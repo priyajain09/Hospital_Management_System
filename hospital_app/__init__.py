@@ -1,5 +1,5 @@
 from flask import Flask
-from flask.ext.sqlalchemy import SQLAlchemy                 #SQL database
+from flask_sqlalchemy import SQLAlchemy                 #SQL database
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
