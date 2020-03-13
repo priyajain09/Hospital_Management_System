@@ -1,7 +1,4 @@
-from flask import Flask
-
-app = Flask(__name__)
+from hospital_app import app
 
 if __name__ == "__main__":
-    print("edew")
-    pass
+    app.run()
