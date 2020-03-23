@@ -1,1 +1,1 @@
-### contains templates
+### templates
