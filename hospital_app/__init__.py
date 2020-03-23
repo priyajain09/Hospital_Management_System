@@ -6,7 +6,6 @@ app.config.from_object('config')
 app.config.from_pyfile('config.py')
 db = SQLAlchemy(app)
 
-
 @app.route('/')
 def hello():
     return "hello_world"

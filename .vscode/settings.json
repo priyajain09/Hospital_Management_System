@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "/home/priya/.virtualenvs/flask_env/bin/python"
+    "python.pythonPath": "/home/priya/.virtualenvs/flask_env/bin/python",
+    "python.autoComplete.extraPaths": ["./src"]
 }
