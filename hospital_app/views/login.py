@@ -13,16 +13,17 @@ login_bp = Blueprint('login',__name__)
 @login_bp.route('/login',methods=['Get','Post'])
 def login():
     if current_user.is_authenticated:
-        return "fhfjf"
+        return "logged in"
     form = LoginForm()
     if form.validate_on_submit():
-        # by calling first() it will retur the user object if it exists else return None
+        # by calling first() it will return the user object if it exists else return None
         user = User.query.filter_by(username = form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash("Invalid username or password!")
-            return redirect(url_for('login.login'))
+            # return redirect(url_for('login.login'))
         login_user(user,remember = form.remember_me.data)
         next_page = request.args.get('next')
+
         # when the Url is absolute it does not redirect to the url 
         if not next_page or url_parse(next_page).netloc !='':
             next_page = url_for('login.index')
