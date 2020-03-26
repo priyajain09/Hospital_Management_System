@@ -1,12 +1,14 @@
 ''''
 handles login and logout
 '''
-
 from flask_login import current_user, login_user, logout_user
 from hospital_app.models import User
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app.forms import LoginForm
+from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
+from hospital_app.email import send_password_reset_email
 import re
+from hospital_app import db
 
 login_bp = Blueprint('login', __name__)
 regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
@@ -48,7 +50,39 @@ def login():
 def index():
     return("Hello world!!")
 
+
 @login_bp.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('login.index'))
+
+
+@login_bp.route('/reset_password_request', methods=['GET', 'POST'])
+def reset_password_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('login.index'))
+    form = ResetPasswordRequestForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            send_password_reset_email(user)
+        flash('Check your email for the instructions to reset your password')
+        return redirect(url_for('login.login'))
+    return render_template('Authentication/reset_password_request.html',
+                           title='Reset Password', form=form)
+
+
+@login_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+def reset_password(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('login.index'))
+    user = User.verify_reset_password_token(token)
+    if not user:
+        return redirect(url_for('login.index'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been reset.')
+        return redirect(url_for('login.login'))
+    return render_template('Authentication/reset_password.html', form=form)

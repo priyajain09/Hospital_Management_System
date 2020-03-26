@@ -2,6 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+import logging
+from flask_mail import Mail
 
 
 
@@ -12,12 +14,13 @@ login = LoginManager(app)
 login.login_view='login'
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
+mail = Mail(app)
 
 from hospital_app import  models
 from .views.login import login_bp
-from .views.hello import hello
+from .views.register import register_bp
 app.register_blueprint(login_bp)
-app.register_blueprint(hello)
+app.register_blueprint(register_bp)
 
 
 
