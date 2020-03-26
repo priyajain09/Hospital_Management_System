@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
+    "python.pythonPath": "/home/sapna/6th sem/gexxx/Project/hms/venv/bin/python",
     "python.autoComplete.extraPaths": ["./src"]
 }

@@ -1,6 +1,7 @@
 from hospital_app import db
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from flask_pymongo import PyMongo
 from werkzeug.security import generate_password_hash, check_password_hash
 from hospital_app import login
 from flask_login import UserMixin

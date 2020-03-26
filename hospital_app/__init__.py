@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_pymongo import PyMongo
 from flask_migrate import Migrate
 from flask_login import LoginManager
 import logging
@@ -13,6 +14,9 @@ app.config.from_pyfile('config.py')
 login = LoginManager(app)
 login.login_view='login'
 db = SQLAlchemy(app)
+mongo = PyMongo(app)
+user_collection = mongo.db.users
+user_collection.insert({'name':'Anthoy'})
 migrate = Migrate(app, db)
 mail = Mail(app)
 
