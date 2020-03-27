@@ -15,8 +15,8 @@ login = LoginManager(app)
 login.login_view='login'
 db = SQLAlchemy(app)
 mongo = PyMongo(app)
-user_collection = mongo.db.users
-user_collection.insert({'name':'Anthoy'})
+#user_collection = mongo.db.users               uncomment for testing connection hereonly
+#user_collection.insert({'name':'Anthoy'})
 migrate = Migrate(app, db)
 mail = Mail(app)
 
