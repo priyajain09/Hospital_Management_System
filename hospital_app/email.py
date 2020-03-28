@@ -15,5 +15,13 @@ def send_password_reset_email(user):
                sender=app.config['ADMINS'][0],
                recipients=[user.email],
                text_body=render_template('Authentication/email/reset_password.txt',user=user, token=token),
-               html_body=render_template('Authentication/email/reset_password.html',
-                                         user=user, token=token))
+               html_body=render_template('Authentication/email/reset_password.html',user=user, token=token))
+
+
+def send_registration_request_email(user):
+    token = user.get_reset_password_token()
+    send_email('[HMS] Confirm Your Email Address',
+                    sender=app.config['ADMINS'][0], 
+                    recipients=[user.email], 
+                    text_body=render_template('Authentication/email/register.txt',user=user, token=token),
+                    html_body=render_template('Authentication/email/register.html',user=user, token=token))

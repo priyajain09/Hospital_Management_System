@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from hospital_app.models import User
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired,Required
+from hospital_app.models import User,specialization
+from wtforms.ext.sqlalchemy.fields import QuerySelectField
+from hospital_app import db
+from wtforms.fields.html5 import TelField
 
 
 class LoginForm(FlaskForm):
@@ -37,4 +40,18 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Please use a different email address.')    
+            raise ValidationError('Please use a different email address.')
+
+
+
+def get_specialization_list():
+    return db.session.query(specialization).all()
+
+
+class RegistrationForm_Doctor(FlaskForm):
+    name = StringField('Name',validators=[DataRequired()])
+    qualification = StringField('Qualification',validators=[DataRequired()])
+    experience = StringField('Experience',validators=[DataRequired()])
+    specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
+    phonenumber = TelField("Phone Number",validators=[DataRequired()])
+    submit = SubmitField('Submit')

@@ -16,7 +16,7 @@
             Forgot Your Password?
             <a href="{{ url_for('login.reset_password_request') }}">Click to Reset It</a>
         </p>
-        <p>New User? <a href="{{ url_for('register.register',role='user') }}">Click to Register as user!</a><br>
-        <a href ="{{url_for('register.register',role='doctor')}}">Click to Register as </a><br></p>
+        <p>New User?<br> <a href="{{ url_for('register.register_request',role='user') }}">Click to Register as user!</a><br>
+        <a href ="{{url_for('register.register_request',role='doctor')}}">Click to Register as doctor</a><br></p>
     </form>
 {% endblock %}

@@ -1,0 +1,42 @@
+{% block content %}
+    <h1>Register</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.name.label }}<br>
+            {{ form.name(size=32) }}<br>
+            {% for error in form.name.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.qualification.label }}<br>
+            {{ form.qualification(size=64) }}<br>
+            {% for error in form.qualification.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.experience.label }}<br>
+            {{ form.experience(size=32) }}<br>
+            {% for error in form.experience.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.specialization.label }}<br>
+            {{ form.specialization() }}<br>
+            {% for error in form.specialization.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.phonenumber.label }}<br>
+            {{ form.phonenumber(size=32) }}<br>
+            {% for error in form.phonenumber.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}

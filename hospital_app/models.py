@@ -9,26 +9,23 @@ import jwt
 from hospital_app import app
 
 
-
-
 class User(UserMixin,db.Model):
-    username = db.Column(db.String(64), index=True, unique=True,primary_key=True)
+    username = db.Column(db.String(64), index=True, unique=True, primary_key=True)
     email = db.Column(db.String(100), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(20))
+    confirmed = db.Column(db.Boolean, nullable = False, default = False) 
 
-    def get_reset_password_token(self,expires_in = 600):
+    def get_reset_password_token(self,expires_in = 900):
         return jwt.encode({'reset_password':self.username,'exp':time()+expires_in},app.config['SECRET_KEY'],algorithm = 'HS256').decode('utf-8')
 
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            username = jwt.decode(token,app.config['SECRET_KEY'],algorithms=['HS256'])['reset_password']
+            username = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
         except:
             return
-        return User.query.filter_by(username=username).first()   
-
-
+        return User.query.filter_by(username = username).first()   
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -42,11 +39,22 @@ class User(UserMixin,db.Model):
     def get_id(self):
         return str(self.username)
 
+class specialization(UserMixin,db.Model):
+    specialization = db.Column(db.String(50),primary_key=True)
+
+    def get_id(self):
+        return str(self.specialization)
+
+    def __repr__(self):
+        return '{}'.format(self.specialization)
+
 
 
 @login.user_loader
 def load_user(username):
     return User.query.filter_by(username = username).first()
+
+
 
 # class user(db.Model):
 #      user_id = db.Column(db.String(30),primary_key=True)
