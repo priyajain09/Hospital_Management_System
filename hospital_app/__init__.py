@@ -23,9 +23,10 @@ mail = Mail(app)
 from hospital_app import  models
 from .views.login import login_bp
 from .views.register import register_bp
+from .views.admin import admin_bp
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
-
+app.register_blueprint(admin_bp)
 
 
     

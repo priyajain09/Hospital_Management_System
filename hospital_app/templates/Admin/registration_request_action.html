@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Doctor Details</h1>
+<p>
+    Name: {{q.name}} <br>
+    Qualifications: {{q.qualification}} <br>
+    Specialization: {{q.specialization}}<br>
+    Experience: {{q.experience}}<br>
+    Phone Number: {{q.contact_number}}
+    <button type="button" onclick="window.location.href='{{ url_for( 'admin.action_taken_on_request' , username=q.username,action='Approve' ) }}';">Approve</button>
+    <button type="button" onclick="window.location.href='{{ url_for( 'admin.action_taken_on_request' , username=q.username,action='Reject' ) }}';">Reject</button>
+</p>
+</body>
+</html>

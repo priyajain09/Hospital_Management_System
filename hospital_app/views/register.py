@@ -3,7 +3,7 @@ from hospital_app.forms import RegistrationForm, RegistrationForm_Doctor
 from flask import Blueprint
 from flask_login import current_user, login_user, logout_user
 from flask import Blueprint, render_template, redirect,url_for, request, flash
-from hospital_app.models import User
+from hospital_app.models import User,Doctor
 from hospital_app.email import send_registration_request_email
 
 
@@ -54,7 +54,10 @@ def register_doctor(token):
         return redirect(url_for('login.login'))
     form = RegistrationForm_Doctor()
     if form.validate_on_submit():
-        return redirect(url_for('login.index'))
+        doctor = Doctor(name = form.name.data,qualification = form.qualification.data,experience = form.experience.data,specialization = form.specialization.data,contact_number = form.phonenumber.data)
+        db.session.add(doctor)
+        db.session.commit()
+        return "You will be notified through email if your request get approved/rejected."
     return render_template('Authentication/register_doctor.html',title = "Register Doctor",form = form)    
 
 
