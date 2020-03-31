@@ -14,7 +14,7 @@ login_bp = Blueprint('login', __name__)
 regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
 
 
-@login_bp.route('/login', methods = ['Get','Post'])
+@login_bp.route('/', methods = ['Get','Post'])
 def login():
     if current_user.is_authenticated:
         return current_user.username
@@ -41,7 +41,12 @@ def login():
             next_page = url_for('login.index')
 
         # chnage it later
-        return redirect(url_for('login.index'))
+        if current_user.role=="user":
+            return redirect(url_for('user.home_page'))
+        if current_user.role=="admin":
+            return redirect(url_for('admin.home_page'))
+        if current_user.role=="doctor":
+            return redirect(url_for('doctor_routes.home_page'))        
     return render_template('Authentication/login.html', title = "Sign In", form = form)            
 
 
@@ -54,7 +59,7 @@ def index():
 @login_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('login.index'))
+    return redirect(url_for('login.login'))
 
 
 @login_bp.route('/reset_password_request', methods=['GET', 'POST'])

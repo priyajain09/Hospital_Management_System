@@ -53,5 +53,9 @@ class RegistrationForm_Doctor(FlaskForm):
     qualification = StringField('Qualification',validators=[DataRequired()])
     experience = StringField('Experience',validators=[DataRequired()])
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
-    phonenumber = TelField("Phone Number",validators=[DataRequired()])
+    phonenumber = StringField("Phone Number",validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+class search_doctor_form(FlaskForm):
+    specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
+    submit = SubmitField('Search')

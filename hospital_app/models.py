@@ -11,6 +11,13 @@ from hospital_app import app
 from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey,Date
 from datetime import datetime
 
+
+
+@login.user_loader
+def load_user(username):
+    return User.query.filter_by(username = username).first()
+
+    
 class User(UserMixin,db.Model):
     username = db.Column(db.String(64), index=True, unique=True, primary_key=True,nullable= False)
     email = db.Column(db.String(100), index=True, unique=True,nullable=False)
@@ -44,7 +51,7 @@ class User(UserMixin,db.Model):
 
 
 
-class specialization(UserMixin,db.Model):
+class specialization(db.Model):
     specialization = db.Column(db.String(50),primary_key=True,nullable=False)
 
     def get_id(self):
@@ -53,7 +60,7 @@ class specialization(UserMixin,db.Model):
     def __repr__(self):
         return '{}'.format(self.specialization)
 
-class Patient(UserMixin, db.Model):
+class Patient( db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable=False)
     name = db.Column(db.String(50),nullable = False)
@@ -64,14 +71,14 @@ class Patient(UserMixin, db.Model):
     address = db.Column(db.String(80))
 
 
-class Doctor(UserMixin, db.Model):
+class Doctor( db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable = False)
     name = db.Column(db.String(50),nullable = False)
     gender_doctor = db.Column(db.String(15))
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
-    contact_number = db.Column(db.Unicode(20),nullable = False)
+    contact_number = db.Column(db.String(15),nullable = False)
     address = db.Column(db.String(80)) 
     qualification = db.Column(db.String(100),nullable = False)  
     experience = db.Column(db.String(15),nullable = False)
@@ -86,8 +93,4 @@ class Doctor(UserMixin, db.Model):
 
 
 
-@login.user_loader
-def load_user(username):
-    return User.query.filter_by(username = username).first()
 
-     

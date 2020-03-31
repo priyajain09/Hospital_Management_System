@@ -1,0 +1,27 @@
+
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Doctor Details
+{% endblock %}
+{% block content %}
+<p>
+    <b>Name:</b> {{q.name}} <br>
+    <b>Qualifications:</b> {{q.qualification}} <br>
+    <b>Specialization:</b> {{q.specialization}}<br>
+    <b>Experience:</b> {{q.experience}}<br>
+    <b>Phone Number:</b> {{q.contact_number}}
+    <button type="button" onclick="window.location.href='{{ url_for( 'admin.action_taken_on_request' , username=q.username,action='Approve' ) }}';">Approve</button>
+    <button type="button" onclick="window.location.href='{{ url_for( 'admin.action_taken_on_request' , username=q.username,action='Reject' ) }}';">Reject</button>
+</p>
+{% endblock %}
+
+
+
+
+
+
+
+
+

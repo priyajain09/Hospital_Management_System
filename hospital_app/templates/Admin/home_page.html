@@ -1,4 +1,20 @@
-<html>
-    <h1> ADMIN LANDING PAGE</h1>
-    <a href = "{{url_for('admin.registration_request')}}"></a>
-</html>
+{% extends 'index.html' %}
+{% block title %}  {% endblock %}
+
+{% block sidebar %}
+<div class="sidebar-heading"></div>
+      <div class="list-group list-group-flush">
+        <a href="{{url_for('admin.doctor_list')}}" class="list-group-item list-group-item-action bg-light">Doctors</a>
+        <a href="{{url_for('admin.user_list')}}" class="list-group-item list-group-item-action bg-light">Users</a>
+        <a href="{{url_for('admin.registration_request')}}" class="list-group-item list-group-item-action bg-light">Registration Requests</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Departments</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">History</a>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block heading %}
+ADMIN
+{% endblock %}

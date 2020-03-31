@@ -1,30 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'index.html' %}
+{% block title %}  {% endblock %}
 
-<head>
+{% block sidebar %}
+<div class="sidebar-heading"></div>
+      <div class="list-group list-group-flush">
+        <a href="{{url_for('admin.doctor_list')}}" class="list-group-item list-group-item-action bg-light">Start New Treatment</a>
+        <a href="{{url_for('admin.user_list')}}" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
+        <a href="{{url_for('admin.registration_request')}}" class="list-group-item list-group-item-action bg-light">Treatments</a>
+        <a href="#" class="list-group-item list-group-item-action bg-light">Patients</a>
+      </div>
+    </div>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+{% endblock %}
 
-    <title>Home</title>
-
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-
-</head>
-
-<body>
-
-<div class="container">
-            <div>
-                <a href="{{ url_for('doctor_routes.start_treatment') }}">Start New Treatment</a>.
-            </div>   
-</div>
-<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-</body>
-
-</html>
+{% block heading %}
+DOCTOR
+{% endblock %}

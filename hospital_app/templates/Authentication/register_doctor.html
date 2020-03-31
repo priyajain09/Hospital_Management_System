@@ -1,4 +1,27 @@
-{% block content %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Hospital Management System</title>
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container">
+            <div class="row">
+            <div class="col-md-4 col-md-offset-4">    
+            <h1></h1>
+            {% block content %}
     <h1>Register</h1>
     <form action="" method="post">
         {{ form.hidden_tag() }}
@@ -40,3 +63,34 @@
         <p>{{ form.submit() }}</p>
     </form>
 {% endblock %}
+            
+            
+</body>
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

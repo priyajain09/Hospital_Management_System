@@ -15,8 +15,8 @@ login = LoginManager(app)
 login.login_view='login'
 db = SQLAlchemy(app)
 mongo = PyMongo(app)
-#user_collection = mongo.db.users               uncomment for testing connection hereonly
-#user_collection.insert({'name':'Anthoy'})
+user_collection = mongo.db.users               
+
 
 migrate = Migrate(app, db)
 mail = Mail(app)
@@ -24,11 +24,12 @@ mail = Mail(app)
 from hospital_app import  models
 from .views.login import login_bp
 from .views.register import register_bp
-
+from .views.user import user_bp
 from .views.admin import admin_bp
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(user_bp)
 
 from .views.doctor_routes import doctor_routes_bp
 # from .views.hello import hello

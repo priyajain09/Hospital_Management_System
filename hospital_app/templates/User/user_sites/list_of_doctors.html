@@ -1,0 +1,30 @@
+{% extends 'User/home_page.html' %}
+{% block heading %}Search Doctor {% endblock %}
+{% block content %}
+<form action="{{url_for('user.doctor')}}" method="post">
+    {{form.hidden_tag()}}
+    <p>
+        {{ form.specialization.label }}<br>
+            {{ form.specialization() }}<br>
+            {% for error in form.specialization.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+
+{% for row in q %}
+<a href = "#">
+<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+    <p>
+        {{row.name}}<br>
+        {{row.specialization}}<br>
+        {{row.qualification}}<br>
+        {{row.experience}}<br>
+        
+    </p>
+  </div> 
+</a>
+{% endfor %}
+
+{% endblock %}

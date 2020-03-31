@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Start Treatment</title>
+    <title>Hospital Management System</title>
 
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
 
@@ -17,7 +17,11 @@
 <body>
     <div class="container">
             <div class="row">
-            <div class="col-md-4 col-md-offset-4">    
+            <div class="col-md-4 col-md-offset-4"> 
+                
+            {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
             <h1>Sign In</h1>
             <form action="" method="post" novalidate>
             
@@ -37,11 +41,10 @@
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         {{ form.submit() }}</p>
         <p>
-            Forgot Your Password?
-            <a href="{{ url_for('login.reset_password_request') }}">Click to Reset It</a>
+            <a href="{{ url_for('login.reset_password_request') }}">Forgot Password?</a>
         </p>
-        <p>New User?<br> <a href="{{ url_for('register.register_request',role='user') }}">Click to Register as user!</a><br>
-        <a href ="{{url_for('register.register_request',role='doctor')}}">Click to Register as doctor</a><br></p>
+        <p>Register as  <a href="{{ url_for('register.register_request',role='user') }}">User</a> /
+        <a href ="{{url_for('register.register_request',role='doctor')}}">Doctor</a><br></p>
     </form>
 </body>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
