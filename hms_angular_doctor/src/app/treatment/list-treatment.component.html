@@ -1,0 +1,23 @@
+<div class="table-responsive">
+    <table class="table table-bordered" *ngIf="treatments && treatments.length">
+      <thead>
+        <tr class="bg-primary">
+          <th>Treatment ID</th>
+          <th>Patient User ID</th>
+          <th>Patient name</th>
+          <th>Start Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let treatment of treatments">
+          <td>{{ treatment.id }}</td>
+          <td>{{ treatment.patient_userid }}</td>
+          <td>{{ treatment.patient_name }}</td>
+          <td>{{ treatment.start_date }}</td>
+          <td> <button class="btn btn-primary" (click)="editButtonClick(treatment.id)">Edit</button> </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

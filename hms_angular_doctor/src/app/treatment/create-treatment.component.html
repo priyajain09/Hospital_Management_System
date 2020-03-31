@@ -1,0 +1,173 @@
+<form class="form-horizontal" (ngSubmit)="onSubmit()" [formGroup]="treatmentForm">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title">{{pageTitle}}</h3>
+      </div>
+      <div class="panel-body">
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="patient_name">Patient's Name</label>
+          <div class="col-sm-8">
+            <input id="patient_name" type="text" class="form-control" formControlName="patient_name">
+          </div>
+        </div>
+  
+        <div class="form-group">
+          <label class="col-sm-2 control-label" for="patient_userid">Patient UserID</label>
+          <div class="col-sm-8">
+            <input id="patient_userid" type="text" class="form-control" formControlName="patient_userid">
+          </div>
+        </div>
+
+          </div>
+            <div class="well">
+                    <div class="form-group">
+                            <div class="col-md-offset-2 col-md-4">
+                              <button type="button" class="btn btn-primary" (click)="addDoctorButtonClick()">
+                                Add Doctor
+                              </button>
+                            </div>
+                          </div>
+                <div formArrayName="alldoctors"
+                *ngFor="let doctor of treatmentForm.get('alldoctors')['controls']; let i = index">
+                <div [formGroupName] ="i">
+                        <div class="form-group">
+                                <label class="col-sm-2 control-label" attr.for="{{'doctid'+i}}">
+                                Doctor UserID
+                                </label>
+                                <div class="col-sm-4">
+                                <input type="text" class="form-control" id="doctid"
+                                    placeholder="doctor id" formControlName="doctid">
+                                </div>
+                                
+                        </div>
+                        <hr width="500px;" color="blue"
+                        size="10">
+                </div>      
+                </div>
+            </div>>
+          <div class="form-group">
+                <label class="col-sm-2 control-label" for="start_date">start_date</label>
+                <div class="col-sm-8">
+                  <input id="start_date" type="text" class="form-control" formControlName="start_date">
+                </div>
+              </div>
+
+              <div class="form-group">
+                    <label class="col-sm-2 control-label" for="time_stamp">time_stamp</label>
+                    <div class="col-sm-8">
+                      <input id="time_stamp" type="text" class="form-control" formControlName="time_stamp">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                      <label class="col-sm-2 control-label" for="Referto">Refer to</label>
+                      <div class="col-sm-8">
+                        <input id="Referto" type="text" class="form-control" formControlName="Referto">
+                      </div>
+                    </div>
+
+        <div class="well">
+                <div class="form-group">
+                        <div class="col-md-offset-2 col-md-4">
+                          <button type="button" class="btn btn-primary" (click)="addPrescriptionButtonClick()">
+                            Add Prescription
+                          </button>
+                        </div>
+                      </div>
+        <div formArrayName="prescription"
+        *ngFor="let presc of treatmentForm.get('prescription')['controls']; let j = index">
+        <div [formGroupName]="j">
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label" attr.for="{{'presid'+j}}">
+                Prescription ID
+              </label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="{{'presid'+j}}"
+                    placeholder="prescription id" formControlName="presid">
+              </div>
+              <label class="col-sm-2 control-label" attr.for="{{'date'+j}}">
+                  Dated
+                </label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="{{'date'+j}}"
+                      placeholder="date" formControlName="date">
+                </div>
+              <label class="col-sm-2 control-label" attr.for="{{'pres_doctor_userid'+j}}">
+                Doctor UserID
+              </label>
+              <div class="col-sm-4">
+                <input type="text" placeholder="Doctor UserID" id="{{'pres_doctor_userid'+j}}"
+                    class="form-control" formControlName="pres_doctor_userid">
+              </div>
+              <label class="col-sm-2 control-label" attr.for="{{'tests'+j}}">
+                Tests 
+              </label>
+              <div class="col-sm-4">
+                <input type="text" placeholder="tests" id = "{{'tests'+j}}"
+                    class="form-control" formControlName="tests">
+              </div>
+              <label class="col-sm-2 control-label" attr.for="{{'symptoms'+j}}">
+                Symptoms
+              </label>
+              <div class="col-sm-4">
+                <input type="text" placeholder="symptoms" id = "{{'symptoms'+j}}"
+                    class="form-control" formControlName="symptoms">
+              </div>
+              <label class="col-sm-2 control-label" attr.for="{{'medicines'+j}}">
+                  Medicines
+                </label>
+                <div class="col-sm-4">
+                  <input type="text" placeholder="medicines" id = "{{'medicines'+j}}"
+                      class="form-control" formControlName="medicines">
+                </div>
+                
+              <label class="col-sm-2 control-label" attr.for="{{'diet_plan'+j}}">
+                Diet Plan
+              </label>
+              <div class="col-sm-4">
+                <input type="text" placeholder="diet_plan" id = "{{'diet_plan'+j}}"
+                    class="form-control" formControlName="diet_plan">
+              </div>
+              <label class="col-sm-2 control-label" attr.for="{{'next_visit_date'+j}}">
+                Next visit date
+              </label>
+              <div class="col-sm-4">
+                <input type="text" placeholder="next_visit_date" id = "{{'next_visit_date'+j}}"
+                    class="form-control" formControlName="next_visit_date">
+              </div>
+            </div>
+          <hr width="500px;" color="blue"
+          size="10">
+          </div>
+          </div>
+          </div>
+
+      </div>
+      <div class="panel-footer">
+        <button class="btn btn-primary" type="submit"  [disabled]="treatmentForm.invalid">Save</button>
+        <button class="btn btn-primary" type="button"
+          (click)="onLoadDataClick()">Load Data</button>
+      
+    </div>
+  </form>
+
+  <table border="1">
+        <tr>
+          <th style="padding: 10px">FormGroup</th>
+          <th style="padding: 10px">FormControl (fullName)</th>
+        </tr>
+        <tr>
+          <td style="padding: 10px">
+            touched : {{ treatmentForm.touched }}
+            <br/> dirty : {{ treatmentForm.dirty }}
+            <br/> valid : {{ treatmentForm.valid }}
+            <br/> Form Values : {{treatmentForm.value | json}}
+          </td>
+          <td style="padding: 10px">
+            touched : {{ treatmentForm.get('patient_name').touched }}
+            <br/> dirty : {{ treatmentForm.get('patient_name').dirty }}
+            <br/> valid : {{ treatmentForm.get('patient_name').valid }}
+            <br/> patient_name Value : {{treatmentForm.get('patient_name').value}}
+          </td>
+        </tr>
+      </table>
