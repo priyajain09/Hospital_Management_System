@@ -54,13 +54,21 @@ def register_doctor(token):
         return redirect(url_for('login.login'))
     form = RegistrationForm_Doctor()
     if form.validate_on_submit():
-        doctor = Doctor(name = form.name.data,qualification = form.qualification.data,experience = form.experience.data,specialization = form.specialization.data,contact_number = form.phonenumber.data)
+        # return user.username
+        spec = str(form.specialization.data)
+        doctor = Doctor(username = user.username,name = form.name.data,qualification = form.qualification.data,experience = form.experience.data,specialization = spec,contact_number = form.phonenumber.data)
+        # db.session.rollback()
         db.session.add(doctor)
         db.session.commit()
-        return "You will be notified through email if your request get approved/rejected."
+        flash("You will be notified through email if your request get approved/rejected.")
+        return redirect(url_for('login.login'))
     return render_template('Authentication/register_doctor.html',title = "Register Doctor",form = form)    
 
 
-
+# @register_bp.teardown_request
+# def teardown_request(exception):
+#     if exception:
+#         db.session.rollback()
+#     db.session.remove()
 
 

@@ -1,0 +1,24 @@
+{% extends 'Admin/home_page.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Doctors
+{% endblock %}
+{% block content %}
+{% for row in q %}
+<a href = "#">
+<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+    <p>
+        {{row[1].name}}<br>
+        {{row[1].specialization}}<br>
+        {{row[1].qualification}}<br>
+        {{row[1].experience}}<br>
+        {{row[0].email}}<br>
+        
+    </p>
+  </div> 
+</a>
+{% endfor %}
+{% endblock %}
+

@@ -1,0 +1,27 @@
+
+{% block heading %}
+Prescriptions
+{% endblock %}
+
+{% block content %}
+{% for row in prescriptions %}
+<div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item"><b>Prescription ID :  </b>{{ row.presid }}</li>
+            <li class="list-group-item"><b>Date :  </b>{{ row.date }}</li>
+            <li class="list-group-item"><b>Doctor username :  </b>{{ row.pres_doctor_userid }}</li>
+            <li class="list-group-item"><b>Tests:  </b>{{ row.tests}}</li>
+            <li class="list-group-item"><b>Symptoms :  </b>{{ row.symptoms }}</li> 
+            <li class="list-group-item"><b>Medicines :  </b>{{ row.medicines }}</li> 
+            <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 
+            <li class="list-group-item"><b>Next Visit :  </b>{{ row.next_visit_date }}</li> 
+          </ul>
+      </div>
+      </div>
+    </div>
+{% endfor %}
+
+<a href ="{{url_for('user.current_treatments')}}"><b>Current Treatments</b></a>
+{% endblock %}

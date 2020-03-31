@@ -1,0 +1,24 @@
+{% extends 'User/home_page.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Ongoing Treatments
+{% endblock %}
+{% block content %}
+{% for row in treatment %}
+<a href = "{{url_for('user.prescriptions')}}">
+<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+    <p>
+        <b>Disease:</b> {{row.disease}}<br>
+        <b>Treatment Started On:</b> {{row.start_date}}<br>
+        <b>Doctors Handling The Treatments</b> <br>
+        {% for doctor in row.alldoctors %}
+        {{doctor.doctid}}<br>
+        {% endfor %}
+    </p>
+  </div> 
+</a>
+{% endfor %}
+{% endblock %}
+

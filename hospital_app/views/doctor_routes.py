@@ -4,7 +4,7 @@ import json
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
 @doctor_routes_bp.route('/doctor')
-def doctor():       #pass user_id as parameter
+def home_page():       #pass user_id as parameter
     return render_template('Doctor/home.html')
 
 @doctor_routes_bp.route('/start_treatment', methods=['GET', 'POST'])
