@@ -1,0 +1,83 @@
+{% extends 'Doctor/home.html' %}
+
+
+{% block heading %}
+Treatment Details
+{% endblock %}
+
+<!--to add later : editing treatment details code-->
+{% block content %}
+<!---add prescription form below--->
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4">
+            <form method=POST action="{{ url_for('doctor_routes.add_prescription', treat_id = treat_id ) }}">
+                <div class="form-group">
+                    <label for="tests">Test Results</label>
+                    <input type="text" class="form-control" name="tests" placeholder="BP/Temperature etc">
+                </div>
+
+                                                         
+                <div class="form-group" id = "add_symptoms">
+                        <label for="allsymptoms">Symptoms</label>
+                        <br> <input type="text" name="symptoms_inputs[]">
+                </div>                
+                <input type="button" value = "Add Symptoms" onClick="addSymptoms('add_symptoms');">
+                
+                <div class="form-group" id = "add_medicines">
+                    <label for="allmedicines">Medicines</label>
+                    <br> <input type="text" name="medicines_inputs[]">
+                </div>                
+                <input type="button" value = "Add Medicines" onClick="addMedicines('add_medicines');">                
+                
+
+                <div class="form-group">
+                    <label for="diet_plan">Diet Plan</label>
+                    <input type="text" class="form-control" name="diet_plan" placeholder="diet plan">
+                </div>
+                <div class="form-group">
+                    <label for="next_visit_date">Next Visit Date</label>
+                    <input type="date" class="form-control" name="next_visit_date" >
+                </div>                
+                <button type="submit" class="btn btn-primary btn-block">Add Prescription</button> 
+                
+            </form>
+            <br>
+        </div>
+    </div>
+</div>
+
+<br>
+<br>
+{% for row in prescriptions %}
+<div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item"><b>Prescription ID :  </b>{{ row.pres_id }}</li>
+            <li class="list-group-item"><b>Date :  </b>{{ row.time_stamp }}</li>
+            <li class="list-group-item"><b>Doctor username :  </b>{{ row.pres_doctor_userid }}</li>
+            <li class="list-group-item"><b>Tests:  </b>{{ row.tests}}</li>
+            <li class="list-group-item"><b>Symptoms :  </b>
+            {% for symptom in row.symptoms_inputs %}
+            {{ symptom }}
+            {% endfor %}
+            </li> 
+            <li class="list-group-item"><b>Medicines :  </b>
+                {% for medicine in row.medicines_inputs %}
+                {{ medicine }}
+                {% endfor %}            
+            </li> 
+            <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 
+            <li class="list-group-item"><b>Next Visit :  </b>{{ row.str_next_visit_date }}</li> 
+          </ul>
+      </div>
+      </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+{% endfor %}
+
+
+{% endblock %}
