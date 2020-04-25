@@ -6,8 +6,26 @@
 Doctors
 {% endblock %}
 {% block content %}
+<br>
+<br>
+<h3>Search doctor by specialization</h3>
+<br>
+<form action= "{{url_for('admin.doctor_list')}}" method="post">
+  {{form.hidden_tag()}}
+  {{form.specialization.label}}
+  {{form.specialization()}}
+  {{form.submit()}}
+</form>
+<br>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
 {% for row in q %}
-<a href = "#">
+<a href = "{{url_for('admin.doctor_details',username = row[0].username)}}">
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
         {{row[1].name}}<br>

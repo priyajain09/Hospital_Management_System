@@ -3,9 +3,8 @@ from hospital_app.forms import RegistrationForm, RegistrationForm_Doctor
 from flask import Blueprint
 from flask_login import current_user, login_user, logout_user
 from flask import Blueprint, render_template, redirect,url_for, request, flash
-from hospital_app.models import User,Doctor
+from hospital_app.models import User, Doctor, is_user_deleted, Patient
 from hospital_app.email import send_registration_request_email
-
 
 register_bp = Blueprint('register', __name__)
 
@@ -20,6 +19,10 @@ def register(token):
     if user.role =="user":
         user.confirmed = True
         # db.session.add(user)
+        u = is_user_deleted(username = user.username)
+        db.session.add(u)
+        x = Patient(username = user.username)
+        db.session.add(x)
         db.session.commit()
         return redirect(url_for('login.login'))
     return redirect(url_for('register.register_doctor',token=token))

@@ -1,0 +1,27 @@
+{% extends 'Admin/home_page.html' %}
+{% block title %}  {% endblock %}
+
+{% block heading %}
+Specializations
+{% endblock %}
+{% block content %}
+
+{% for spez in q %}
+{{spez}}<br>
+{% endfor %}
+<br>
+<br>
+<h3> Add Specialization</h3>
+<br>
+<form action = "" method="post">
+
+{{form.hidden_tag()}}
+{{form.specialization_name.label}}
+{{form.specialization_name()}}
+{% for error in form.specialization_name.errors %}
+<span style="color: red;">[{{ error }}]</span>
+{% endfor %}        
+{{form.submit()}}
+</form>
+{% endblock %}
+

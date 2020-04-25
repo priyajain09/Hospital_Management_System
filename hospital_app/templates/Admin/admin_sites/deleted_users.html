@@ -1,0 +1,45 @@
+{% extends 'Admin/home_page.html' %}
+{% block title %}  {% endblock %}
+
+{% block heading %}
+{% endblock %}
+{% block content %}
+<h2>Deleted Users</h2>
+<br>
+<br>
+<h3>search by username</h3>
+<form action= "" method="post">
+    {{form.hidden_tag()}}
+    {{form.username.label}}
+    {{form.username()}}
+    {{form.submit()}}
+  </form>
+  <br>
+  <br>
+  {% with messages = get_flashed_messages() %}
+     {% if messages %}
+        {% for message in messages %}
+           {{ message }}
+        {% endfor %}
+     {% endif %}
+  {% endwith %}
+  {% for row in users %}
+  <a href = "#">
+  <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+      <p>
+          Username: {{row.username}}<br>
+          Email: {{row.email}}<br>
+          Name: {{row.name}}<br>
+          Age: {{row.age}}<br>
+          Blood Group: {{row.blood_group}}
+          Contact Number: {{row.contact_number}}<br>
+          Address: {{row.address}}<br>
+          Gender: {{row.gender_user}}<br>
+          Deleted On: {{row.deleted_on}}<br>
+          <br>
+          
+      </p>
+    </div> 
+  </a>
+  {% endfor %}
+{% endblock %}
