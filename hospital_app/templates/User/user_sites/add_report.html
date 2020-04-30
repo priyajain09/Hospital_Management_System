@@ -1,0 +1,49 @@
+{% extends 'User/home_page.html' %}
+{% block title %}  {% endblock %}
+{% block heading %}
+Prescriptions
+{% endblock %}
+
+{% block content %}
+{% with messages = get_flashed_messages() %}
+     {% if messages %}
+        {% for message in messages %}
+           {{ message }}
+        {% endfor %}
+     {% endif %}
+  {% endwith %}
+
+<div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item"><b>Prescription ID :  </b>{{ prescription.pres_id }}</li>
+            <li class="list-group-item"><b>Date :  </b>{{ prescription.time_stamp }}</li>
+            <li class="list-group-item"><b>Doctor username :  </b>{{ prescription.pres_doctor_userid }}</li>
+            <li class="list-group-item"><b>Tests:  </b>{{ prescription.tests}}</li>
+            <li class="list-group-item"><b>Symptoms :  </b>{{ prescription.symptoms_inputs }}</li> 
+            <li class="list-group-item"><b>Medicines :  </b>{{ prescription.medicines_inputs }}</li> 
+            <li class="list-group-item"><b>Diet Plan :  </b>{{ prescription.diet_plan }}</li> <br>
+            Reports:
+            {% for report in prescription.reports %}
+            <li class="list-group-item"><b>{{report}}</b>
+            {% if report in added_reports|map(attribute="report_name") %}
+            <button type="button" onclick="window.location.href='{{ url_for( 'user.download_report' ,treat_id = treat_id,pres_id =prescription.pres_id ,report_name=report)}}';">Click to Download</button>
+            <button type="button" onclick="window.location.href='{{ url_for( 'user.remove_report' ,treat_id = treat_id,pres_id =prescription.pres_id ,report_name=report)}}';">Remove</button>
+            {% else %}
+            {# if report is not added #}
+            <form method = "POST" enctype="multipart/form-data" action = "{{url_for('user.upload_report_file',treat_id = treat_id,pres_id=prescription.pres_id,report_name=report)}}">
+            <input type = "file" name = "input_report">
+            <button type = "submit">Upload</button>
+            </form>
+            
+            {% endif %}
+            </li> 
+            {% endfor %}
+            <li class="list-group-item"><b>Next Visit :  </b>{{ prescription.str_next_visit_date }}</li> 
+          </ul>
+      </div>
+      </div>
+    </div><br><br>
+<a href ="{{url_for('user.current_treatments')}}"><b>Current Treatments</b></a>
+{% endblock %}

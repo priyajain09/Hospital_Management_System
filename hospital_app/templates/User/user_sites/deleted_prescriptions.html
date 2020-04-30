@@ -17,15 +17,17 @@ Prescriptions
             <li class="list-group-item"><b>Symptoms :  </b>{{ row.symptoms_inputs }}</li> 
             <li class="list-group-item"><b>Medicines :  </b>{{ row.medicines_inputs }}</li> 
             <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 
-            <li class="list-group-item"><b>Reports :  </b>{{ row.reports }}</li> 
+            <li class="list-group-item"><b>Reports :  </b></li> 
+            {% for report in row.reports %}
+            <b>{{report}}</b> 
+            <button type="button" onclick="window.location.href='{{ url_for( 'user.download_report' ,treat_id = treat_id,pres_id =row.pres_id ,report_name=report)}}';">Click to Download</button><br>
+            {% endfor %}
             <li class="list-group-item"><b>Next Visit :  </b>{{ row.str_next_visit_date }}</li> 
           </ul>
       </div>
       </div>
     </div>
-    <button type="button" onclick="window.location.href='{{ url_for( 'user.add_reports' ,treat_id = treat_id,pres_id =row.pres_id )}}';">Add/Update Reports</button>
-
 {% endfor %}
 
-<a href ="{{url_for('user.current_treatments')}}"><b>Current Treatments</b></a>
+<a href ="{{url_for('user.past_treatments')}}"><b>Closed Treatments</b></a>
 {% endblock %}

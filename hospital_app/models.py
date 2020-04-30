@@ -8,8 +8,9 @@ from flask_login import UserMixin
 from time import time
 import jwt
 from hospital_app import app
-from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey,Date,Boolean
+from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date, Boolean, LargeBinary
 from datetime import datetime
+from sqlalchemy import Enum
 
 
 
@@ -121,3 +122,18 @@ class deleted_doctors(db.Model):
 class is_user_deleted(db.Model):
     username = db.Column(db.String(64),primary_key=True)
     is_deleted = db.Column(Boolean, unique=False, default=False)
+
+class upload_medical_records(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    treat_id = db.Column(db.Integer,nullable=False)
+    type_doc = db.Column(Enum('Invoice','Prescription','Report',name="type_enum", create_type=False),nullable = False)
+    date = db.Column(db.Date,nullable = False)
+    filename = db.Column(db.String(50),nullable = False)
+    File = db.Column(db.LargeBinary,nullable = False)
+
+class upload_report(db.Model):
+    treat_id = db.Column(db.Integer,primary_key=True)
+    pres_id = db.Column(db.Integer,primary_key=True)
+    report_name = db.Column(db.String(50),primary_key= True)
+    file_name = db.Column(db.String(50),nullable = False)
+    report = db.Column(db.LargeBinary,nullable = False)

@@ -3,10 +3,10 @@
 <div class="sidebar-heading">Start Bootstrap </div>
       <div class="list-group list-group-flush">
         <a href="{{url_for('user.current_treatments')}}" class="list-group-item list-group-item-action bg-light">Current Treatments</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Past Treatments</a>
+        <a href="{{url_for('user.past_treatments')}}" class="list-group-item list-group-item-action bg-light">Past Treatments</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
         <a href="{{url_for('user.doctor')}}" class="list-group-item list-group-item-action bg-light">Search Doctors</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Upload Medical Records</a>
+        <a href="{{url_for('user.upload_medical_records_func')}}" class="list-group-item list-group-item-action bg-light">Upload Medical Records</a>
         <!-- <a href="" class="list-group-item list-group-item-action bg-light">Profile</a> -->
   </div>
 </div>

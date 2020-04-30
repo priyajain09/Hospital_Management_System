@@ -1,10 +1,12 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField,DateField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired,Required
 from hospital_app.models import User,specialization
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from hospital_app import db
 from wtforms.fields.html5 import TelField
+# from flask_wtf.file import FileField, FileRequired
+# from werkzeug.utils import secure_filename
 
 
 class LoginForm(FlaskForm):
@@ -81,3 +83,12 @@ class update_user_form(FlaskForm):
      address = TextAreaField('Address: ')
      gender_user = StringField('Gender: ')
      submit = SubmitField('Update')
+
+# class upload_document(FlaskForm):
+#     treat_id = IntegerField('Treatment Id: ')
+#     type_doc = SelectField('Type: ',choices=[('Prescription','Prescription'),('Invoice','Invoice'),('Report','Report')])
+#     date = DateField('Date: ')
+#     File = FileField('Upload file',validators=[FileRequired()])
+#     submit = SubmitField('Upload')
+
+

@@ -3,25 +3,25 @@
 
 
 {% block heading %}
-Ongoing Treatments
+Closed Treatments
 {% endblock %}
 {% block content %}
 {% for row in treatment %}
-<a href = "{{url_for('user.prescriptions',treat_id = row.treat_id)}}">
+<a href = "{{url_for('user.deleted_prescriptions',treat_id = row.treat_id)}}">
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
         <b>Treatment ID:</b>{{row.treat_id}}
         <b>Disease:</b> {{row.disease_name}}<br>
         <b>Treatment Started On:</b> {{row.time_stamp}}<br>
+        <b>Treatment Closed On:</b> {{row.treat_closed_on}}<br>
         <b>Total Prescriptions:</b> {{row.total_prescriptions}}<br>
-        <b>Doctors Handling The Treatments</b> <br>
+        <b>Doctors Handled The Treatment</b> <br>
         {% for doctor in row.alldoctors %}
         {{doctor}}<br>
-        {% endfor %}
+        {% endfor %}    
     </p>
   </div> 
 </a>
-<button type="button" onclick="window.location.href='{{ url_for( 'user.close_treatment' ,treat_id = row.treat_id )}}';">Close Treatment</button>
 <br>
 {% endfor %}
 {% endblock %}
