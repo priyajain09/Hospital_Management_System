@@ -70,19 +70,25 @@ Treatment Details
                     <input type="text" class="form-control" name="tests" placeholder="BP/Temperature etc">
                 </div>
 
-                                                         
+                <hr>                                 
                 <div class="form-group" id = "add_symptoms">
                         <label for="allsymptoms">Symptoms</label>
-                        <br> <input type="text" name="symptoms_inputs[]">
+                        <br> Symptom 1 <input type="text" name="symptoms_inputs[]">
                 </div>                
                 <input type="button" value = "Add Symptoms" onClick="addSymptoms('add_symptoms');">
-                
+                <hr>
                 <div class="form-group" id = "add_medicines">
                     <label for="allmedicines">Medicines</label>
-                    <br> <input type="text" name="medicines_inputs[]">
+                    <br> Medicine 1<input type="text" name="medicines_inputs[]">
                 </div>                
                 <input type="button" value = "Add Medicines" onClick="addMedicines('add_medicines');">                
-                
+                <hr>
+                <div class="form-group" id = "add_reports">
+                        <label for="allreports">Reports Required</label>
+                        <br>Report 1 <input type="text" name="reports_inputs[]">
+                    </div>                
+                    <input type="button" value = "Add Reports" onClick="addReports('add_reports');">                
+                   <hr> 
 
                 <div class="form-group">
                     <label for="diet_plan">Diet Plan</label>
@@ -119,6 +125,11 @@ Treatment Details
             <li class="list-group-item"><b>Medicines :  </b>
                 {% for medicine in row.medicines_inputs %}
                 {{ medicine }}
+                {% endfor %}            
+            </li> 
+            <li class="list-group-item"><b>Reports Required :  </b>
+                {% for report in row.reports_inputs %}
+                {{ report }}
                 {% endfor %}            
             </li> 
             <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 

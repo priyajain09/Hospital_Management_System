@@ -104,12 +104,13 @@ def refer_info(treat_id):
 @doctor_routes_bp.route('/add_prescription/<treat_id>', methods=['GET', 'POST'])
 def add_prescription(treat_id):
     if request.method == 'POST':
-        #data from start treatment form
+        #data from prescription form
         tests = request.form['tests']
         diet_plan = request.form['diet_plan']
         str_next_visit_date = request.form['next_visit_date']
         medicines_inputs = request.form.getlist('medicines_inputs[]')
         symptoms_inputs = request.form.getlist('symptoms_inputs[]')
+        reports_inputs = request.form.getlist('reports_inputs[]')
 
         #get and update total prescription under a treatment
         doc_treatment = mongo.db.Treatment.find({ "treat_id": int(treat_id) })
@@ -120,6 +121,6 @@ def add_prescription(treat_id):
         mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions':presc_id }})
         
         #insert new prescription data
-        mongo.db.Treatment.update({'treat_id' : int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : presc_id , 'pres_doctor_userid' : current_user.username , 'time_stamp': datetime.now(), 'tests' : tests , 'diet_plan' : diet_plan, 'str_next_visit_date' : str_next_visit_date , 'medicines_inputs' : medicines_inputs , 'symptoms_inputs' : symptoms_inputs }}})
+        mongo.db.Treatment.update({'treat_id' : int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : presc_id , 'pres_doctor_userid' : current_user.username , 'time_stamp': datetime.now(), 'tests' : tests , 'diet_plan' : diet_plan, 'str_next_visit_date' : str_next_visit_date , 'medicines_inputs' : medicines_inputs , 'symptoms_inputs' : symptoms_inputs, 'reports_inputs' : reports_inputs }}})
 
     return redirect(url_for('doctor_routes.treatment_info', treat_id = treat_id))
