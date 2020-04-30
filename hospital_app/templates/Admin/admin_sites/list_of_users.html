@@ -6,8 +6,23 @@
 Users
 {% endblock %}
 {% block content %}
+<form action= "" method="post">
+  {{form.hidden_tag()}}
+  {{form.username.label}}
+  {{form.username()}}
+  {{form.submit()}}
+</form>
+<br>
+<br>
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
 {% for row in q %}
-<a href = "#">
+<a href = "{{url_for('admin.user_details',username = row.username)}}">
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
         {{row.username}}<br>

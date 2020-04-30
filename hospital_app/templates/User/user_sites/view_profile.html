@@ -1,0 +1,20 @@
+{% extends 'User/home_page.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+        Name: {{patient.name}}<br>
+        Email: {{current_user.email}}<br>
+        Username: {{current_user.username}}<br>
+        Age:  {{patient.age}}<br>
+        Gender: {{patient.gender_user}}<br>
+        Blood Group:  {{patient.blood_group}}<br>
+        Contact Number: {{patient.contact_number}}<br>
+        Address: {{patient.address}}<br>
+
+{% endblock %}

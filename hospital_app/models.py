@@ -8,7 +8,7 @@ from flask_login import UserMixin
 from time import time
 import jwt
 from hospital_app import app
-from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey,Date
+from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey,Date,Boolean
 from datetime import datetime
 
 
@@ -17,17 +17,19 @@ from datetime import datetime
 def load_user(username):
     return User.query.filter_by(username = username).first()
 
-    
+
+# username cannot be updated, patient and doctor can be deleted
 class User(UserMixin,db.Model):
     username = db.Column(db.String(64), index=True, unique=True, primary_key=True,nullable= False)
     email = db.Column(db.String(100), index=True, unique=True,nullable=False)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(20),nullable=False)
     confirmed = db.Column(db.Boolean, nullable = False, default = False) 
-    patient = db.relationship("Patient" , backref='user',uselist=False)
-    doctor = db.relationship("Doctor" , backref='user',uselist=False)
+    patient = db.relationship("Patient" , backref='user',uselist=False, cascade = 'save-update,delete')
+    doctor = db.relationship("Doctor" , backref='user',uselist=False, cascade = 'save-update,delete')
     def get_reset_password_token(self,expires_in = 900):
         return jwt.encode({'reset_password':self.username,'exp':time()+expires_in},app.config['SECRET_KEY'],algorithm = 'HS256').decode('utf-8')
+
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -50,7 +52,7 @@ class User(UserMixin,db.Model):
         return str(self.username)
 
 
-
+#only delete, insert is allowed 
 class specialization(db.Model):
     specialization = db.Column(db.String(50),primary_key=True,nullable=False)
 
@@ -63,13 +65,12 @@ class specialization(db.Model):
 class Patient( db.Model):
     id = db.Column(db.Integer,primary_key=True)
     username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable=False)
-    name = db.Column(db.String(50),nullable = False)
-    gender_user = db.Column(db.String(15))
+    name = db.Column(db.String(50))
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
     contact_number = db.Column(db.Unicode(20))
     address = db.Column(db.String(80))
-
+    gender_user = db.Column(db.String(15))
 
 class Doctor( db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -91,6 +92,32 @@ class Doctor( db.Model):
     def __repr__(self):
         return '{}'.format(self.name)
 
+class deleted_patients(db.Model):
+    username = db.Column(db.String(64),primary_key = True)
+    email = db.Column(db.String(100),unique = True,nullable = False)
+    name = db.Column(db.String(50),nullable = False)
+    age = db.Column(db.Integer)
+    blood_group = db.Column(db.String(15))
+    contact_number = db.Column(db.Unicode(20))
+    address = db.Column(db.String(80))
+    gender_user = db.Column(db.String(15))
+    deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
 
+class deleted_doctors(db.Model):
+    username = db.Column(db.String(64),primary_key = True)
+    email = db.Column(db.String(100),unique = True,nullable = False)
+    name = db.Column(db.String(50),nullable = False)
+    gender_doctor = db.Column(db.String(15))
+    age = db.Column(db.Integer)
+    blood_group = db.Column(db.String(15))
+    contact_number = db.Column(db.String(15),nullable = False)
+    address = db.Column(db.String(80)) 
+    qualification = db.Column(db.String(100),nullable = False)  
+    experience = db.Column(db.String(15),nullable = False)
+    specialization = db.Column(db.String(20),nullable = False)
+    date_of_joining = db.Column(db.Date)
+    deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
 
-
+class is_user_deleted(db.Model):
+    username = db.Column(db.String(64),primary_key=True)
+    is_deleted = db.Column(Boolean, unique=False, default=False)

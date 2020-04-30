@@ -1,0 +1,26 @@
+{% extends 'User/home_page.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Profile
+{% endblock %}
+
+{% block content %}
+<form action= "{{url_for('user.update_profile')}}" method="post">
+    {{form.hidden_tag()}}
+    {{form.name.label}}
+    {{form.name()}}<br><br>
+    {{form.age.label}}
+    {{form.age()}}<br><br>
+    {{form.blood_group.label}}
+    {{form.blood_group()}}<br><br>
+    {{form.contact_number.label}}
+    {{form.contact_number()}}<br><br>
+    {{form.gender_user.label}}
+    {{form.gender_user()}}<br><br>
+    {{form.address.label}}
+    {{form.address()}}<br><br>
+    {{form.submit()}}
+</form>
+{% endblock %}

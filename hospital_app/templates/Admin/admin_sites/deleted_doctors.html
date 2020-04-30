@@ -1,0 +1,48 @@
+{% extends 'Admin/home_page.html' %}
+{% block title %}  {% endblock %}
+
+{% block heading %}
+{% endblock %}
+{% block content %}
+<h2>Deleted Doctors</h2>
+<br>
+<br>
+<h3>search by specialization</h3>
+<form action= "" method="post">
+    {{form.hidden_tag()}}
+    {{form.specialization.label}}
+    {{form.specialization()}}
+    {{form.submit()}}
+  </form>
+  <br>
+  <br>
+  {% with messages = get_flashed_messages() %}
+     {% if messages %}
+        {% for message in messages %}
+           {{ message }}
+        {% endfor %}
+     {% endif %}
+  {% endwith %}
+  {% for doctor in doctors %}
+  <a href = "#">
+  <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+      <p>
+        Username: {{doctor.username}}<br>
+        Email: {{doctor.email}}<br>
+        Name: {{doctor.name}}<br>
+        Age:  {{doctor.age}}<br>
+        Gender: {{doctor.gender_doctor}}<br>
+        Blood Group:  {{doctor.blood_group}}<br>
+        Contact Number: {{doctor.contact_number}}<br>
+        Address: {{doctor.address}}<br>
+        Qualification: {{doctor.qualification}}<br>
+        Experience: {{doctor.experience}}<br>
+        Specialization: {{doctor.specialization}}<br>
+        Date Of Joining: {{doctor.date_of_joining}}<br>
+        Deleted On: {{doctor.deleted_on}}<br>
+        <br>
+      </p>
+    </div> 
+  </a>
+  {% endfor %}
+{% endblock %}

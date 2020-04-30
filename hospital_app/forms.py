@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired,Required
 from hospital_app.models import User,specialization
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -43,6 +43,19 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('Please use a different email address.')
 
 
+class specialization_form(FlaskForm):
+    specialization_name = StringField('Specialization: ',validators=[DataRequired()])
+    submit = SubmitField('Add')
+
+    def validate_specialization_name(self, specialization_name):
+        spec_name = specialization.query.filter_by(specialization = specialization_name.data).first()
+        if spec_name is not None:
+            raise ValidationError('Already added!!')
+
+class search_user(FlaskForm):
+    username = StringField('Username: ',validators=[DataRequired()])
+    submit = SubmitField('Search')
+    
 
 def get_specialization_list():
     return db.session.query(specialization).all()
@@ -59,3 +72,12 @@ class RegistrationForm_Doctor(FlaskForm):
 class search_doctor_form(FlaskForm):
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
     submit = SubmitField('Search')
+
+class update_user_form(FlaskForm):
+     name = StringField('Name: ')
+     age = IntegerField('Age: ')
+     blood_group = StringField('Blood Group: ')
+     contact_number = IntegerField('Contact Number: ')
+     address = TextAreaField('Address: ')
+     gender_user = StringField('Gender: ')
+     submit = SubmitField('Update')

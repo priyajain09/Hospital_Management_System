@@ -1,0 +1,7 @@
+create patient:
+
+u = User(username='priya_09',email='jain@gmail.com',role='user',confirmed=True)
+u.set_password('pj')
+db.session.add(u)
+db.session.commit()
+

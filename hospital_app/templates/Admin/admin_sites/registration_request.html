@@ -2,6 +2,13 @@
 
 {% block heading %}Doctor's registration request list{% endblock %}
 {% block content %}
+{% with messages = get_flashed_messages() %}
+   {% if messages %}
+      {% for message in messages %}
+         {{ message }}
+      {% endfor %}
+   {% endif %}
+{% endwith %}
 {% for row in q %}
 <a href = "{{url_for('admin.action_reg_request',username=row[0].username)}}">
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 86%, 30%);padding:20px;">

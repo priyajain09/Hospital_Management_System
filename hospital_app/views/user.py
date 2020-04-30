@@ -5,7 +5,7 @@ from hospital_app import mongo
 import json
 from flask_login import current_user
 from hospital_app import user_collection
-from hospital_app.forms import search_doctor_form
+from hospital_app.forms import search_doctor_form,update_user_form
 from hospital_app.models import Doctor
 
 user_bp = Blueprint('user', __name__)
@@ -33,4 +33,17 @@ def doctor():
         return render_template('User/user_sites/list_of_doctors.html',q=d,form=form)
     return render_template('User/user_sites/list_of_doctors.html',q=d,form=form)
         
+@user_bp.route('/user/view_profile',methods = ['GET','POST'])
+def view_profile():
+    patient = current_user.patient
+    return render_template('User/user_sites/view_profile.html',patient = patient)
 
+@user_bp.route('/user/update_profile',methods = ['GET','POST'])
+def update_profile():
+    form = update_user_form(obj = current_user.patient)
+    if form.validate_on_submit():
+        form.populate_obj(current_user.patient)
+        db.session.commit()
+    return render_template('User/user_sites/update_profile.html',form = form)
+
+    
