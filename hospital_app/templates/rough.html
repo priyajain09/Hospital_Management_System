@@ -8,10 +8,16 @@
         <script src="../static/js_doctor/js_start_treatment.js"></script>
         <script src="../static/js_doctor/js_add_doctor.js"></script>
         
-        
+        <script>
+            function getContent(){
+                document.getElementById("my-textarea").value = document.getElementById("my-content").innerHTML;
+            }
+        </script>
+
+
     </head>
     <body>
-        <form name = 'myform'>
+        <!-- <form name = 'myform'>
                 <input type="button" value="Start treatment" onclick="showTreatmentForm()">
                 <div id='start_treat_form'></div>
         </form>
@@ -41,9 +47,14 @@
                     </div>
                 </div>
             </div>
-            
+             -->
 
-
+            <div id="my-content" contenteditable="true">Some Text</div>
+        
+            <form  action="{{ url_for('doctor_routes.rough') }}" onsubmit="return getContent()">
+                <textarea id="my-textarea" style="display:none"></textarea>
+                <input type="submit" />
+            </form>
 
     </body>
 </html>

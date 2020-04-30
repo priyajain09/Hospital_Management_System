@@ -5,9 +5,62 @@
 Treatment Details
 {% endblock %}
 
-<!--to add later : editing treatment details code-->
+
 {% block content %}
+<div class="container">
+        <div class="row">
+            <div class="col-sm-4">
+                <ul class="list-group">
+                    <li class="list-group-item"><b>Treatment ID :  </b>{{ treatment.treat_id }}</li>
+                    <li class="list-group-item"><b>Started on :  </b>{{ treatment.time_stamp }}</li>
+                    <li class="list-group-item"><b>Patient User ID :  </b>{{ treatment.patient_userid }}</li>
+                    <li class="list-group-item"><b>Patient Name:  </b>{{ treatment.patient_name}}</li>
+                    <li class="list-group-item"><b>Doctors :  </b>
+                    {% for doctor in treatment.alldoctors %}
+                    {{ doctor }}
+                    {% endfor %}
+                    </li>
+                </ul> 
+            </div>
+            <div class="col-md-4 col-md-offset-4">
+                <form method=POST action="{{ url_for('doctor_routes.treatment_info', treat_id = treat_id) }}">
+                    <div class="form-group">
+                        <label for="disease_name">Disease Name</label>
+                        <input type="text" class="form-control" name="disease_name" value = {{treatment.disease_name}} >
+                    </div>
+                                         
+                    <div class="form-group" id = "add_doctor">
+                            <label for="doctor_inputs">Doctors Involved</label>
+                            <br> <input type="text" name="doctor_inputs[]" >
+                    </div>                
+                    <input type="button" value = "add doctor" onClick="addDoctor('add_doctor');">    
+                    <button type="submit" class="btn btn-primary btn-block">Submit</button> 
+                    
+                </form>
+                <br>
+            </div>
+            <div class="col-md-4 col-md-offset-4">
+                    <form method=POST action="{{ url_for('doctor_routes.refer_info', treat_id = treat_id) }}">
+
+                        <div class="form-group">
+                                <label for="Referto">Refer to</label>
+                                <input type="text" class="form-control" name="Referto" value = {{treatment.Referto}}>
+                        </div>                                                   
+                        <button type="submit" class="btn btn-primary btn-block">Submit</button> 
+                        
+                    </form>
+                    <br>
+                </div>
+
+        </div>
+    </div>
+    <p> Note : On adding referto, treatment will be closed from your side, and will not be shown at your sites.
 <!---add prescription form below--->
+<br>
+<hr>
+<br>
+<h4> Fill Prescription Form </h4>
+<br>
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -17,19 +70,25 @@ Treatment Details
                     <input type="text" class="form-control" name="tests" placeholder="BP/Temperature etc">
                 </div>
 
-                                                         
+                <hr>                                 
                 <div class="form-group" id = "add_symptoms">
                         <label for="allsymptoms">Symptoms</label>
-                        <br> <input type="text" name="symptoms_inputs[]">
+                        <br> Symptom 1 <input type="text" name="symptoms_inputs[]">
                 </div>                
                 <input type="button" value = "Add Symptoms" onClick="addSymptoms('add_symptoms');">
-                
+                <hr>
                 <div class="form-group" id = "add_medicines">
                     <label for="allmedicines">Medicines</label>
-                    <br> <input type="text" name="medicines_inputs[]">
+                    <br> Medicine 1<input type="text" name="medicines_inputs[]">
                 </div>                
                 <input type="button" value = "Add Medicines" onClick="addMedicines('add_medicines');">                
-                
+                <hr>
+                <div class="form-group" id = "add_reports">
+                        <label for="allreports">Reports Required</label>
+                        <br>Report 1 <input type="text" name="reports_inputs[]">
+                    </div>                
+                    <input type="button" value = "Add Reports" onClick="addReports('add_reports');">                
+                   <hr> 
 
                 <div class="form-group">
                     <label for="diet_plan">Diet Plan</label>
@@ -66,6 +125,11 @@ Treatment Details
             <li class="list-group-item"><b>Medicines :  </b>
                 {% for medicine in row.medicines_inputs %}
                 {{ medicine }}
+                {% endfor %}            
+            </li> 
+            <li class="list-group-item"><b>Reports Required :  </b>
+                {% for report in row.reports_inputs %}
+                {{ report }}
                 {% endfor %}            
             </li> 
             <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 
