@@ -13,16 +13,16 @@ def home_page():
 
 @doctor_routes_bp.route('/rough', methods=['GET', 'POST'])
 def rough():
-    if request.method == 'POST':
-            patient_userid = request.form['patient_userid']
-            patient_name = request.form['patient_name']
-            doctor_inputs = request.form.getlist('doctor_inputs[]')
-            today = date.today()
-            print(type(request.form['doctor_inputs[]']))
-            print(patient_name)
-            print(type(doctor_inputs))
-            for x in range(len(doctor_inputs)): 
-                print(doctor_inputs[x]) 
+    # if request.method == 'POST':
+    #         patient_userid = request.form['patient_userid']
+    #         patient_name = request.form['patient_name']
+    #         doctor_inputs = request.form.getlist('doctor_inputs[]')
+           
+    #         print(type(request.form['doctor_inputs[]']))
+    #         print(patient_name)
+    #         print(type(doctor_inputs))
+    #         for x in range(len(doctor_inputs)): 
+    #             print(doctor_inputs[x]) 
             #mongo.db.Treatment.insert(x)      
     return render_template('rough.html')
 
@@ -58,16 +58,48 @@ def current_treatment_list():
     
 @doctor_routes_bp.route('/treatment_info/<treat_id>', methods=['GET', 'POST'])
 def treatment_info(treat_id):
+    if request.method == 'POST':    
+        disease_name = request.form['disease_name']
+
+        alldoctors = request.form.getlist('doctor_inputs[]')
+        print(alldoctors)
+        print(disease_name)
+
+        doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) })
+        Doctors = doc_treatment['alldoctors']
+        print(type(Doctors))
+        print(Doctors)
+        print(type(alldoctors))
+        print(type(alldoctors[0]))
+        for doctor in alldoctors :
+            Doctors.append(doctor)
+        print(Doctors)
+        mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'disease_name':disease_name , "alldoctors" : Doctors }})
+
     doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) })
-    print(doc_treatment)
+    #print(doc_treatment)
     total_prescriptions = doc_treatment['total_prescriptions']
-    print(total_prescriptions)
-    print(type(total_prescriptions))
+    #print(total_prescriptions)
+    #print(type(total_prescriptions))
     #to be done : editing some attributes of treatment document like disease_name, alldoctors etc.
+
+
     if total_prescriptions == 0 :
         return render_template('Doctor/doctor_sites/treatment_info.html', treatment=doc_treatment, treat_id = treat_id)
     else :
         return render_template('Doctor/doctor_sites/treatment_info.html', treatment=doc_treatment, treat_id = treat_id, prescriptions=doc_treatment["prescription"])
+
+
+@doctor_routes_bp.route('/treatment_info/<treat_id>/refer', methods=['GET', 'POST'])
+def refer_info(treat_id):
+    if request.method == 'POST':    
+        Referto = request.form['Referto']
+        print(Referto)
+        mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'Referto':Referto , 'treat_closed_on': datetime.now()}})
+        doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) }) 
+        mongo.db.Past_Treatments.insert(doc_treatment)
+        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })       
+    return redirect(url_for('doctor_routes.home_page'))
 
 @doctor_routes_bp.route('/add_prescription/<treat_id>', methods=['GET', 'POST'])
 def add_prescription(treat_id):
