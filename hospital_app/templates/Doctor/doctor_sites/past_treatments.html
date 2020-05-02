@@ -7,9 +7,10 @@ Closed Treatments
 {% endblock %}
 {% block content %}
 {% for row in past_treatment %}
-<a href = "{{url_for('doctor_routes.deleted_prescriptions',treat_id = row.treat_id)}}">
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
+        <a href = "{{url_for('doctor_routes.deleted_prescriptions',treat_id = row.treat_id)}}"><b>View Prescriptions</b></a><br>
+
         <b>Treatment Id:</b> {{row.treat_id}}<br>
         <b>Started On:</b> {{row.time_stamp}}<br>
         <b>Patient User ID:</b> {{row.patient_userid}}<br>
@@ -24,16 +25,16 @@ Closed Treatments
 
     </p>
   </div> 
-</a>
 <br>
 {% endfor %}
 <br>
 <br>
 <h3>Ongoing Treatments Closed by you </h3>
 {% for row in closed_treatment %}
-<a href = "{{url_for('doctor_routes.ongoing_deleted_prescriptions',treat_id = row.treat_id)}}">
+
 <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
+        <a href = "{{url_for('doctor_routes.ongoing_deleted_prescriptions',treat_id = row.treat_id)}}"><b>View Prescriptions</b></a><br>
         <b>Treatment Id:</b> {{row.treat_id}}<br>
         <b>Started On:</b> {{row.time_stamp}}<br>
         <b>Patient User ID:</b> {{row.patient_userid}}<br>

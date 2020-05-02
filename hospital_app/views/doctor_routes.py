@@ -53,8 +53,8 @@ def start_treatment():
 
 @doctor_routes_bp.route('/current_treatment_list', methods=['GET', 'POST'])
 def current_treatment_list():
-    doc_treatment_cursor = mongo.db.Treatment.find({ "treat_id": { "$ne": 0 } })
-    return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment_cursor)
+    doc_treatment = mongo.db.Treatment.find( { 'alldoctors' : { '$in': [ current_user.username ] } })
+    return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
     
 @doctor_routes_bp.route('/treatment_info/<treat_id>', methods=['GET', 'POST'])
 def treatment_info(treat_id):
@@ -160,11 +160,10 @@ def deleted_prescriptions(treat_id):
     treatment = mongo.db.Past_Treatments.find_one({"treat_id":treat_id})
     return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
 
-@doctor_routes_bp.route('/doctor/past_treatment/<int:treat_id>/prescriptions')
+@doctor_routes_bp.route('/doctor/past_treatment/<int:treat_id>/ongoing_prescriptions')
 def ongoing_deleted_prescriptions(treat_id):
+    print(treat_id)
     treatment = mongo.db.Treatment.find_one({"treat_id":int(treat_id)})
-    if treatment['total_prescriptions'] == 0:
-        print('no prescriptions')
-        return redirect(url_for('doctor_routes.home_page'))
-    else:
-        return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
+    print(treatment)
+    return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
+    
