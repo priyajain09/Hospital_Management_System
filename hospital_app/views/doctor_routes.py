@@ -35,7 +35,7 @@ def start_treatment():
             patient_userid = request.form['patient_userid']
             patient_name = request.form['patient_name']
             doctor_inputs = request.form.getlist('doctor_inputs[]')
-            
+            doctor_closed = []
             #get total number of treatments from mongo and increment it by 1 and update
             query_total_treat = { "Description": "Total number of treatments started" }
             doc_total_treat_cursor = mongo.db.Treatment.find(query_total_treat)
@@ -45,7 +45,7 @@ def start_treatment():
             mongo.db.Treatment.update(query_total_treat,{"$set":{'total_treatments':bson_int64_treat_id}})
             
             #insert new treatment data
-            mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'patient_userid' : patient_userid, 'patient_name' : patient_name,'disease_name' : "", 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'alldoctors':doctor_inputs})
+            mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'patient_userid' : patient_userid, 'patient_name' : patient_name,'disease_name' : "", 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'alldoctors':doctor_inputs, 'doctor_closed' : doctor_closed})
             
             return redirect(url_for('doctor_routes.home_page'))
         
@@ -124,3 +124,47 @@ def add_prescription(treat_id):
         mongo.db.Treatment.update({'treat_id' : int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : presc_id , 'pres_doctor_userid' : current_user.username , 'time_stamp': datetime.now(), 'tests' : tests , 'diet_plan' : diet_plan, 'str_next_visit_date' : str_next_visit_date , 'medicines_inputs' : medicines_inputs , 'symptoms_inputs' : symptoms_inputs, 'reports_inputs' : reports_inputs }}})
 
     return redirect(url_for('doctor_routes.treatment_info', treat_id = treat_id))
+
+@doctor_routes_bp.route('/close_treatment/<treat_id>')
+def close_treatment(treat_id):
+    #print(treat_id)
+    doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) })
+    Doctors_closed = doc_treatment['doctor_closed']
+    Doctors_closed.append(current_user.username)
+    #print(Doctors_closed)    
+
+    
+    alldoctors = doc_treatment['alldoctors']
+    #print(alldoctors)
+    alldoctors.remove(current_user.username)
+    #print(alldoctors)
+
+    mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'doctor_closed':Doctors_closed , 'alldoctors' : alldoctors}})
+    #if all doctors have closed the treatment, shift doc to past treatments collection
+    if len(alldoctors) == 0:
+        mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'treat_closed_on': datetime.now()}})
+        doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) }) 
+        mongo.db.Past_Treatments.insert(doc_treatment)
+        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })
+    return redirect(url_for('doctor_routes.home_page'))
+
+@doctor_routes_bp.route('/past_treatments')
+def past_treatments():
+    past_treatment = mongo.db.Past_Treatments.find( { 'alldoctors' : { '$in': [ current_user.username ] } })
+    closed_treatment = mongo.db.Treatment.find( { 'doctor_closed' : { '$in': [ current_user.username ] } })
+    
+    return render_template('Doctor/doctor_sites/past_treatments.html', past_treatment = past_treatment, closed_treatment = closed_treatment)
+
+@doctor_routes_bp.route('/doctor/past_treatment/<int:treat_id>/prescriptions')
+def deleted_prescriptions(treat_id):
+    treatment = mongo.db.Past_Treatments.find_one({"treat_id":treat_id})
+    return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
+
+@doctor_routes_bp.route('/doctor/past_treatment/<int:treat_id>/prescriptions')
+def ongoing_deleted_prescriptions(treat_id):
+    treatment = mongo.db.Treatment.find_one({"treat_id":int(treat_id)})
+    if treatment['total_prescriptions'] == 0:
+        print('no prescriptions')
+        return redirect(url_for('doctor_routes.home_page'))
+    else:
+        return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
