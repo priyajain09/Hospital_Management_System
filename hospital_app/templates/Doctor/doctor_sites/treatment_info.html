@@ -20,6 +20,11 @@ Treatment Details
                     {{ doctor }}
                     {% endfor %}
                     </li>
+                    <li class="list-group-item"><b>Past Doctors :  </b>
+                    {% for doctor in treatment.doctor_closed %}
+                    {{ doctor }}
+                    {% endfor %}
+                    </li>
                 </ul> 
             </div>
             <div class="col-md-4 col-md-offset-4">
@@ -40,15 +45,22 @@ Treatment Details
                 <br>
             </div>
             <div class="col-md-4 col-md-offset-4">
-                    <form method=POST action="{{ url_for('doctor_routes.refer_info', treat_id = treat_id) }}">
 
-                        <div class="form-group">
-                                <label for="Referto">Refer to</label>
-                                <input type="text" class="form-control" name="Referto" value = {{treatment.Referto}}>
-                        </div>                                                   
-                        <button type="submit" class="btn btn-primary btn-block">Submit</button> 
-                        
-                    </form>
+
+                               <br>               
+                        <button type="submit" class="btn btn-primary btn-block"><a href= "{{ url_for('doctor_routes.close_treatment', treat_id = treat_id) }}">Submit</a></button> 
+                        <br>
+                        <form method=POST action="{{ url_for('doctor_routes.refer_info', treat_id = treat_id) }}">
+
+                            <div class="form-group">
+                                    <label for="Referto">Refer to</label>
+                                    <input type="text" class="form-control" name="Referto" value = {{treatment.Referto}}>
+                            </div>                                                   
+                            <button type="submit" class="btn btn-primary btn-block">Submit</button> 
+                            
+                        </form>    
+                    
+
                     <br>
                 </div>
 
