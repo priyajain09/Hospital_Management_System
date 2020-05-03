@@ -37,6 +37,7 @@ Closed Treatments
         <a href = "{{url_for('doctor_routes.ongoing_deleted_prescriptions',treat_id = row.treat_id)}}"><b>View Prescriptions</b></a><br>
         <b>Treatment Id:</b> {{row.treat_id}}<br>
         <b>Started On:</b> {{row.time_stamp}}<br>
+        <!-- <b>Closed By you on : <b> -->
         <b>Patient User ID:</b> {{row.patient_userid}}<br>
         <b>Patient Name:</b> {{row.patient_name}}<br>
         <b>Disease Name:</b> {{row.disease_name}}<br>
@@ -45,7 +46,10 @@ Closed Treatments
           {% for doctor in row.alldoctors %}
           {{ doctor }}
           {% endfor %}<br>
-
+          <b>Doctors Closed:</b>
+          {% for doctor in row.doctor_closed %}
+          {{ doctor }}
+          {% endfor %}<br>
     </p>
   </div> 
 </a>

@@ -39,7 +39,7 @@ Treatment Details
                             <br> <input type="text" name="doctor_inputs[]" >
                     </div>                
                     <input type="button" value = "add doctor" onClick="addDoctor('add_doctor');">    
-                    <button type="submit" class="btn btn-primary btn-block">Submit</button> 
+                    <button type="submit" class="btn btn-primary">Submit</button> 
                     
                 </form>
                 <br>
@@ -48,7 +48,8 @@ Treatment Details
 
 
                                <br>               
-                        <button type="submit" class="btn btn-primary btn-block"><a href= "{{ url_for('doctor_routes.close_treatment', treat_id = treat_id) }}">Submit</a></button> 
+                        <button type="submit" class="btn btn-warning"><a href= "{{ url_for('doctor_routes.close_treatment', treat_id = treat_id) }}">Close Treatment</a></button> 
+                        <br>
                         <br>
                         <form method=POST action="{{ url_for('doctor_routes.refer_info', treat_id = treat_id) }}">
 
@@ -56,7 +57,7 @@ Treatment Details
                                     <label for="Referto">Refer to</label>
                                     <input type="text" class="form-control" name="Referto" value = {{treatment.Referto}}>
                             </div>                                                   
-                            <button type="submit" class="btn btn-primary btn-block">Submit</button> 
+                            <button type="submit" class="btn btn-primary">Submit</button> 
                             
                         </form>    
                     

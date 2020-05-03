@@ -140,6 +140,7 @@ def close_treatment(treat_id):
     #print(alldoctors)
 
     mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'doctor_closed':Doctors_closed , 'alldoctors' : alldoctors}})
+    mongo.db.Treatment.update({'treat_id' : int(treat_id) },{'$push':{"Doctor_closed_time" :{ 'doct_id' : current_user.username,'time_stamp': datetime.now()}}})
     #if all doctors have closed the treatment, shift doc to past treatments collection
     if len(alldoctors) == 0:
         mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'treat_closed_on': datetime.now()}})
