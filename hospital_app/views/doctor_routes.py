@@ -1,8 +1,11 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
+from hospital_app.models import User,Doctor
+from hospital_app import db
 import json
 from flask_login import current_user
-# from datetime import date
+from hospital_app.forms import update_doctor_form
+from hospital_app.models import Doctor
 from datetime import datetime
 
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
@@ -167,4 +170,16 @@ def ongoing_deleted_prescriptions(treat_id):
     treatment = mongo.db.Treatment.find_one({"treat_id":int(treat_id)})
     print(treatment)
     return render_template('Doctor/doctor_sites/past_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
-    
+
+@doctor_routes_bp.route('/doctor/view_profile',methods = ['GET','POST'])
+def view_profile():
+    doctor = current_user.doctor
+    return render_template('Doctor/doctor_sites/view_profile.html',doctor = doctor)
+
+@doctor_routes_bp.route('/doctor/update_profile',methods = ['GET','POST'])
+def update_profile():
+    form = update_doctor_form(obj = current_user.doctor)
+    if form.validate_on_submit():
+        form.populate_obj(current_user.doctor)
+        db.session.commit()
+    return render_template('Doctor/doctor_sites/update_profile.html',form = form)
