@@ -4,6 +4,8 @@ For inserting a doctor into the system:
 -> u.set_password('whatever')
 -> db.session.add(u)
 -> db.session.commit()
+## rollback when commit is unsuccessful and throws error:-
+#->db.session.rollback()
 -> similarily add entry into doctor from python shell or using psql commands.
 
 # to print all users
