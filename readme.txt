@@ -1,4 +1,4 @@
-For inserting a doctor into the system:
+For inserting a doctor into the system without using user interface:
 -> write following commands in python shell: 
 -> u = User(username = 'pj',email='nfjefne',role='doctor',confirmed=True)
 -> u.set_password('whatever')

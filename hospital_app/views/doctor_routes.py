@@ -14,21 +14,6 @@ doctor_routes_bp = Blueprint('doctor_routes',__name__)
 def home_page():      
     return render_template('Doctor/home.html')
 
-@doctor_routes_bp.route('/rough', methods=['GET', 'POST'])
-def rough():
-    # if request.method == 'POST':
-    #         patient_userid = request.form['patient_userid']
-    #         patient_name = request.form['patient_name']
-    #         doctor_inputs = request.form.getlist('doctor_inputs[]')
-           
-    #         print(type(request.form['doctor_inputs[]']))
-    #         print(patient_name)
-    #         print(type(doctor_inputs))
-    #         for x in range(len(doctor_inputs)): 
-    #             print(doctor_inputs[x]) 
-            #mongo.db.Treatment.insert(x)      
-    return render_template('rough.html')
-
 
 @doctor_routes_bp.route('/start_treatment', methods=['GET', 'POST'])
 def start_treatment():      
