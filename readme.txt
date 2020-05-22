@@ -12,7 +12,7 @@ For inserting a doctor into the system without using user interface:
 users = User.query.all()
 
 for user in users:
-    print user.name
+    print(user.username)
 
 
 
