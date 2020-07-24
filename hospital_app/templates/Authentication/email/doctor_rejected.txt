@@ -1,0 +1,9 @@
+Dear {{ user.username }},
+
+Sorry, your registration request has been rejected.
+
+If you have not requested for registration simply ignore this message.
+
+Sincerely,
+
+The Hospital Management Team

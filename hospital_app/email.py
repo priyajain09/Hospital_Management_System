@@ -25,3 +25,20 @@ def send_registration_request_email(user):
                     recipients=[user.email], 
                     text_body=render_template('Authentication/email/register.txt',user=user, token=token),
                     html_body=render_template('Authentication/email/register.html',user=user, token=token))
+
+
+def send_request_accepted_mail(user):
+    token = user.get_reset_password_token()
+    send_email('[HMS] Registration Request Accepted',
+                    sender=app.config['ADMINS'][0], 
+                    recipients=[user.email], 
+                    text_body=render_template('Authentication/email/doctor_accepted.txt',user=user, token=token),
+                    html_body=render_template('Authentication/email/doctor_accepted.html',user=user, token=token))                 
+
+def send_request_rejected_mail(user):
+    token = user.get_reset_password_token()
+    send_email('[HMS] Registration Request Rejected',
+                    sender=app.config['ADMINS'][0], 
+                    recipients=[user.email], 
+                    text_body=render_template('Authentication/email/doctor_rejected.txt',user=user, token=token),
+                    html_body=render_template('Authentication/email/doctor_rejected.html',user=user, token=token))                   

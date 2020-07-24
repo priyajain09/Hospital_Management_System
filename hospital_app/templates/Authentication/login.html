@@ -43,8 +43,8 @@
         <p>
             <a href="{{ url_for('login.reset_password_request') }}">Forgot Password?</a>
         </p>
-        <p>Register as  <a href="{{ url_for('register.register_request',role='user') }}">User</a> /
-        <a href ="{{url_for('register.register_request',role='doctor')}}">Doctor</a><br></p>
+        <p>Register as  <a href="{{ url_for('register.register_user_request') }}">User</a> /
+        <a href ="{{url_for('register.register_request')}}">Doctor</a><br></p>
     </form>
 </body>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>

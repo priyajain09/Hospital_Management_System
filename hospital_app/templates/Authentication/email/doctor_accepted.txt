@@ -1,0 +1,11 @@
+Congratulations {{ user.username }},
+
+Your request has been accepted.To login click on the following link:
+
+{{ url_for('register.register', token=token, _external=True) }}
+
+If you have not requested for registration simply ignore this message.
+
+Sincerely,
+
+The Hospital Management Team

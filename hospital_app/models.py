@@ -25,7 +25,6 @@ class User(UserMixin,db.Model):
     email = db.Column(db.String(100), index=True, unique=True,nullable=False)
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(20),nullable=False)
-    confirmed = db.Column(db.Boolean, nullable = False, default = False) 
     patient = db.relationship("Patient" , backref='user',uselist=False, cascade = 'save-update,delete')
     doctor = db.relationship("Doctor" , backref='user',uselist=False, cascade = 'save-update,delete')
     def get_reset_password_token(self,expires_in = 900):
@@ -137,3 +136,24 @@ class upload_report(db.Model):
     report_name = db.Column(db.String(50),primary_key= True)
     file_name = db.Column(db.String(50),nullable = False)
     report = db.Column(db.LargeBinary,nullable = False)
+
+class temporary_users(db.Model):
+    username = db.Column(db.String(64), index=True, unique=True, primary_key=True)
+    email = db.Column(db.String(100), index=True, unique=True,nullable=False)
+    password_hash = db.Column(db.String(128))
+    role = db.Column(db.String(20),nullable=False)
+
+    def get_reset_password_token(self,expires_in = 900):
+        return jwt.encode({'reset_password':self.username,'exp':time()+expires_in},app.config['SECRET_KEY'],algorithm = 'HS256').decode('utf-8')
+
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            username = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return temporary_users.query.filter_by(username = username).first()   
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
