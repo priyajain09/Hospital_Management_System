@@ -1,0 +1,33 @@
+{% extends 'Doctor/home.html' %}
+{% block title %}  {% endblock %}
+{% block heading %}
+Prescriptions
+{% endblock %}
+
+{% block content %}
+{% for row in prescriptions %}
+<div class="container">
+    <div class="row">
+      <div class="col-sm-4">
+        <ul class="list-group">
+            <li class="list-group-item"><b>Prescription ID :  </b>{{ row.pres_id }}</li>
+            <li class="list-group-item"><b>Date :  </b>{{ row.time_stamp }}</li>
+            <li class="list-group-item"><b>Doctor username :  </b>{{ row.pres_doctor_userid }}</li>
+            <li class="list-group-item"><b>Tests:  </b>{{ row.tests}}</li>
+            <li class="list-group-item"><b>Symptoms :  </b>{{ row.symptoms_inputs }}</li> 
+            <li class="list-group-item"><b>Medicines :  </b>{{ row.medicines_inputs }}</li> 
+            <li class="list-group-item"><b>Diet Plan :  </b>{{ row.diet_plan }}</li> 
+            <li class="list-group-item"><b>Reports :  </b></li> 
+            {% for report in row.reports %}
+            {{report}}
+            
+            {% endfor %}
+            <li class="list-group-item"><b>Next Visit :  </b>{{ row.str_next_visit_date }}</li> 
+          </ul>
+      </div>
+      </div>
+    </div>
+{% endfor %}
+
+
+{% endblock %}

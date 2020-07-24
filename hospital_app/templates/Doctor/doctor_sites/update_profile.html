@@ -1,0 +1,36 @@
+{% extends 'Doctor/home.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Profile
+{% endblock %}
+
+{% block content %}
+<form action= "{{url_for('doctor_routes.update_profile')}}" method="post">
+    {{form.hidden_tag()}}
+    {{form.name.label}}
+    {{form.name()}}<br><br>
+    {{form.age.label}}
+    {{form.age()}}<br><br>
+    {{form.blood_group.label}}
+    {{form.blood_group()}}<br><br>
+    {{form.contact_number.label}}
+    {{form.contact_number()}}<br><br>
+    {{form.gender_doctor.label}}
+    {{form.gender_doctor()}}<br><br>
+    {{form.address.label}}
+    {{form.address()}}<br><br>
+    {{form.qualification.label}}
+    {{form.qualification()}}<br><br>
+    {{form.experience.label}}
+    {{form.experience()}}<br><br>
+    {{form.specialization.label}}
+    {{form.specialization()}}<br><br>
+    {{form.consultant_fee.label}}
+    {{form.consultant_fee()}}<br><br>
+    {{form.visiting_hours.label}}
+    {{form.visiting_hours()}}<br><br>
+    {{form.submit()}}
+</form>
+{% endblock %}

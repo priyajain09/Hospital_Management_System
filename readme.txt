@@ -1,16 +1,18 @@
-For inserting a doctor into the system:
+For inserting a doctor into the system without using user interface:
 -> write following commands in python shell: 
 -> u = User(username = 'pj', email='nfjefne', role='doctor', confirmed=True)
 -> u.set_password('whatever')
 -> db.session.add(u)
 -> db.session.commit()
+## rollback when commit is unsuccessful and throws error:-
+#->db.session.rollback()
 -> similarily add entry into doctor from python shell or using psql commands.
 
 # to print all users
 users = User.query.all()
 
 for user in users:
-    print user.name
+    print(user.username)
 
 
 

@@ -1,0 +1,60 @@
+{% extends 'Doctor/home.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Closed Treatments
+{% endblock %}
+{% block content %}
+{% for row in past_treatment %}
+<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+    <p>
+        <a href = "{{url_for('doctor_routes.deleted_prescriptions',treat_id = row.treat_id)}}"><b>View Prescriptions</b></a><br>
+
+        <b>Treatment Id:</b> {{row.treat_id}}<br>
+        <b>Started On:</b> {{row.time_stamp}}<br>
+        <b>Patient User ID:</b> {{row.patient_userid}}<br>
+        <b>Patient Name:</b> {{row.patient_name}}<br>
+        <b>Disease Name:</b> {{row.disease_name}}<br>
+        <b>Refer to:</b> {{row.Referto}}<br>
+        <b>Doctors involved:</b>
+          {% for doctor in row.alldoctors %}
+          {{ doctor }}
+          {% endfor %}<br>
+        <b>Treatment Closed On:</b> {{row.treat_closed_on}}<br>
+
+    </p>
+  </div> 
+<br>
+{% endfor %}
+<br>
+<br>
+<h3>Ongoing Treatments Closed by you </h3>
+{% for row in closed_treatment %}
+
+<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+    <p>
+        <a href = "{{url_for('doctor_routes.ongoing_deleted_prescriptions',treat_id = row.treat_id)}}"><b>View Prescriptions</b></a><br>
+        <b>Treatment Id:</b> {{row.treat_id}}<br>
+        <b>Started On:</b> {{row.time_stamp}}<br>
+        <!-- <b>Closed By you on : <b> -->
+        <b>Patient User ID:</b> {{row.patient_userid}}<br>
+        <b>Patient Name:</b> {{row.patient_name}}<br>
+        <b>Disease Name:</b> {{row.disease_name}}<br>
+        
+        <b>Doctors involved:</b>
+          {% for doctor in row.alldoctors %}
+          {{ doctor }}
+          {% endfor %}<br>
+          <b>Doctors Closed:</b>
+          {% for doctor in row.doctor_closed %}
+          {{ doctor }}
+          {% endfor %}<br>
+    </p>
+  </div> 
+</a>
+<br>
+{% endfor %}
+
+{% endblock %}
+

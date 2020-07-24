@@ -1,15 +1,20 @@
 {% extends 'index.html' %}
 {% block sidebar %}
-<div class="sidebar-heading">Start Bootstrap </div>
+<div class="sidebar-heading">Hospital Management System </div>
       <div class="list-group list-group-flush">
         <a href="{{url_for('doctor_routes.start_treatment')}}" class="list-group-item list-group-item-action bg-light">Start New Treatment</a>
         <a href="{{url_for('doctor_routes.current_treatment_list')}}" class="list-group-item list-group-item-action bg-light">Current Treatments</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Past Treatments</a>
+        <a href="{{url_for('doctor_routes.past_treatments')}}" class="list-group-item list-group-item-action bg-light">Past Treatments</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Search Patient</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Update Profile</a>
       </div>
     </div>
 
+{% endblock %}
+
+{% block dropdown %}
+<a class="dropdown-item" href = "{{url_for('doctor_routes.view_profile')}}">Profile</a>
+<div class="dropdown-divider"></div>
+<a class="dropdown-item" href= "{{url_for('doctor_routes.update_profile')}}">Update Profile</a>
 {% endblock %}
 

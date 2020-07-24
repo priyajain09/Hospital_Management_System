@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField,DateField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField,DateField, FloatField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired,Required
 from hospital_app.models import User,specialization
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
@@ -98,6 +98,21 @@ class update_user_form(FlaskForm):
      address = TextAreaField('Address: ')
      gender_user = StringField('Gender: ')
      submit = SubmitField('Update')
+
+class update_doctor_form(FlaskForm):
+     name = StringField('Name: ')
+     age = IntegerField('Age: ')
+     blood_group = StringField('Blood Group: ')
+     contact_number = IntegerField('Contact Number: ')
+     address = TextAreaField('Address: ')
+     gender_doctor = StringField('Gender: ')
+     qualification = TextAreaField('Qualification: ')
+     experience = StringField('Experience: ')
+     specialization = TextAreaField('Specialization: ')
+     consultant_fee = FloatField('Consultant_fee: ')
+     visiting_hours = StringField('Visiting Hours: ')
+     submit = SubmitField('Update')
+
 
 # class upload_document(FlaskForm):
 #     treat_id = IntegerField('Treatment Id: ')

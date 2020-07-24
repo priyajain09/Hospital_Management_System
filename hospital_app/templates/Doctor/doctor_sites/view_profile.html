@@ -1,0 +1,25 @@
+{% extends 'Doctor/home.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+Profile
+{% endblock %}
+
+{% block content %}
+
+        Name: {{doctor.name}}<br>
+        Email: {{current_user.email}}<br>
+        Username: {{current_user.username}}<br>
+        Age:  {{doctor.age}}<br>
+        Gender: {{doctor.gender_doctor}}<br>
+        Blood Group:  {{doctor.blood_group}}<br>
+        Contact Number: {{doctor.contact_number}}<br>
+        Address: {{doctor.address}}<br>
+        qualification: {{doctor.qualification}}<br>
+        experience: {{doctor.experience}}<br>
+        specialization: {{doctor.specialization}}<br>
+        consultant_fee: {{doctor.consultant_fee}}<br>
+        visiting_hours: {{doctor.visiting_hours}}<br>
+        
+{% endblock %}
