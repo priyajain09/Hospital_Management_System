@@ -10,6 +10,7 @@ from hospital_app.email import send_password_reset_email
 import re
 from hospital_app import db
 from werkzeug.urls import url_parse
+from hospital_app import login
 
 login_bp = Blueprint('login', __name__)
 regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
@@ -92,3 +93,19 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('login.login'))
     return render_template('Authentication/reset_password.html', form=form)
+
+
+# @login.user_loader
+# def load_user(username):
+#     """Check if user is logged-in on every page load."""
+#     if username is not None:
+#         return User.query.filter_by(username = username).first()
+#     return None
+    
+
+
+# @login.unauthorized_handler
+# def unauthorized():
+#     """Redirect unauthorized users to Login page."""
+#     flash('You must be logged in to view that page.')
+#     return redirect(url_for('login_bp.login'))    

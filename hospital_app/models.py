@@ -11,12 +11,21 @@ from hospital_app import app
 from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date, Boolean, LargeBinary
 from datetime import datetime
 from sqlalchemy import Enum
+from flask.helpers import flash, url_for
+from werkzeug.utils import redirect
+
 
 
 
 @login.user_loader
 def load_user(username):
     return User.query.filter_by(username = username).first()
+
+@login.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    flash('You must be logged in to view that page.')
+    return redirect(url_for('login.login')) 
 
 
 # username cannot be updated, patient and doctor can be deleted

@@ -1,6 +1,6 @@
 from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users
 from flask import Blueprint, render_template, redirect,url_for, request, flash
-from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form
+from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form,disease_statistic_form
 from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from hospital_app import db,mongo
 from _datetime import datetime
@@ -298,4 +298,140 @@ def treatments_statistics(year):
     print(labels)
     print(values)
     return render_template('Admin/admin_sites/statistics/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
-    
+
+def numberOfDays(y, m):
+      leap = 0
+      if y% 400 == 0:
+         leap = 1
+      elif y % 100 == 0:
+         leap = 0
+      elif y% 4 == 0:
+         leap = 1
+      if m==2:
+         return 28 + leap
+      list = [1,3,5,7,8,10,12]
+      if m in list:
+         return 31
+      return 30 
+
+
+@admin_bp.route('/admin/statistics/particular_disease',methods = ['GET','POST'])
+def particular_disease():
+
+    now = datetime.datetime.now()
+    current_year = now.year
+
+    form = disease_statistic_form() 
+
+    if form.validate_on_submit():
+        disease_name = form.disease_name.data
+        month = form.month.data
+        year = form.year.data
+
+        if month == "ALL":
+            collection = mongo.db['Past_Treatments'].aggregate([
+            { '$limit': 1 },
+            { '$project': { '_id': '$$REMOVE' } },
+
+            { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+            { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'freelancers' } },
+
+            { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$freelancers"] } } },
+
+            { '$unwind': '$union' },
+            { '$replaceRoot': { 'newRoot': '$union' } },
+
+            {
+                '$project': {'disease_name':1, 'month':{'$month':"$time_stamp"},'year':{'$year':"$time_stamp"} }
+            },
+
+        
+            {
+                '$match' :  {'$and': [{ 'year':year }, {'disease_name':disease_name}]} 
+            },
+
+            {
+                '$group' : {
+                            '_id' : "$month" ,
+                            'count': { '$sum': 1 }
+                            }
+            },
+
+            {
+                '$sort' : { 'month': 1 }
+            }
+            ])
+        
+
+            labels = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+            values = [0]*12
+            i = 0
+            for row in collection:
+                values[row['_id']] = row['count']
+
+            print(labels)
+            print(values)
+            return render_template('Admin/admin_sites/statistics/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+            
+
+        else :
+            collection = mongo.db['Past_Treatments'].aggregate([
+                { '$limit': 1 },
+                { '$project': { '_id': '$$REMOVE' } },
+
+                { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+                { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'freelancers' } },
+
+                { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$freelancers"] } } },
+
+                { '$unwind': '$union' },
+                { '$replaceRoot': { 'newRoot': '$union' } },
+
+                {
+                    '$project': {'disease_name':1, 'month':{'$month':"$time_stamp"},'year':{'$year':"$time_stamp"}, 'date':{'$date':"$time_stamp"}}
+                },
+
+            
+                {
+                    '$match' :  {'$and': [{ 'year':year }, {'disease_name':disease_name}, {'month':month}]} 
+                },
+
+                {
+                    '$group' : {
+                                '_id' : "$date" ,
+                                'count': { '$sum': 1 }
+                                }
+                },
+
+                {
+                    '$sort' : { 'date': 1 }
+                }
+            ]
+            )
+
+            num_days = numberOfDays(year, month)
+            values = [0]*num_days
+            labels = []
+
+            for i in range(1,num_days+1):
+                labels.append[i]
+
+
+            for row in collection:
+                values[row['_id']] = row['count']
+
+            print(labels)
+            print(values)
+            return render_template('Admin/admin_sites/statistics/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+                
+    else:
+        labels = []
+        values = []
+        return render_template('Admin/admin_sites/statistics/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+
+        
+        
+
+
+
+

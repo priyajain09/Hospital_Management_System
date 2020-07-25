@@ -11,7 +11,8 @@ from flask_mail import Mail
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
 app.config.from_pyfile('config.py')
-login = LoginManager(app)
+login = LoginManager()
+login.init_app(app)
 login.login_view='login'
 db = SQLAlchemy(app)
 mongo = PyMongo(app)
