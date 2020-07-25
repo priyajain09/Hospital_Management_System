@@ -1,8 +1,11 @@
-from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted
+from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form
 from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
-from hospital_app import db
+from hospital_app import db,mongo
+from _datetime import datetime
+from hospital_app.email import send_request_accepted_mail, send_request_rejected_mail
+import datetime
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -40,7 +43,7 @@ def user_list():
 
 @admin_bp.route('/admin/registration_request')
 def registration_request():
-    q = db.session.query(User,Doctor).join(Doctor).filter(User.confirmed == False).all()
+    q = db.session.query(User,Doctor).join(Doctor).all()
     if len(q) == 0:
         flash("No pending requests")
     return render_template('Admin/admin_sites/registration_request.html',q=q)
@@ -53,21 +56,22 @@ def action_reg_request(username):
 
 @admin_bp.route('/admin/<username>/<action>')
 def action_taken_on_request(username,action):
-    if action=="Reject":
+    if action == "Reject":
         # due to cascading its corresponding entry from doctor table gets deleted automatically.
-        x = User.query.filter_by(username=username).first() 
+        x = temporary_users.query.filter_by(username = username).first() 
         db.session.delete(x) 
         db.session.commit()
-    else:
-        x = User.query.filter_by(username=username).first() 
-        x.confirmed = True
-        u = is_user_deleted(username = username)
-        db.session.add(u)
+        y = Doctor.query.filter_by(username = username).first()
+        db.session.delete(y)
         db.session.commit()
-    return redirect(url_for('admin.home_page'))
-        # x = Doctor.query.filter_by(username=username).first() 
-        # add doj later
-    return redirect(url_for('admin.registration_request'))
+        send_request_rejected_mail(x)
+    else:
+        y = Doctor.query.filter_by(username = username).first()
+        y.date_of_joining = datetime.date(datetime.now())
+        db.session.commit()
+        send_request_accepted_mail(y)
+
+    return redirect(url_for('admin.registration_request'))   
 
 @admin_bp.route('/admin/departments', methods = ['GET','POST'])
 def departments():
@@ -161,3 +165,137 @@ def deleted_doctors_func():
 
 
 
+# *******************************************************************************************************
+
+# Statistics
+@admin_bp.route('/admin/statistics/diseases',defaults = {'year':None})
+@admin_bp.route('/admin/statistics/diseases/<int:year>', methods = ['GET','POST'])
+def diseases_statistics(year):
+    now = datetime.datetime.now()
+    current_year = now.year
+
+    if year:
+        d = year
+    else:
+        d = current_year    
+
+
+    
+    collection = mongo.db['Past_Treatments'].aggregate( 
+    [
+        # this code is used to take the union of past_treatments table and treatment table
+        { '$limit': 1 },
+        { '$project': { '_id': '$$REMOVE' } },
+
+        { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+        { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'treatment' } },
+
+        { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$treatment"] } } },
+
+        { '$unwind': '$union' },
+        { '$replaceRoot': { 'newRoot': '$union' } },
+
+        # upto here
+
+        # using project im taking only the two columns and that are : disease name and year.
+
+        {
+            '$project': {'disease_name':1,'year':{'$year':"$time_stamp"} }
+        },
+
+        # putting a condition on year.
+        {
+            '$match' : { 'year':d }
+        },
+
+        # grouped using disease name and counted the treatments having the same disease name
+        {
+            '$group' : {
+                         '_id' : "$disease_name" ,
+                        'count': { '$sum': 1 }
+                        }
+        },
+
+        # sorted in the descending order of count
+        {
+            '$sort' : { 'count': -1 }
+        }
+    ]
+    )
+   
+
+    labels = []
+    values = []
+    i = 0
+    for row in collection:
+        if (i<15):
+            labels.append(row['_id'])
+            values.append(row['count'])
+            i = i+ 1
+        else:
+            break    
+
+    print(labels)
+    print(values)
+    return render_template('Admin/admin_sites/statistics/diseases.html',title = "Disease Statistics", max = 10, values = values, labels= labels, year = current_year)
+    
+
+@admin_bp.route('/admin/statistics/treatments',defaults = {'year':None})
+@admin_bp.route('/admin/statistics/treatments/<int:year>', methods = ['GET','POST'])
+def treatments_statistics(year):
+    now = datetime.datetime.now()
+    current_year = now.year
+
+    if year:
+        d = year
+    else:
+        d = current_year    
+
+
+    
+    collection = mongo.db['Past_Treatments'].aggregate( 
+    [
+        { '$limit': 1 },
+        { '$project': { '_id': '$$REMOVE' } },
+
+        { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+        { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'freelancers' } },
+
+        { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$freelancers"] } } },
+
+        { '$unwind': '$union' },
+        { '$replaceRoot': { 'newRoot': '$union' } },
+
+        {
+            '$project': {'month':{'$month':"$time_stamp"},'year':{'$year':"$time_stamp"} }
+        },
+
+    
+        {
+            '$match' : { 'year':d }
+        },
+
+        {
+            '$group' : {
+                         '_id' : "$month" ,
+                        'count': { '$sum': 1 }
+                        }
+        },
+
+        {
+            '$sort' : { 'month': 1 }
+        }
+    ]
+    )
+   
+
+    labels = ["January","February","March","April","May","June","July","August","September","October","November","December"]
+    values = [0]*12
+    i = 0
+    for row in collection:
+         values[row['_id']] = row['count']
+
+    print(labels)
+    print(values)
+    return render_template('Admin/admin_sites/statistics/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
+    

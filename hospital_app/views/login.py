@@ -9,6 +9,7 @@ from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
 from hospital_app.email import send_password_reset_email
 import re
 from hospital_app import db
+from werkzeug.urls import url_parse
 
 login_bp = Blueprint('login', __name__)
 regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
@@ -46,11 +47,11 @@ def login():
             next_page = url_for('login.index')
 
         # chnage it later
-        if current_user.role=="user" and current_user.confirmed == True:
+        if current_user.role=="user" :
             return redirect(url_for('user.home_page'))
         if current_user.role=="admin":
             return redirect(url_for('admin.home_page'))
-        if current_user.role=="doctor" and current_user.confirmed == True:
+        if current_user.role=="doctor":
             return redirect(url_for('doctor_routes.home_page'))        
     return render_template('Authentication/login.html', title = "Sign In", form = form)            
 

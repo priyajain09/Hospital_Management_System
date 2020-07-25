@@ -26,7 +26,7 @@ class ResetPasswordRequestForm(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
-class RegistrationForm(FlaskForm):
+class UserRegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -64,12 +64,27 @@ def get_specialization_list():
 
 
 class RegistrationForm_Doctor(FlaskForm):
+    username = StringField('Username', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    password = PasswordField('Password', validators=[DataRequired()])
+    password2 = PasswordField(
+        'Retype Password', validators=[DataRequired(), EqualTo('password')])
     name = StringField('Name',validators=[DataRequired()])
     qualification = StringField('Qualification',validators=[DataRequired()])
     experience = StringField('Experience',validators=[DataRequired()])
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
     phonenumber = StringField("Phone Number",validators=[DataRequired()])
     submit = SubmitField('Submit')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        if user is not None:
+            raise ValidationError('Please use a different email address.')
 
 class search_doctor_form(FlaskForm):
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)

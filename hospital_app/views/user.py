@@ -9,13 +9,19 @@ from hospital_app.forms import search_doctor_form,update_user_form
 from hospital_app.models import Doctor,upload_medical_records,upload_report
 from flask import request
 from werkzeug.datastructures import CombinedMultiDict
-from flask import send_file
+from flask import send_file,Markup
 from io import BytesIO
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 user_bp = Blueprint('user', __name__)
+
+@user_bp.route("/chart")
+def chart():
+    labels = ["January","February","March","April","May","June","July","August"]
+    values = [967.67, 1190.89, 1079.75, 1349.19,2328.91, 2504.28, 10004, 16002]
+    return render_template('chart.html',title='Bitcoin Monthly Price in USD', max=17000, values=values, labels=labels)
 
 def allowed_file(filename):
     return '.' in filename and \
