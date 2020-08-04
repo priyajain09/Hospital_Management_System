@@ -1,37 +1,37 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField,DateField, FloatField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, InputRequired,Required
-from hospital_app.models import User,specialization
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField, FloatField, RadioField
+from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, InputRequired,Required, NumberRange
+from hospital_app.models import User, specialization, temporary_users
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from hospital_app import db
-from wtforms.fields.html5 import TelField
+from wtforms.fields.html5 import TelField,DateField
 # from flask_wtf.file import FileField, FileRequired
 # from werkzeug.utils import secure_filename
 
 
 class LoginForm(FlaskForm):
-    username = StringField('Email or username',validators=[DataRequired()])
-    password = PasswordField('Password' , validators=[DataRequired()])
+    username = StringField('Email or username',validators=[InputRequired()])
+    password = PasswordField('Password' , validators=[InputRequired()])
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Sign In')
 
 
 class ResetPasswordForm(FlaskForm):
-    password = PasswordField('Password', validators=[DataRequired()])
+    password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField(
-        'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+        'Repeat Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Request Password Reset')
 
 class ResetPasswordRequestForm(FlaskForm):
-    email = StringField('Email', validators=[DataRequired(), Email()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
     submit = SubmitField('Request Password Reset')
 
 class UserRegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField(
-        'Retype Password', validators=[DataRequired(), EqualTo('password')])
+        'Retype Password', validators=[InputRequired(), EqualTo('password')])
     submit = SubmitField('Send Confirmation Mail')
 
     def validate_username(self, username):
@@ -46,7 +46,7 @@ class UserRegistrationForm(FlaskForm):
 
 
 class specialization_form(FlaskForm):
-    specialization_name = StringField('Specialization: ',validators=[DataRequired()])
+    specialization_name = StringField('Specialization: ',validators=[InputRequired()])
     submit = SubmitField('Add')
 
     def validate_specialization_name(self, specialization_name):
@@ -55,7 +55,7 @@ class specialization_form(FlaskForm):
             raise ValidationError('Already added!!')
 
 class search_user(FlaskForm):
-    username = StringField('Username: ',validators=[DataRequired()])
+    username = StringField('Username: ',validators=[InputRequired()])
     submit = SubmitField('Search')
     
 
@@ -64,16 +64,16 @@ def get_specialization_list():
 
 
 class RegistrationForm_Doctor(FlaskForm):
-    username = StringField('Username', validators=[DataRequired()])
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
+    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField(
-        'Retype Password', validators=[DataRequired(), EqualTo('password')])
-    name = StringField('Name',validators=[DataRequired()])
-    qualification = StringField('Qualification',validators=[DataRequired()])
-    experience = StringField('Experience',validators=[DataRequired()])
+        'Retype Password', validators=[InputRequired(), EqualTo('password')])
+    name = StringField('Name',validators=[InputRequired()])
+    qualification = StringField('Qualification',validators=[InputRequired()])
+    experience = StringField('Experience',validators=[InputRequired()])
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
-    phonenumber = StringField("Phone Number",validators=[DataRequired()])
+    phonenumber = StringField("Phone Number",validators=[InputRequired()])
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
@@ -85,6 +85,7 @@ class RegistrationForm_Doctor(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+ 
 
 class search_doctor_form(FlaskForm):
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
@@ -121,4 +122,41 @@ class update_doctor_form(FlaskForm):
 #     File = FileField('Upload file',validators=[FileRequired()])
 #     submit = SubmitField('Upload')
 
+class disease_statistic_form(FlaskForm):
+    disease_name = StringField("Disease Name: ")
+
+
+class patient_registration_form(FlaskForm):
+    username = StringField('Username', validators=[InputRequired()])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    birthdate = DateField("Birthdate", validators=[InputRequired()])
+    firstname = StringField('First name',validators=[InputRequired()])
+    lastname = StringField('Last name ')
+    age = IntegerField('Age in years',validators=[InputRequired(), NumberRange(1,150)])
+    blood_group = SelectField('Blood Group ',choices = [('Unknown','Unknown'),('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),('O+','O+'),('O-','O-'),('AB+','AB+'),('AB-','AB-')])
+    contact_number = IntegerField('Contact Number ',validators=[InputRequired()])
+    address = TextAreaField('Address ')
+    gender = RadioField('Gender ',validators=[InputRequired()], choices = [('Male','Male'),('Female','Female'),('Transgender','Transgender')])
+    submit = SubmitField('Submit')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        u = temporary_users.query.filter_by(username = username.data).first()
+        if user is not None or u is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        u = temporary_users.query.filter_by(email = email.data).first()
+        if user is not None or u is not None:
+            raise ValidationError('Please use a different email address.')
+
+class queue_form(FlaskForm):
+    treat_id = IntegerField('Treatment ID',id = "treatId",validators=[InputRequired()])
+    doctor_username = StringField('Doctor username',validators=[InputRequired()])
+
+    def validate_doctor_username(self,doctor_username):
+        user = User.query.filter_by(username = doctor_username.data, role = "doctor").first()
+        if user is None:
+            raise ValidationError('Invalid username')
 

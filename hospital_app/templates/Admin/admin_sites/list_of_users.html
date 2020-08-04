@@ -1,36 +1,37 @@
 {% extends 'Admin/home_page.html' %}
-{% block title %}  {% endblock %}
 
 
-{% block heading %}
-Users
-{% endblock %}
 {% block content %}
-<form action= "" method="post">
-  {{form.hidden_tag()}}
-  {{form.username.label}}
-  {{form.username()}}
-  {{form.submit()}}
-</form>
-<br>
-<br>
+<h2 class='mb-3'>Current Users</h2>
 {% with messages = get_flashed_messages() %}
-   {% if messages %}
-      {% for message in messages %}
-         {{ message }}
-      {% endfor %}
-   {% endif %}
-{% endwith %}
-{% for row in q %}
-<a href = "{{url_for('admin.user_details',username = row.username)}}">
-<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
-    <p>
-        {{row.username}}<br>
-        {{row.email}}<br>
-        
-    </p>
-  </div> 
-</a>
-{% endfor %}
+     {% if messages %}
+        {% for message in messages %}
+           {{ message }}
+        {% endfor %}
+     {% endif %}
+  {% endwith %}
+<table id="dtBasicExample" class="table" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Email
+      </th>
+      <th class="th-sm">More Details
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for row in q %}
+       <tr>
+           <td>{{row.username}}</td>
+           <td>{{row.email}}</td>
+           <td ><a href = "{{url_for('admin.user_details',username = row.username)}}">Click here</a> </td>
+       </tr>
+    {% endfor %}   
+  </tbody>
+  
+</table>
 {% endblock %}
+
 

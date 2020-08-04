@@ -18,11 +18,11 @@ def home_page():
 def doctor_list():
     form = search_doctor_form()
     if form.validate_on_submit():
-        doctors = db.session.query(User,Doctor).join(Doctor).filter(User.confirmed == True,Doctor.specialization == str(form.specialization.data)).all()
+        doctors = db.session.query(User,Doctor).join(Doctor).filter(Doctor.specialization == str(form.specialization.data)).all()
         if len(doctors) == 0:
             flash("No Doctors")
         return render_template('Admin/admin_sites/list_of_doctors.html',q=doctors,form = form)
-    q = db.session.query(User,Doctor).join(Doctor).filter(User.confirmed == True).all()
+    q = db.session.query(User,Doctor).join(Doctor).all()
     if len(q) == 0:
             flash("No Doctors")
     return render_template('Admin/admin_sites/list_of_doctors.html',q=q,form = form)
@@ -41,37 +41,42 @@ def user_list():
     return render_template('Admin/admin_sites/list_of_users.html',q=q,form= form)
 
 
-@admin_bp.route('/admin/registration_request')
-def registration_request():
-    q = db.session.query(User,Doctor).join(Doctor).all()
-    if len(q) == 0:
-        flash("No pending requests")
-    return render_template('Admin/admin_sites/registration_request.html',q=q)
-
-
 @admin_bp.route('/admin/registration_request/<username>')
 def action_reg_request(username):
-    q = Doctor.query.filter_by(username = username).first()
-    return render_template('Admin/admin_sites/registration_request_action.html',q=q)
+    q = temporary_users.query.get(username)
+    return render_template('Admin/admin_sites/registration_request_action.html',row=q)
 
 @admin_bp.route('/admin/<username>/<action>')
 def action_taken_on_request(username,action):
     if action == "Reject":
         # due to cascading its corresponding entry from doctor table gets deleted automatically.
-        x = temporary_users.query.filter_by(username = username).first() 
+        x = temporary_users.query.get(username) 
         db.session.delete(x) 
         db.session.commit()
-        y = Doctor.query.filter_by(username = username).first()
-        db.session.delete(y)
-        db.session.commit()
         send_request_rejected_mail(x)
-    else:
-        y = Doctor.query.filter_by(username = username).first()
-        y.date_of_joining = datetime.date(datetime.now())
+    elif action == "Accept":
+        user = temporary_users.query.get(username)
+        u = User(username = user.username, email = user.email, password_hash = user.password_hash, 
+        role = 'doctor')
+        y = Doctor(username = user.username, name = user.name, qualification = user.qualification, experience = user.experience
+        , specialization = user.specialization, timestamp = user.timestamp, contact_number = user.contact_number)
+        db.session.delete(user) 
         db.session.commit()
-        send_request_accepted_mail(y)
-
+        db.session.add(u)
+        db.session.commit()
+        db.session.add(y)
+        db.session.commit()
+        # send_request_accepted_mail(y)
     return redirect(url_for('admin.registration_request'))   
+
+
+
+@admin_bp.route('/admin/registration_requests')
+def registration_request():
+    q = temporary_users.query.filter_by(role='doctor').all()
+    if len(q) == 0:
+        flash("No pending requests")
+    return render_template('Admin/admin_sites/registration_request.html',q=q)
 
 @admin_bp.route('/admin/departments', methods = ['GET','POST'])
 def departments():
@@ -168,6 +173,13 @@ def deleted_doctors_func():
 # *******************************************************************************************************
 
 # Statistics
+@admin_bp.route('/admin/statistics')
+def stats():
+    return render_template('/Admin/admin_sites/statistics.html')
+
+
+
+
 @admin_bp.route('/admin/statistics/diseases',defaults = {'year':None})
 @admin_bp.route('/admin/statistics/diseases/<int:year>', methods = ['GET','POST'])
 def diseases_statistics(year):

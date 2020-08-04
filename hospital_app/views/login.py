@@ -25,6 +25,8 @@ def login():
             return redirect(url_for('admin.home_page'))
         if current_user.role=="doctor":
             return redirect(url_for('doctor_routes.home_page'))   
+        if current_user.role == "receptionist":
+            return redirect(url_for('receptionist.home_page'))  
 
     form = LoginForm()
 
@@ -53,8 +55,12 @@ def login():
         if current_user.role=="admin":
             return redirect(url_for('admin.home_page'))
         if current_user.role=="doctor":
-            return redirect(url_for('doctor_routes.home_page'))        
-    return render_template('Authentication/login.html', title = "Sign In", form = form)            
+            return redirect(url_for('doctor_routes.home_page'))      
+
+        if current_user.role == "receptionist":
+            return redirect(url_for('receptionist.home_page'))  
+
+    return render_template('Authentication/authentication/login.html', title = "Sign In", form = form)            
 
 
 @login_bp.route('/index')

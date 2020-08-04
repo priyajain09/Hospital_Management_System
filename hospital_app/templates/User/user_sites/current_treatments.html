@@ -21,7 +21,7 @@ Ongoing Treatments
     </p>
   </div> 
 </a>
-<button type="button" onclick="window.location.href='{{ url_for( 'user.close_treatment' ,treat_id = row.treat_id )}}';">Close Treatment</button>
+<button type="button" onclick="window.location.href='{{ url_for( 'user.close_treatment' ,treat_id = row.treat_id )}}';">Close Treatment</button><br>
 <br>
 {% endfor %}
 {% endblock %}

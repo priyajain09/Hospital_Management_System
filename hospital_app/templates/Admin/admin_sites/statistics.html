@@ -1,0 +1,12 @@
+{% extends 'Admin/home_page.html' %}
+
+{% block content %}
+<div class="jumbotron">
+    <h2 class="display-4">Statistics</h2>
+    <p class="lead"></p>
+    <hr class="my-4">
+    <p></p>
+    <a class="btn btn-primary btn-lg" href="{{url_for('admin.diseases_statistics')}}" role="button">Disease Statistics</a>
+    <a class="btn btn-primary btn-lg" href="{{url_for('admin.treatments_statistics')}}" role="button">Treatment Statistics</a>
+  </div>
+{% endblock %}

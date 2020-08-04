@@ -1,25 +1,35 @@
 {% extends 'index.html' %}
-{% block title %}  {% endblock %}
 
-{% block sidebar %}
-<div class="sidebar-heading"></div>
+
+    {% block sidebar %}
+    <div class="bg-light border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading"></div>
       <div class="list-group list-group-flush">
         <a href="{{url_for('admin.doctor_list')}}" class="list-group-item list-group-item-action bg-light">Doctors</a>
         <a href="{{url_for('admin.user_list')}}" class="list-group-item list-group-item-action bg-light">Users</a>
         <a href="{{url_for('admin.registration_request')}}" class="list-group-item list-group-item-action bg-light">Registration Requests</a>
         <a href="{{url_for('admin.departments')}}" class="list-group-item list-group-item-action bg-light">Departments</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
+        <a href="{{url_for('admin.stats')}}" class="list-group-item list-group-item-action bg-light"> Statistics</a>
         <a href="{{url_for('admin.deleted_users')}}" class="list-group-item list-group-item-action bg-light">Deleted Users</a>
         <a href="{{url_for('admin.deleted_doctors_func')}}" class="list-group-item list-group-item-action bg-light">Deleted Doctors</a>
       </div>
     </div>
+    {% endblock %}
 
+    
+
+
+{% block footer %}
+<!-- Footer -->
+<footer class="page-footer font-small blue">
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2018 Copyright:
+    <a href="https://mdbootstrap.com/education/bootstrap/"> MDBootstrap.com</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
 {% endblock %}
 
-{% block heading %}
-ADMIN
-{% endblock %}
-
-{% block profile %}
-"#"
-{% endblock %}

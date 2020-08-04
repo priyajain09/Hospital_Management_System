@@ -1,23 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <title>{{title }}</title>
-  <script src='../../../../static/Chart.min.js'></script>
-</head>
+{% extends 'Admin/home_page.html' %}
 
+
+{% block links %}
+<link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="../../../static/css/mdb.min.css">
+  <!-- Your custom styles (optional) -->
+  <link rel="stylesheet" href="../../../static/css/style.css">
+
+  <link href="../../../static/css1/simple-sidebar.css" rel="stylesheet">
+  <script src='../../../../static/Chart.min.js'></script>
+  
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  
+{% endblock %}
+
+
+{% block content %}
 <body>
   <center>
     <h1>{{ title }}</h1>
   </center>
-  <div class="dropdown">
-    <button class="dropbtn">Select year</button>
-    <div class="dropdown-content">
-      <a href="{{url_for('admin.diseases_statistics',year = year)}}">{{year}}</a>
-      <a href="{{url_for('admin.diseases_statistics',year = year-1)}}">{{year-1}}</a>
-      <a href="{{url_for('admin.diseases_statistics',year = year-2)}}">{{year-2}}</a>
-    </div>
-  </div>
+  <!-- Basic dropdown -->
+<button class="btn btn-primary dropdown-toggle mr-4" type="button" data-toggle="dropdown"
+aria-haspopup="true" aria-expanded="false">Select year</button>
+
+<div class="dropdown-menu">
+  <a class="dropdown-item" href="{{url_for('admin.diseases_statistics',year = year)}}">{{year}}</a>
+  <a class="dropdown-item" href="{{url_for('admin.diseases_statistics',year = year-1)}}">{{year-1}}</a>
+  <a class="dropdown-item" href="{{url_for('admin.diseases_statistics',year = year-2)}}">{{year-2}}</a>
+</div>
+<!-- Basic dropdown -->
+ 
   <center>
     <canvas id="chart" width="600" height="400"></canvas>
     <script>
@@ -64,4 +88,4 @@
     </script>
   </center>
 </body>
-</html>
+{% endblock %}
