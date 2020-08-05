@@ -6,7 +6,9 @@
         <a href="{{url_for('doctor_routes.current_treatment_list')}}" class="list-group-item list-group-item-action bg-light">Current Treatments</a>
         <a href="{{url_for('doctor_routes.past_treatments')}}" class="list-group-item list-group-item-action bg-light">Past Treatments</a>
         <a href="#" class="list-group-item list-group-item-action bg-light">Search Patient</a>
-        <a href="#" class="list-group-item list-group-item-action bg-light">Disease Statistics</a>
+        <a href="{{url_for('doctor_routes.current_symptoms_stats')}}" class="list-group-item list-group-item-action bg-light">Current Symptom Stats</a>
+        <a href="{{url_for('doctor_routes.symptoms_stats')}}" class="list-group-item list-group-item-action bg-light">Symptom Stats</a>
+        <a href="{{url_for('doctor_routes.query')}}" class="list-group-item list-group-item-action bg-light">Query</a>
       </div>
     </div>
 

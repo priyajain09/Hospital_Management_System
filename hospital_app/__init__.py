@@ -5,12 +5,13 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 import logging
 from flask_mail import Mail
-
+from flask_datepicker import datepicker
 
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
 app.config.from_pyfile('config.py')
+datepicker(app)
 login = LoginManager(app)
 login.login_view='login'
 db = SQLAlchemy(app)
@@ -31,9 +32,10 @@ app.register_blueprint(register_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
 
-from .views.doctor_routes import doctor_routes_bp
-# from .views.hello import hello
+from .views.doctor.doctor_routes import doctor_routes_bp
 app.register_blueprint(doctor_routes_bp)
 
+from .views.doctor.stats import stats_bp
+app.register_blueprint(stats_bp)
 
     

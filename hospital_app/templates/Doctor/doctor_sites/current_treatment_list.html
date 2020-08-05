@@ -7,7 +7,7 @@ Ongoing Treatments
 {% block content %}
 {% for row in treatment %}
 <a href = "{{url_for('doctor_routes.treatment_info', treat_id = row.treat_id)}}">
-<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
+<div style="background-color:rgba(200, 235, 236, 0.623);color:hsl(180, 1%, 13%);padding:20px;">
     <p>
         <b>Treatment Id:</b> {{row.treat_id}}<br>
         <b>Started On:</b> {{row.time_stamp}}<br>
@@ -16,6 +16,7 @@ Ongoing Treatments
     </p>
   </div> 
 </a>
+<hr>
 {% endfor %}
 {% endblock %}
 

@@ -1,0 +1,44 @@
+{% extends 'Doctor/home.html' %}
+
+{% block heading %}
+Symptoms stats
+{% endblock %}
+{% block content %}
+
+        <form method=POST action="{{ url_for('doctor_routes.symptoms_stats') }}">
+            <div class="row">
+                <div class="col-4">
+                    <div class="form-group">
+                        <label for="from_date">Stat From</label>
+                        <input type="date" class="form-control" name="from_date" >
+                    </div>    
+                </div>
+                <div class="col-4">
+                    <div class="form-group">
+                        <label for="to_date">Stat to</label>
+                        <input type="date" class="form-control" name="to_date" >
+                    </div>
+                </div>
+                <di class="col-4">
+                    <button type="submit" class="btn btn-primary btn-block">View Stats</button>
+                </div>
+            </div>
+        </form> 
+
+
+<div class="card">
+    <!-- Card content -->
+    <div class="card-body">
+      <!-- Title -->
+      <h4 class="card-title">{{str_from_date}} to {{str_to_date}}</h4>
+
+            <p class="card-text">
+                {% for symptom in symp_stat %}
+                    {{symptom}}<br>
+                {%endfor%}
+            </p>
+        </div>
+
+</div>     
+
+{% endblock %}
