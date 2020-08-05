@@ -8,6 +8,7 @@ from hospital_app import user_collection
 from flask import request
 from hospital_app.forms import patient_registration_form,queue_form
 import random, string
+from sqlalchemy import func
 
 recep_bp = Blueprint('recep', __name__)
 
@@ -68,6 +69,11 @@ def add_to_queue(name, username):
     if form.validate_on_submit():
         try:
             treat_id = form.treat_id.data
+
+            if (patient_queue.query.get(treat_id) is not None):
+                flash("Already added!")
+                return redirect(url_for('recep.patient_enquiry'))
+                
             doctor_username = form.doctor_username.data
             doctor = Doctor.query.filter_by(username = doctor_username).first()
             doctor_name = doctor.name
@@ -85,15 +91,15 @@ def add_to_queue(name, username):
         treatments = mongo.db.Treatment.find({"patient_userid":username})
         return render_template('Reception/treatments.html',treatments = treatments,name = name, username = username,form = form)
 
-@recep_bp.route('/patient_queue')
-def queue():
-    u = patient_queue.query.all()
-    return render_template('Reception/patient_queue.html',list = u)
 
 
 @recep_bp.route('/<name>/<username>')
 def add_to_compounder_queue(name,username):
     try:
+        user = compounder_queue.query.get(username)
+        if(user is not None):
+            flash("Already added!")
+            return redirect(url_for('recep.patient_enquiry'))
         u = compounder_queue(name = name, username = username)
         db.session.add(u)
         db.session.commit()
@@ -103,7 +109,90 @@ def add_to_compounder_queue(name,username):
         flash("Try Again!")    
     return redirect(url_for('recep.patient_enquiry'))
 
-@recep_bp.route('/compounder_queue')
+@recep_bp.route('/compounder_queue',methods = ['GET','POST'])
 def compounderQueue():
-    u = compounder_queue.query.all()
+    if request.method == "POST":
+        search_text = request.form['search_text']
+        if request.form['filter'] == "username":
+            u = compounder_queue.query.filter(func.lower(compounder_queue.username).contains(search_text.lower(),autoescape = True))
+
+        elif request.form['filter'] == "name":
+            u = compounder_queue.query.filter(func.lower(compounder_queue.name).contains(search_text.lower(),autoescape = True))
+
+        elif request.form['filter'] == "none":        
+            u = compounder_queue.query.all()
+    else:
+        u = compounder_queue.query.all()    
     return render_template('Reception/compounder_queue.html',list = u)
+
+@recep_bp.route('/doctor_queue',methods = ['GET','POST'])
+def doctorQueue():
+    if request.method == "POST":
+        search_text = request.form['search_text']
+        if request.form['filter'] == "username":
+            u = patient_queue.query.filter(func.lower(patient_queue.username).contains(search_text.lower(),autoescape = True))
+
+        elif request.form['filter'] == "name":
+            u = patient_queue.query.filter(func.lower(patient_queue.name).contains(search_text.lower(),autoescape = True))
+
+        elif request.form['filter'] == "none":        
+            u = patient_queue.query.all()
+
+        elif request.form['filter'] == "doctor_name":        
+            u = patient_queue.query.filter(func.lower(patient_queue.doctor).contains(search_text.lower(),autoescape = True))   
+    else:
+        u = patient_queue.query.all()    
+    return render_template('Reception/patient_queue.html',list = u)
+
+@recep_bp.route('/compounder_queue/<username>')
+def remove_compounder_queue(username):
+    try:
+        u = compounder_queue.query.get(username)
+        db.session.delete(u)
+        db.session.commit()
+        flash("Removed successfully!")
+    except:
+        db.session.rollback()
+        flash("Try again!")
+    return redirect(url_for('recep.compounderQueue'))
+
+
+@recep_bp.route('/compounder_queue/remove_all')
+def remove_all_compounder_queue():
+    try:
+        u = compounder_queue.query.delete()
+        db.session.commit()
+        flash("Removed All")
+    except:
+        db.session.rollback()
+        flash("Try again !")
+    return redirect(url_for('recep.compounderQueue'))
+        
+@recep_bp.route('/doctor_enquiry')
+def doctor_enquiry():
+    u = Doctor.query.all()
+    return render_template('/Reception/doctor_enquiry.html',list = u)
+
+@recep_bp.route('/doctor_queue/<treat_id>')
+def remove_doctor_queue(treat_id):
+    try:
+        u = patient_queue.query.get(treat_id)
+        db.session.delete(u)
+        db.session.commit()
+        flash("Removed successfully!")
+    except:
+        db.session.rollback()
+        flash("Try again!")
+    return redirect(url_for('recep.doctorQueue'))
+
+
+@recep_bp.route('/doctor_queue/remove_all')
+def remove_all_doctor_queue():
+    try:
+        u = patient_queue.query.delete()
+        db.session.commit()
+        flash("Removed All")
+    except:
+        db.session.rollback()
+        flash("Try again !")
+    return redirect(url_for('recep.doctorQueue'))

@@ -99,6 +99,7 @@ class Doctor( db.Model):
     visiting_hours = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_of_joining = db.Column(db.Date)
+    status = db.Column(db.String(20), default = "Not Available")
 
     def __repr__(self):
         return '{}'.format(self.name)
