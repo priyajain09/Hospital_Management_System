@@ -1,0 +1,46 @@
+{% extends 'Authentication/base.html' %}
+{% from  'Authentication/_render_field.html' import render_field %}
+
+
+<!-- Default form login -->
+
+<!-- Default form login -->
+
+{% block authentication %}
+{% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form class="text-center border border-light p-5" action="{{url_for('login.login')}}" method="post">
+                {{ form.hidden_tag() }}
+                <p class="h2 mb-4">Sign in</p>
+
+                    {{ render_field(form.username,placeholder = form.username.label.text) }}
+                    {{ render_field(form.password,placeholder = form.password.label.text) }}
+                
+            
+                <div class="d-flex justify-content-around">
+                    <div>
+                        <!-- Remember me -->
+                        <div class="custom-control custom-checkbox">
+                            {{ form.remember_me() }} {{ form.remember_me.label }}
+                        </div>
+                    </div>
+                    <div>
+                        <!-- Forgot password -->
+                        <a href="{{ url_for('login.reset_password_request') }}">Forgot password?</a>
+                    </div>
+                </div>
+            
+                <!-- Sign in button -->
+                <button class="btn btn-info btn-block my-4" type="submit">Sign In</button>
+            
+                <!-- Register -->
+                <p>Not a member? Register as 
+                    <a href="{{ url_for('register.register_user_request') }}">User</a>/
+                    <a href ="{{url_for('register.register_request')}}">Doctor</a><br></p>
+                </p>
+            
+            
+            </form>
+
+{% endblock %}

@@ -1,104 +1,28 @@
+{% extends 'Authentication/base.html' %}
+{% from  'Authentication/_render_field.html' import render_field %}
 
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
+{% block authentication %}
+{% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+            <form class="text-center border border-light p-5" action="{{url_for('register.register_request')}}" method="post">
+                {{ form.hidden_tag() }}
+                <p class="h2 mb-4">Sign up</p>
+                    {{ render_field(form.name,placeholder = form.name.label.text) }}
+                    {{ render_field(form.username,placeholder = form.username.label.text) }}
+                    {{ render_field(form.email,placeholder = form.email.label.text) }}
+                    {{ render_field(form.password,placeholder = form.password.label.text) }}
+                    {{ render_field(form.password2,placeholder = form.password2.label.text) }}
+                    {{ render_field(form.qualification,placeholder = form.qualification.label.text) }}
+                    {{ render_field(form.experience,placeholder = form.experience.label.text) }}
+                    {{ render_field(form.specialization,placeholder = form.specialization.label.text) }}
+                    {{ render_field(form.phonenumber,placeholder = form.phonenumber.label.text) }}
+                <!-- Sign up button -->
+                <button class="btn btn-info btn-block my-4" type="submit">Sign up</button>
+            </form>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Hospital Management System</title>
-
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-
-</head>
-<body>
-    <div class="container">
-            <div class="row">
-            <div class="col-md-4 col-md-offset-4">    
-            <h1></h1>
-            {% block content %}
-    <h1>Register</h1>
-    <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <p>
-            {{ form.username.label }}<br>
-            {{ form.username(size=32) }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.email.label }}<br>
-            {{ form.email(size=32) }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(size=32) }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password2.label }}<br>
-            {{ form.password2(size=32) }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name(size=32) }}<br>
-            {% for error in form.name.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.qualification.label }}<br>
-            {{ form.qualification(size=64) }}<br>
-            {% for error in form.qualification.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.experience.label }}<br>
-            {{ form.experience(size=32) }}<br>
-            {% for error in form.experience.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.specialization.label }}<br>
-            {{ form.specialization() }}<br>
-            {% for error in form.specialization.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.phonenumber.label }}<br>
-            {{ form.phonenumber(size=32) }}<br>
-            {% for error in form.phonenumber.errors %}
-            <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>{{ form.submit() }}</p>
-    </form>
 {% endblock %}
-            
-            
-</body>
-<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
-
-</body>
-
-</html>
 
 
 

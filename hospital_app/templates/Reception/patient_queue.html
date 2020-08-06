@@ -1,0 +1,28 @@
+{% extends 'Reception/base.html' %}
+
+{% block content %}
+<div>
+    <table id="dtBasicExample" class="table" width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">Username
+            </th>
+            <th class="th-sm">Email
+            </th>
+            <th class="th-sm">More Details
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+         {% for row in list %}
+             <tr>
+                 <td>{{row.username}}</td>
+                 <td>{{row.name}}</td>
+                 <td ><a href = "{{url_for('admin.user_details',username = row.username)}}">Click here</a> </td>
+             </tr>
+          {% endfor %}   
+        </tbody>
+        
+      </table>
+</div>
+{% endblock %}

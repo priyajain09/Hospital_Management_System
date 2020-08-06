@@ -1,7 +1,7 @@
 {% extends 'Admin/home_page.html' %}
 
-{% block heading %}Doctor's registration request list{% endblock %}
 {% block content %}
+<h2 class='mb-3'>Pending Requests</h2>
 {% with messages = get_flashed_messages() %}
    {% if messages %}
       {% for message in messages %}
@@ -9,15 +9,31 @@
       {% endfor %}
    {% endif %}
 {% endwith %}
-{% for row in q %}
-<a href = "{{url_for('admin.action_reg_request',username=row[0].username)}}">
-<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 86%, 30%);padding:20px;">
-    <p>
-        {{row[1].name}}<br>
-        {{row[1].specialization}}<br>
-        {{row[1].timestamp}}<br>
-    </p>
-  </div> 
-</a>
-{% endfor %}
+<table id="dtBasicExample" class="table" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">Name
+      </th>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Email
+      </th>
+      <th class="th-sm">More Details
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for row in q %}
+       <tr>
+         <td>{{row.name}}</td>
+           <td>{{row.username}}</td>
+           <td>{{row.email}}</td>
+           <td ><a href = "{{url_for('admin.action_reg_request',username = row.username)}}">Click here</a> </td>
+       </tr>
+    {% endfor %}   
+  </tbody>
+  
+</table>
 {% endblock %}
+
+

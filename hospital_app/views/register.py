@@ -61,14 +61,11 @@ def register_request():
         return redirect(url_for('login.index'))
     form = RegistrationForm_Doctor()
     if form.validate_on_submit():
-        user = temporary_users(username = form.username.data, email = form.email.data, role = "doctor")
+        spec = str(form.specialization.data)
+        user = temporary_users(username = form.username.data, email = form.email.data, role = "doctor",name = form.name.data,qualification = form.qualification.data,
+        experience = form.experience.data,specialization = spec,contact_number = form.phonenumber.data)
         user.set_password(form.password.data)  
         db.session.add(user)
-        db.session.commit()
-        spec = str(form.specialization.data)
-        doctor = Doctor(username = user.username,name = form.name.data,qualification = form.qualification.data,
-        experience = form.experience.data,specialization = spec,contact_number = form.phonenumber.data)
-        db.session.add(doctor)
         db.session.commit()
         flash("You will be notified through email if your request get approved/rejected.")
         return redirect(url_for('login.login'))

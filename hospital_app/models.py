@@ -11,12 +11,21 @@ from hospital_app import app
 from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date, Boolean, LargeBinary
 from datetime import datetime
 from sqlalchemy import Enum
+from flask.helpers import flash, url_for
+from werkzeug.utils import redirect
+
 
 
 
 @login.user_loader
 def load_user(username):
     return User.query.filter_by(username = username).first()
+
+@login.unauthorized_handler
+def unauthorized():
+    """Redirect unauthorized users to Login page."""
+    flash('You must be logged in to view that page.')
+    return redirect(url_for('login.login')) 
 
 
 # username cannot be updated, patient and doctor can be deleted
@@ -71,6 +80,8 @@ class Patient( db.Model):
     contact_number = db.Column(db.Unicode(20))
     address = db.Column(db.String(80))
     gender_user = db.Column(db.String(15))
+    timestamp = db.Column(db.DateTime,default = datetime.utcnow)
+    birthdate = db.Column(db.Date)
 
 class Doctor( db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -140,8 +151,16 @@ class upload_report(db.Model):
 class temporary_users(db.Model):
     username = db.Column(db.String(64), index=True, unique=True, primary_key=True)
     email = db.Column(db.String(100), index=True, unique=True,nullable=False)
-    password_hash = db.Column(db.String(128))
+    password_hash = db.Column(db.String(128),nullable = False)
     role = db.Column(db.String(20),nullable=False)
+    name = db.Column(db.String(50),nullable = True)
+    qualification = db.Column(db.String(100),nullable = True)  
+    experience = db.Column(db.String(15),nullable = True)
+    specialization = db.Column(db.String(20),nullable = True)
+    contact_number = db.Column(db.String(15),nullable = True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+
 
     def get_reset_password_token(self,expires_in = 900):
         return jwt.encode({'reset_password':self.username,'exp':time()+expires_in},app.config['SECRET_KEY'],algorithm = 'HS256').decode('utf-8')
@@ -157,3 +176,18 @@ class temporary_users(db.Model):
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
+
+
+class patient_queue(db.Model):
+    treat_id = db.Column(db.Integer, nullable = False, primary_key = True)
+    name = db.Column(db.String(50),nullable = False)
+    username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
+    doctor = db.Column(db.String, nullable = False)
+    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
+    status = db.Column(db.String(30),default = "in ")
+    timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
+
+class compounder_queue(db.Model):
+    name = db.Column(db.String(50),nullable = False)
+    username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False,primary_key = True)
+    timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)

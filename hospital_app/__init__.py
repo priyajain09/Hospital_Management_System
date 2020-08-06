@@ -12,7 +12,8 @@ app = Flask(__name__, instance_relative_config=True)
 app.config.from_object('config')
 app.config.from_pyfile('config.py')
 datepicker(app)
-login = LoginManager(app)
+login = LoginManager()
+login.init_app(app)
 login.login_view='login'
 db = SQLAlchemy(app)
 mongo = PyMongo(app)
@@ -27,10 +28,12 @@ from .views.login import login_bp
 from .views.register import register_bp
 from .views.user import user_bp
 from .views.admin import admin_bp
+from .views.receptionist import recep_bp
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(recep_bp)
 
 from .views.doctor.doctor_routes import doctor_routes_bp
 app.register_blueprint(doctor_routes_bp)

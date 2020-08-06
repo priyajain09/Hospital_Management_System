@@ -1,0 +1,146 @@
+{% extends 'Reception/base.html' %}
+{% block heading %}
+Patient Enquiry
+{% endblock %}
+
+{% block content %}
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
+<form class="needs-validation" method = "post" action = "{{url_for('recep.patient_enquiry')}}"novalidate>
+    <div class = "form-row">
+        <div class="col-md-3 mb-3">
+            <label for="filter">Select filter</label>
+            <select class="browser-default custom-select" name = "filter">
+                <option value="none" selected>None</option>
+                <option value="username">Username</option>
+                <option value="email">Email</option>
+                <option value="name">Name</option>
+                
+              </select>
+            
+        </div>
+        <div class = "col-md-3 mb-3">
+            <label for ="search_text">Search text</label>
+            <input type="text" class="form-control" id="search_text" placeholder="Type here" name = "search_text">
+        </div>
+        
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 mb-5">
+            <button class="btn btn-primary btn-sm" type="submit">Search</button><br><br>
+        </div>
+    </div>
+    
+</form>       
+
+<!-- Card -->
+<div class="card">
+
+
+  
+    <!-- Card content -->
+    <div class="card-body">
+  
+      <!-- Title -->
+      <h4 class="card-title"><a>Patient List</a></h4>
+      <!-- Text -->
+      <p class="card-text"><table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"
+        width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">S.no
+            </th>
+            <th class="th-sm">Full name
+            </th>
+            <th class="th-sm">Username
+            </th>
+            <th class="th-sm">Email
+            </th>
+            <th class="th-sm">More Details
+            </th>
+            <th class="th-sm">Send for tests
+            </th>
+            <th class="th-sm">Add to queue
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+         {% for row in list %}
+             <tr>
+                 <td>{{loop.index}}</td>
+                 <td>{{row[1].name}}</td>
+                 <td>{{row[0].username}}</td>
+                 <td>{{row[0].email}}</td>
+                 <td ><a href="{{url_for('admin.user_details',username = row[0].username)}}" >Click here</a> </td>
+                 <td><a  data-toggle="modal" data-target="#modalConfirmDelete">Click here</button></td>
+                 <td ><a href = "{{url_for('recep.add_to_queue',name = row[1].name, username = row[0].username)}}">Click here</a> </td>   
+             </tr>
+             <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+    <!--Content-->
+    <div class="modal-content text-center">
+      <!--Header-->
+      <div class="modal-header d-flex justify-content-center">
+        <p class="heading">Are you sure?</p>
+      </div>
+
+      <!--Body-->
+      <div class="modal-body">
+
+        <i class="fas fa-times fa-4x animated rotateIn"></i>
+
+      </div>
+
+      <!--Footer-->
+      <div class="modal-footer flex-center">
+        <a href="{{url_for('recep.add_to_compounder_queue', name =row[1].name,username = row[0].username )}}" class="btn  btn-outline-danger">Yes</a>
+        <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
+      </div>
+    </div>
+    <!--/.Content-->
+  </div>
+</div>
+
+          {% endfor %}   
+        </tbody>
+        
+      </table></p>
+  
+    </div>
+  
+  </div>
+  
+
+<!-- Modal -->
+
+
+  <!-- Card -->
+
+{% endblock %}
+
+{% block add_script %}
+<script>
+    function myFunction() {
+  var txt;
+  if (confirm("Are you sure, you want to send patient for tests ?")) {
+    txt = "You pressed OK!";
+  } else {
+    txt = "You pressed Cancel!";
+  }
+  document.getElementById("demo").innerHTML = txt;
+}
+</script>
+
+<script>
+    $(document).ready(function () {
+$('#dtDynamicVerticalScrollExample').DataTable({
+"scrollY": "50vh",
+"scrollCollapse": true,
+});
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+{% endblock %}
