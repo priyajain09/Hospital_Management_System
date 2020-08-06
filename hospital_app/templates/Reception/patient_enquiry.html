@@ -74,10 +74,10 @@ Patient Enquiry
                  <td>{{row[0].username}}</td>
                  <td>{{row[0].email}}</td>
                  <td ><a href="{{url_for('admin.user_details',username = row[0].username)}}" >Click here</a> </td>
-                 <td><a  data-toggle="modal" data-target="#modalConfirmDelete">Click here</button></td>
+                 <td><a  data-toggle="modal" data-target="#modalConfirmDelete{{row[1].username}}"  >Click here</button></td>
                  <td ><a href = "{{url_for('recep.add_to_queue',name = row[1].name, username = row[0].username)}}">Click here</a> </td>   
              </tr>
-             <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             <div class="modal fade" id="modalConfirmDelete{{row[1].username}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
   aria-hidden="true">
   <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
     <!--Content-->
