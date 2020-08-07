@@ -8,7 +8,8 @@ from hospital_app.forms import update_doctor_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
 from collections import defaultdict
-
+from operator import itemgetter 
+  
 stats_bp = Blueprint('stats',__name__, url_prefix='/doctor')
 
 @stats_bp.route('/symptoms-stats',methods = ['GET','POST'])
@@ -40,9 +41,10 @@ def symptoms_stats():
                     symp_stat[symptom] += 1
     
         print(symp_stat)
-        sort_symp_stat = sorted(symp_stat.items(), key=lambda x: x[1], reverse=True)
-        print(sort_symp_stat)
-        return render_template('Doctor/doctor_sites/current_symptoms_stats.html', symp_stat = symp_stat)
+        symp_table_data = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True))
+        symp_stat = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True)[0:10])
+        print(symp_stat)
+        return render_template('Doctor/doctor_sites/current_symptoms_stats.html', symp_stat = symp_stat, symp_table_data = symp_table_data)
 
-    return render_template('Doctor/doctor_sites/current_symptoms_stats.html')
-
+    symp_stat = defaultdict(int) 
+    return render_template('Doctor/doctor_sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat)

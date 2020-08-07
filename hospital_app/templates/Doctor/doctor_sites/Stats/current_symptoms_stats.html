@@ -20,7 +20,7 @@
 
 </div>
 
-<div class="card">
+<div class="card mb-4 wow fadeIn">
   <!-- Card content -->
     <div class="card-body">
       <form method=POST action="{{ url_for('stats.symptoms_stats') }}">  
@@ -32,17 +32,56 @@
       </h4>   
       </form> 
      
-        <canvas id="myChart" style="max-width: 500px;"></canvas>
+      <canvas id="myChart" style="max-width: 500px;"></canvas>
       <br>
-      <div>
+    <div>
 
+</div> 
+<br>
+<br>
+<div class="card mb-4 wow fadeIn">
+  <!-- Card content -->
+    <div class="card-body">
+      <table id="dtBasicExample" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">Symptoms
+            </th>
+            <th class="th-sm"># Cases
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key , value in symp_stat.items() %}
+          <tr>
+            <td>{{key}}</td>
+            <td>{{value}}</td>
+          </tr>
+          {% endfor %} 
+        </tbody>
+      </table>
+      </div>
     </div> 
 </div>
-<br>
 
 {% endblock %}
 
 {% block scripts %}
+
+<script >
+ $(document).ready(function () {
+$('#dtBasicExample').DataTable();
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+$('#dtBasicExample').DataTable();
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+
   <script type="text/javascript">
     $(function() {
       $('input[name="daterange"]').daterangepicker();
