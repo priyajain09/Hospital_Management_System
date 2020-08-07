@@ -1,4 +1,4 @@
-from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users
+from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users,temporary_role_users
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form,disease_statistic_form
 from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
@@ -127,7 +127,9 @@ def doctor_details(username):
 def delete_doctor(username):
     user = User.query.get(username)
     doctor = user.doctor
-    u = deleted_doctors(username = str(user.username),email=user.email,name=doctor.name,gender_doctor=doctor.gender_doctor,age=doctor.age,blood_group=doctor.blood_group,contact_number=doctor.contact_number,address=doctor.address,qualification=doctor.qualification,experience=doctor.experience,specialization=doctor.specialization,date_of_joining=doctor.date_of_joining)
+    u = deleted_doctors(username = str(user.username),email=user.email,name=doctor.name,gender_doctor=doctor.gender_doctor,
+    age=doctor.age,blood_group=doctor.blood_group,contact_number=doctor.contact_number,address=doctor.address,qualification=doctor.qualification,
+    experience=doctor.experience,specialization=doctor.specialization,date_of_joining=doctor.date_of_joining)
     x = is_user_deleted.query.get(username)
     x.is_deleted = True
     db.session.add(u)
@@ -166,10 +168,41 @@ def deleted_doctors_func():
     u = deleted_doctors.query.all()
     if len(u)==0:
         flash("No deleted doctors")
-    return render_template('Admin/admin_sites/deleted_doctors.html',doctors = u,form=form)
+    return render_template('Admin/admin_sites/deleted_doctors.html',doctors = u,form = form)
 
+@admin_bp.route('/admin/assistant_registration_requests/<role>')
+def assistant_registration_requests(role):
+    u = temporary_role_users.query.filter_by(role = role).all()
+    if (len(u) == 0):
+        flash("No pending requests")
 
+    if role == "assistant":    
+        return render_template('Admin/admin_sites/assistant_requests.html',list = u)   
+    elif role =="compounder":
+        return render_template('Admin/admin_sites/compounder_requests.html',list = u)  
+    elif role == "reception":
+        return render_template('Admin/admin_sites/reception_requests.html',list = u)  
+        
+@admin_bp.route('/admin/assistant_registration_requests/<username>/<action>/<role>')
+def action_role_reg(username,action,role):
 
+    if action == "Accept":
+        user = temporary_role_users.query.filter_by(username=username).first()
+        if user is not None:
+            u = User(username = user.username, email = user.email, role = user.role, password_hash = user.password)
+            db.session.add(u)
+            db.session.commit()
+            u = user_role(username = user.username, name = user.name,role = user.role, birthdate = user.birthdate,age = user.age,
+            contact_number = user.contact_number, address = user.address, gender = user.gender, work_timings = user.work_timings,
+            timestamp = user.timestamp, doctor_username = user.doctor_username,date_of_joining = datetime.datetime.now())
+            db.session.add(u)
+            db.session.commit()
+            
+    elif action == "Reject":
+        user = temporary_role_users.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+    return  redirect(url_for('admin.assistant_registration_requests',role=role))
 # *******************************************************************************************************
 
 # Statistics

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, IntegerField, TextAreaField,SelectField, FloatField, RadioField
 from wtforms.validators import ValidationError, InputRequired, Email, EqualTo, InputRequired,Required, NumberRange
-from hospital_app.models import User, specialization, temporary_users
+from hospital_app.models import User, specialization, temporary_users, temporary_role_users
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from hospital_app import db
 from wtforms.fields.html5 import TelField,DateField
@@ -160,3 +160,36 @@ class queue_form(FlaskForm):
         if user is None:
             raise ValidationError('Invalid username')
 
+class register_role_form(FlaskForm):
+    username = StringField('Username', validators=[InputRequired()])
+    doctor_username = StringField('Doctor username')
+    password = PasswordField('Password', validators=[InputRequired()])
+    password2 = PasswordField(
+        'Retype Password', validators=[InputRequired(), EqualTo('password')])
+    email = StringField('Email', validators=[InputRequired(), Email()])
+    birthdate = DateField("Birthdate", validators=[InputRequired()])
+    role = SelectField('Select role',choices=[('reception','Receptionist'),('compounder','Compounder'),('assistant','Assistant')])
+    firstname = StringField('First name',validators=[InputRequired()])
+    lastname = StringField('Last name ')
+    age = IntegerField('Age in years',validators=[InputRequired(), NumberRange(1,150)])
+    contact_number = IntegerField('Contact Number ',validators=[InputRequired()])
+    address = TextAreaField('Address ')
+    work_timings = StringField('Working days - working hours',validators=[InputRequired()])
+    gender = SelectField('Gender ',validators=[InputRequired()], choices = [('Male','Male'),('Female','Female'),('Transgender','Transgender')])
+    submit = SubmitField('Submit')
+
+    def validate_username(self, username):
+        user = User.query.filter_by(username=username.data).first()
+        u = temporary_users.query.filter_by(username = username.data).first()
+        x = temporary_role_users.query.filter_by(username = username.data).first()
+        if user is not None or u is not None or x is not None:
+            raise ValidationError('Please use a different username.')
+
+    def validate_email(self, email):
+        user = User.query.filter_by(email=email.data).first()
+        u = temporary_users.query.filter_by(email = email.data).first()
+        x = temporary_role_users.query.filter_by(email = email.data).first()
+        if user is not None or u is not None or x is not None:
+            raise ValidationError('Please use a different email address.')
+
+        
