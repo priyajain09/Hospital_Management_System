@@ -1,9 +1,9 @@
 from hospital_app import db
-from hospital_app.forms import UserRegistrationForm, RegistrationForm_Doctor
+from hospital_app.forms import UserRegistrationForm, RegistrationForm_Doctor,register_role_form
 from flask import Blueprint
 from flask_login import current_user, login_user, logout_user
 from flask import Blueprint, render_template, redirect,url_for, request, flash
-from hospital_app.models import User, Doctor, is_user_deleted, Patient, temporary_users
+from hospital_app.models import User, Doctor, is_user_deleted, Patient, temporary_users,temporary_role_users
 from hospital_app.email import send_registration_request_email
 
 register_bp = Blueprint('register', __name__)
@@ -71,4 +71,31 @@ def register_request():
         return redirect(url_for('login.login'))
     return render_template('Authentication/register_doctor.html',title = "Register Doctor",form = form)    
 
+@register_bp.route('/register/other',methods=['GET', 'POST'])
+def register_role_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('login.index'))
+    
+    form = register_role_form()
 
+    if form.validate_on_submit():
+        if(form.role.data == "assistant"):
+            u = User.query.filter_by(username=form.doctor_username.data, role = "doctor").first()
+            if u is None:
+                flash("Invalid doctor username for role Assistant.")
+                return redirect(url_for('login.home_page'))
+        user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
+        birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
+        work_timings = form.work_timings.data,doctor_username = form.doctor_username.data)
+        passw = form.password.data 
+        user.set_password(form.password.data)
+        try:
+            db.session.add(user)
+            db.session.commit()
+            flash("Your request has been submitted to admin.Check email for further information.")
+            return redirect(url_for('login.login'))
+        except:
+            db.session.rollback()
+            flash("Try again")    
+            return redirect(url_for('register.register_role_request'))
+    return render_template('/Authentication/register_role_user.html',form = form)    

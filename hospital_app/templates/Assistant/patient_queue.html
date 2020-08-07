@@ -1,0 +1,120 @@
+{% extends 'index.html' %}
+{% block heading %}
+Doctor Queue
+{% endblock %}
+
+{% block content %}
+
+
+<form class="needs-validation" method = "post" action = "{{url_for('assistant.home_page')}}"novalidate>
+    <div class = "form-row">
+        <div class="col-md-3 mb-3">
+            <label for="filter">Select filter</label>
+            <select class="browser-default custom-select" name = "filter">
+                <option value="none" selected>None</option>
+                <option value="username">Username</option>
+                <option value="name">Name</option>
+              </select>
+            
+        </div>
+        <div class = "col-md-3 mb-3">
+            <label for ="search_text">Search text</label>
+            <input type="text" class="form-control" id="search_text" placeholder="Type here" name = "search_text">
+        </div>
+        
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 mb-5">
+            <button class="btn btn-primary btn-sm" type="submit">Search</button><br><br>
+        </div>
+    </div>
+    
+</form>       
+
+<!-- Card -->
+<div class="card">
+
+
+  
+    <!-- Card content -->
+    <div class="card-body">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+        {% endfor %}
+ 
+  
+      <!-- Title -->
+      <h4 class="card-title"><a>Patient List</a></h4>
+      <!-- Text -->
+      <p class="card-text"><table id="dtHorizontalVerticalExample" class="table table-striped table-bordered table-sm " cellspacing="0"
+        width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">S.no
+            </th>
+            <th class="th-sm">Full name
+            </th>
+            <th class="th-sm">Username
+            </th>
+            <th class="th-sm">Doctor name
+            </th>
+            <th class="th-sm">Doctor username
+            </th>
+            <th class="th-sm">Treatment ID
+            </th>
+            <th class="th-sm">Timestamp
+            </th>
+            <th class="th-sm">User Details
+            </th>
+            <th class="th-sm">Remove
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+         {% for row in list %}
+             <tr>
+                 <td>{{loop.index}}</td>
+                 <td>{{row.name}}</td>
+                 <td>{{row.username}}</td>
+                 <td>{{row.doctor}}</td>
+                 <td>{{row.doctor_username}}</td>
+                 <td>{{row.treat_id}}</td>
+                 <td>{{row.timestamp}}</td>
+                 <td ><a href="{{url_for('admin.user_details',username = row.username)}}" >Click here</a> </td>
+                 <td ><a href="{{url_for('assistant.remove_doctor_queue',treat_id = row.treat_id)}}" >Click here</a> </td>
+             </tr>
+             
+</div>
+
+          {% endfor %}   
+        </tbody>
+        
+      </table></p>
+      <div class="card-footer">
+      <button type="button" class="btn btn-primary btn-sm" onclick="window.location.href='{{ url_for( 'assistant.remove_all_doctor_queue')}}';">Remove all</button>
+      </div>
+  
+    </div>
+  
+  </div>
+  
+
+<!-- Modal -->
+
+
+  <!-- Card -->
+
+<script>
+    $(document).ready(function () {
+$('#dtHorizontalVerticalExample').DataTable({
+"scrollX": true,
+"scrollY": 200,
+});
+$('.dataTables_length').addClass('bs-select');
+});
+
+</script>  
+
+{% endblock %}
+
+

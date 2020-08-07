@@ -29,11 +29,13 @@ from .views.register import register_bp
 from .views.user import user_bp
 from .views.admin import admin_bp
 from .views.receptionist import recep_bp
+from .views.assistant import assistant_bp
 app.register_blueprint(login_bp)
 app.register_blueprint(register_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
 app.register_blueprint(recep_bp)
+app.register_blueprint(assistant_bp)
 
 from .views.doctor.doctor_routes import doctor_routes_bp
 app.register_blueprint(doctor_routes_bp)

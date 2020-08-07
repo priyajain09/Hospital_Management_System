@@ -1,0 +1,154 @@
+{% extends 'index.html' %}
+{% from 'Reception/_render_field.html' import render_field %}
+
+{% block heading %}
+Registration Form
+{% endblock %}
+
+
+{% block content %}
+<br>
+<div class = 'card'>
+    <div class = 'card-body'>
+        <h4 class="card-title"><a>Patient Details</a></h4>
+    
+          {% for message in get_flashed_messages() %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+          {% endfor %}
+      
+        
+<form  method = "post" action = "{{url_for('register.register_role_request')}}">
+  {{form.hidden_tag()}}  
+  
+  
+  <div class = "form-row">
+    <div class="col-md-4 mb-3">
+        <label for="validationCustomUsername">Unique ID</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          {{ render_field(form.username,placeholder = form.username.label.text) }}
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="email">Email Address</label>
+        {{ render_field(form.email,placeholder = form.email.label.text) }}
+    </div>
+    </div>  
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="name">First name</label>
+        {{ render_field(form.firstname,placeholder = form.firstname.label.text) }}
+        
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="validationCustom02">Last name</label>
+        {{ render_field(form.lastname,placeholder = form.lastname.label.text) }}
+        
+      </div>
+      
+    </div>
+    <div class="form-row">
+        <div class="col-md-4 mb-3">
+          <label for="name">Password</label>
+          {{ render_field(form.password,placeholder = form.password.label.text) }}
+          
+        </div>
+        <div class="col-md-4 mb-3">
+          <label for="validationCustom02">Retype Password</label>
+          {{ render_field(form.password2,placeholder = form.password2.label.text) }}
+          
+        </div>
+        
+      </div>
+    <div class ="form-row">
+        <div class ="col-md-2 mb-3">
+            <label for="bloodgrp">Gender</label>
+            {{ render_field(form.gender,placeholder = form.gender.label.text, class="browser-default custom-select") }}
+            </div>
+        <div class="col-md-2 mb-3">
+            <label for="birthdate">Birthdate</label>
+            {{ render_field(form.birthdate,placeholder = form.birthdate.label.text) }}
+            
+          </div>
+          <div class="col-md-2 mb-3">
+            <label for="age">Age</label>
+            {{ render_field(form.age,placeholder = form.age.label.text) }}
+            
+          </div>
+
+    </div>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="address">Address</label>
+        {{ render_field(form.address,placeholder = form.address.label.text) }}
+      </div>
+      
+      <div class="col-md-3 mb-3">
+        <label for="phonenumber">Contact number</label>
+        {{ render_field(form.contact_number,placeholder = form.contact_number.label.text) }}
+        
+      </div>
+    </div>
+    <div class="form-row">
+        <div class="col-md-3 mb-3">
+            <label for="bloodgrp">Role</label>
+            {{ render_field(form.role,placeholder = form.role.label.text, class="browser-default custom-select") }}
+        </div>
+    </div>
+    <div class="form-row" id = "doctorUsername">
+        <div class="col-md-3 mb-3">
+            <label for="bloodgrp">Doctor username</label>
+            {{ render_field(form.doctor_username,placeholder = form.doctor_username.label.text) }}
+        </div>
+    </div>
+    <div class = "form-row">
+        <div class="col-md-3 mb-3">
+            <label for="phonenumber">Working days and/or hours in a week</label>
+            {{ render_field(form.work_timings,placeholder = form.work_timings.label.text) }}
+          </div>
+
+    </div>
+    
+    {{render_field(form.submit, class="btn btn-primary btn-sm")}}
+  </form>
+</div>
+</div>
+
+<script>
+window.onload = function() {
+    document.getElementById('doctorUsername').style.display = 'none';}
+
+    let role = document.getElementById('role');
+    role.onchange = function() {
+        role_val = role.value;
+        if(role_val == "assistant") {
+        document.getElementById('doctorUsername').style.display = "block";
+        } else {
+            document.getElementById('doctorUsername').style.display = 'none';
+        }
+    }
+</script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

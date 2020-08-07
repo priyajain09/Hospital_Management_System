@@ -185,10 +185,61 @@ class patient_queue(db.Model):
     username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
     doctor = db.Column(db.String, nullable = False)
     doctor_username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
-    status = db.Column(db.String(30),default = "in ")
+    status = db.Column(db.String(30),default = "in queue")
     timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
 class compounder_queue(db.Model):
     name = db.Column(db.String(50),nullable = False)
     username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False,primary_key = True)
     timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
+
+
+class temporary_role_users(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    email = db.Column(db.String(100), unique=True,nullable=False)
+    username = db.Column(db.String(64),index = True,nullable=False,unique = True)
+    name = db.Column(db.String(50))
+    password = db.Column(db.String(100),nullable = False)
+    birthdate = db.Column(db.Date)
+    role = db.Column(db.String(20),nullable = False)
+    age = db.Column(db.Integer)
+    contact_number = db.Column(db.Unicode(20))
+    address = db.Column(db.String(80))
+    gender = db.Column(db.String(15))
+    work_timings = db.Column(db.String(50))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
+    def set_password(self, password):
+        self.password = generate_password_hash(password)
+
+
+class user_role(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable=False)
+    name = db.Column(db.String(50))
+    role = db.Column(db.String(20),nullable = False)
+    birthdate = db.Column(db.Date)
+    age = db.Column(db.Integer)
+    contact_number = db.Column(db.Unicode(20))
+    address = db.Column(db.String(80))
+    gender = db.Column(db.String(15))
+    work_timings = db.Column(db.String(50))
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
+    date_of_joining = db.Column(db.Date)
+    
+
+class past_user_role(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String(64),nullable = False)
+    doctor_username = db.Column(db.String(64),nullable=True)
+    name = db.Column(db.String(50))
+    birthdate = db.Column(db.Date)
+    age = db.Column(db.Integer)
+    contact_number = db.Column(db.Unicode(20))
+    address = db.Column(db.String(80))
+    gender_user = db.Column(db.String(15))
+    work_timings = db.Column(db.String(50))
+    date_of_joining = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+

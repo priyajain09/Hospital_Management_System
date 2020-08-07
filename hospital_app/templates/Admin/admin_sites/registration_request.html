@@ -1,8 +1,32 @@
 {% extends 'Admin/home_page.html' %}
 
+
+
 {% block content %}
-<h2 class='mb-3'>Pending Requests</h2>
-{% with messages = get_flashed_messages() %}
+
+
+
+<div class="card text-center">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="">Doctor</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{url_for('admin.assistant_registration_requests',role='assistant')}}" >Assistant</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('admin.assistant_registration_requests',role='compounder')}}">Compounder</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('admin.assistant_registration_requests',role='reception')}}">Receptionist</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <h5 class="card-title">Doctor Registration Requests </h5>
+    <p class="card-text">
+      {% with messages = get_flashed_messages() %}
    {% if messages %}
       {% for message in messages %}
          {{ message }}
@@ -34,6 +58,8 @@
   </tbody>
   
 </table>
+    </p>
+  </div>
+</div>
+
 {% endblock %}
-
-
