@@ -1,0 +1,69 @@
+{% extends 'Compounder/home.html' %}
+{% block heading %}
+<!-- Heading -->
+<div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+    <!--Card content-->
+    <div class="card-body">
+        <div>
+            <h4 class="mb-2 mb-sm-0 pt-1">
+            <strong>Treatment  </strong><br>
+            <small class="text-muted"><a href="{{url_for('admin.user_details',username = username)}}" >{{username}}</a></small>
+            </h4>
+        <div>
+        <div>
+            <button><a href="{{url_for('comp.comp_start_treatment',username = username)}}" ><h6>Start New Treatment</h6> </a> </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block content %}
+
+
+  
+  <div>
+
+<table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">S.no
+      </th>
+      <th class="th-sm">Full name
+      </th>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Timestamp
+      </th>
+      <th class="th-sm">Remove
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for row in list %}
+       <tr>
+           <td>{{loop.index}}</td>
+           <td>{{row.name}}</td>
+           <td><a href="{{url_for('admin.user_details',username = row.username)}}" >{{row.username}}</a></td>
+           <td>{{row.timestamp}}</td>
+           <td ><a href="{{url_for('recep.remove_compounder_queue',username = row.username)}}" >Click here</a> </td>
+       </tr>
+    {% endfor %}   
+  </tbody>
+</table>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+<script>
+$(document).ready(function () {
+  $('#dtBasicExample').DataTable();
+  $('.dataTables_length').addClass('bs-select');
+  });
+</script> 
+{% endblock %}
+

@@ -43,4 +43,8 @@ app.register_blueprint(doctor_routes_bp)
 from .views.doctor.stats import stats_bp
 app.register_blueprint(stats_bp)
 
+from .views.compounder.comp import comp_bp
+app.register_blueprint(comp_bp)
+
+
     
