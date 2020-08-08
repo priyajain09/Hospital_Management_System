@@ -1,7 +1,7 @@
 {% extends 'Compounder/home.html' %}
 {% block heading %}
 <h3 >
-  <strong>Compounder Queue</strong><br>
+  <strong>Start Treatment</strong><br>
   <small class="text-muted">faded secondary text</small>
 </h3>
 {% endblock %}
@@ -22,6 +22,14 @@
                 <b>Started on :  </b>{{ treatment.time_stamp }}<br>
                 <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
                 <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+                <b>Age:  </b>{{ treatment.age}}<br>
+                <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+                <b>Gender:  </b>{{ treatment.gender}}<br>
+                {% if treatment.doctorid != '' %}
+                    <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
+                    <b>Allergies:  </b>{{ treatment.allergies}}<br>
+                    <b>Chronic Diseases:  </b>{{ treatment.chronic}}<br>
+                {% endif %}
                 </p>
                 </div>
             </div>
@@ -34,7 +42,7 @@
                     <!-- Title -->
                     <h4 class="card-title">Fill Prescription Form</h4>
                         <!-- Form -->
-                        <form method=POST action="{{ url_for('comp.add_prescription', treat_id = treat_id ) }}">
+                        <form method=POST action="{{ url_for('comp.add_prescription', treat_id = treatment.treat_id ) }}">
                             <div class="row">
                                 <div class="col">
                                     <p class="card-text">
@@ -66,11 +74,12 @@
                                 </div>
                             </div>
                             <br>
-                            <div>
+                            <div>    {% if treatment.doctorid == '' %}
                                 <div class="form-group">
                                     <label for="doctor">Choose Doctor</label>
                                     <input type="text" name="doctor" >
                                 </div>
+                                    {% endif %}
                             </div>
                             <button type="submit" class="btn btn-primary btn-block">Add Prescription</button> 
                         </form>
