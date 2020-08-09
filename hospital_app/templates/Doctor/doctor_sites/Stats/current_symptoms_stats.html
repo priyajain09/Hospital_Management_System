@@ -1,0 +1,136 @@
+{% extends 'Doctor/home.html' %}
+
+{% block heading %}
+
+{% endblock %}
+
+
+{% block content %}
+<!-- Heading -->
+<div class="card mb-4 wow fadeIn">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+
+    <h4 class="mb-2 mb-sm-0 pt-1">
+      Symptoms Stats
+    </h4>
+  </div>
+
+
+</div>
+
+<div class="card mb-4 wow fadeIn">
+  <!-- Card content -->
+    <div class="card-body">
+      <form method=POST action="{{ url_for('stats.symptoms_stats') }}">  
+      <h4 class="card-title" >Date Range:
+          <input type="text" name="daterange" value = "" > 
+            <button type="submit" class="btn btn-primary ">
+              View Stats
+            </button>
+      </h4>   
+      </form> 
+     
+      <canvas id="myChart" style="max-width: 500px;"></canvas>
+      <br>
+    <div>
+
+</div> 
+<br>
+<br>
+<div class="card mb-4 wow fadeIn">
+  <!-- Card content -->
+    <div class="card-body">
+      <table id="dtBasicExample" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">Symptoms
+            </th>
+            <th class="th-sm"># Cases
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for key , value in symp_stat.items() %}
+          <tr>
+            <td>{{key}}</td>
+            <td>{{value}}</td>
+          </tr>
+          {% endfor %} 
+        </tbody>
+      </table>
+      </div>
+    </div> 
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script >
+ $(document).ready(function () {
+$('#dtBasicExample').DataTable();
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+$('#dtBasicExample').DataTable();
+$('.dataTables_length').addClass('bs-select');
+});
+</script>
+
+  <script type="text/javascript">
+    $(function() {
+      $('input[name="daterange"]').daterangepicker();
+    });
+  </script>
+      
+<script>
+    var ctx = document.getElementById("myChart").getContext('2d');
+    var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+    labels: [           {% for item in symp_stat.keys() %}
+           "{{ item }}",
+          {% endfor %} ],
+    datasets: [{
+    label: '# of cases',
+    data: [           {% for item in symp_stat.values() %}
+           "{{ item }}",
+          {% endfor %} ],
+    backgroundColor: [
+    'rgba(255, 99, 132, 0.2)',
+    'rgba(54, 162, 235, 0.2)',
+    'rgba(255, 206, 86, 0.2)',
+    'rgba(75, 192, 192, 0.2)',
+    'rgba(153, 102, 255, 0.2)',
+    'rgba(255, 159, 64, 0.2)'
+    ],
+    borderColor: [
+    'rgba(255,99,132,1)',
+    'rgba(54, 162, 235, 1)',
+    'rgba(255, 206, 86, 1)',
+    'rgba(75, 192, 192, 1)',
+    'rgba(153, 102, 255, 1)',
+    'rgba(255, 159, 64, 1)'
+    ],
+    borderWidth: 1
+    }]
+    },
+    options: {
+    scales: {
+    yAxes: [{
+    ticks: {
+    beginAtZero: true
+    }
+    }]
+    }
+    }
+    });
+    
+      </script>
+
+{% endblock %}

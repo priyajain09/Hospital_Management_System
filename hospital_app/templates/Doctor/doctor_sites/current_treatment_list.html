@@ -1,21 +1,127 @@
 {% extends 'Doctor/home.html' %}
 
+  {% block links %}
+  {{super()}}
+  <!-- Custom styles for this template -->
+  <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css" rel="stylesheet">
+<link href="..static/css1/doctor/styles.css" rel="stylesheet">
 
+{% endblock %}
+
+  {% block head %}
+  {{super()}}
+    <style type="text/css">
+ /* Ensure that the demo table scrolls */
+ th, td { white-space: nowrap; }
+    div.dataTables_wrapper {
+        width: 800px;
+        margin: 0 auto;
+    }
+ 
+    th input {
+        width: 90%;
+    }
+      </style>
+  
+{% endblock %}
 {% block heading %}
-Ongoing Treatments
-{% endblock %}
-{% block content %}
-{% for row in treatment %}
-<a href = "{{url_for('doctor_routes.treatment_info', treat_id = row.treat_id)}}">
-<div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
-    <p>
-        <b>Treatment Id:</b> {{row.treat_id}}<br>
-        <b>Started On:</b> {{row.time_stamp}}<br>
-        <b>Patient User ID</b> {{row.patient_userid}}<br>
-        <b>Patient Name</b> {{row.patient_name}}<br>
-    </p>
-  </div> 
-</a>
-{% endfor %}
+
+<!-- Heading -->
+<div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+
+    <h4 class="mb-2 mb-sm-0 pt-1">
+      Active Treatments
+    </h4>
+  </div>
+
+
+</div>
+
 {% endblock %}
 
+{% block content %}
+
+<div class="card mb-4 wow fadeIn cloudy-knoxville-gradient">
+
+  <!--Card content-->
+  <div class="card-body ">
+
+    <table id="example" class="stripe row-border order-column" style="width:100%">
+        <thead>
+            <tr>
+              <th>Treatment ID</th>
+              <th>Start Date</th>
+              <th>Patient User ID</th>
+                <th>Patient Name</th>
+                <th>Disease Name</th>
+                <th>Symptoms</th>
+                <th>Medicines</th>
+
+            </tr>
+        </thead>
+        <tbody>
+          {% for roww in treatment %}
+            <tr>
+              <td>{{roww.treat_id}}</td>
+              <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
+              <td>{{roww.patient_userid}}</td>
+                <td>{{roww.patient_name}}</td>
+                <td>{{roww.disease_name}}</td>
+                <td>{{roww.symptoms_inputs}}</td>
+                <td>{{roww.medicines_inputs}}</td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+            <tr>
+              <th>Started On</th>        
+              <th>Patient User ID</th>
+              <th>Patient Name</th>
+              <th>Disease Name</th> 
+              <th>Symptoms</th>
+              <th>Medicines</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    // Setup - add a text input to each footer cell
+    $('#example tfoot th').each( function (i) {
+        var title = $('#example thead th').eq( $(this).index() ).text();
+        $(this).html( '<input type="text" placeholder="Search '+title+'" data-index="'+i+'" />' );
+    } );
+  
+    // DataTable
+    var table = $('#example').DataTable( {
+        scrollY:        "300px",
+        scrollX:        true,
+        scrollCollapse: true,
+        paging:         false,
+        fixedColumns:   true
+    } );
+ 
+    // Filter event handler
+    $( table.table().container() ).on( 'keyup', 'tfoot input', function () {
+        table
+            .column( $(this).data('index') )
+            .search( this.value )
+            .draw();
+    } );
+} );</script> 
+{% endblock %}

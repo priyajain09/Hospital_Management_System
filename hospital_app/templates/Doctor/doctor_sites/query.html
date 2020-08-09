@@ -1,0 +1,74 @@
+{% extends 'Doctor/home.html' %}
+{% block content %}
+<div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <form method=POST action="{{ url_for('doctor_routes.query' ) }}">                                 
+                    <div class="form-group" id = "add_symptoms">
+                            <label for="allsymptoms">Symptoms</label>
+                            <br> Symptom 1 <input type="text" name="symptoms_inputs[]">
+                    </div>                
+                    <input type="button" value = "Add Symptoms" onClick="addSymptoms('add_symptoms');">
+                    <hr>
+                    <button type="submit" class="btn btn-primary btn-block">View</button> 
+                    
+                </form>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class = "row">
+        <div class = "col-6">
+            <h4> Closed Treatments </h4>
+        {% for row in docs %}
+        <div class="card">
+            <div class="card-body">
+                <p>
+                <b>Disease</b> {{row.disease_name}}<br>
+                <b>All symptoms</b>
+                {% for pres in row.prescription %}
+                    {% for symptom in pres.symptoms_inputs %}
+                        {{symptom}}
+                    {% endfor %}        
+                {% endfor %}<br>
+                <b>Medicines</b>
+                {% for pres in row.prescription %}
+                    {% for medicine in pres.medicines_inputs %}
+                        {{medicine}}
+                    {% endfor %}        
+                {% endfor %}<br>        
+            </p>
+            </div>
+        </div> 
+        <br>
+        {% endfor %}
+        </div>
+        <div class = "col-6">
+            <h4> Ongoing Treatments </h4>
+            {% for row in predocs %}
+            <div class="card">
+                <div class="card-body">
+                <p>
+                    <b>Disease</b> {{row.disease_name}}<br>
+                    <b>All symptoms</b>
+                    {% for pres in row.prescription %}
+                        {% for symptom in pres.symptoms_inputs %}
+                            {{symptom}}
+                        {% endfor %}        
+                    {% endfor %}<br>
+                    <b>Medicines</b>
+                    {% for pres in row.prescription %}
+                        {% for medicine in pres.medicines_inputs %}
+                            {{medicine}}
+                        {% endfor %}        
+                    {% endfor %}<br>        
+                </p>
+                </div>
+            </div> 
+            <br>
+            {% endfor %}
+            </div>
+            </div>
+    </div>
+    {% endblock %}

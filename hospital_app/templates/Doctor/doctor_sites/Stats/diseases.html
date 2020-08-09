@@ -1,0 +1,72 @@
+{% extends 'Doctor/home.html' %}
+
+
+{% block links %}
+    {{super()}}
+  <script src='../../../../static/Chart.min.js'></script>
+  
+{% endblock %}
+
+{% block content %}
+<body>
+  <center>
+    <h1>{{ title }}</h1>
+  </center>
+  <!-- Basic dropdown -->
+<button class="btn btn-primary dropdown-toggle mr-4" type="button" data-toggle="dropdown"
+aria-haspopup="true" aria-expanded="false">Select year</button>
+
+<div class="dropdown-menu">
+  <a class="dropdown-item" href="{{url_for('stats.disease_stats',year = year)}}">{{year}}</a>
+  <a class="dropdown-item" href="{{url_for('stats.disease_stats',year = year-1)}}">{{year-1}}</a>
+  <a class="dropdown-item" href="{{url_for('stats.disease_stats',year = year-2)}}">{{year-2}}</a>
+</div>
+<!-- Basic dropdown -->
+ 
+  <center>
+    <canvas id="chart" width="600" height="400"></canvas>
+    <script>
+      // bar chart data
+      var barData = {
+        labels : [
+          {% for item in labels %}
+           "{{ item }}",
+          {% endfor %}
+	],
+
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          data : [
+            {% for item in values %}
+               "{{ item }}",
+              {% endfor %}
+	    ]
+          }
+        ]
+      }
+
+     // get bar chart canvas
+     var mychart = document.getElementById("chart").getContext("2d");
+
+       steps = 10
+       max = {{max}}
+
+     // draw bar chart
+     new Chart(mychart).Bar(barData, {
+       scaleOverride: true,
+       scaleSteps: steps,
+       scaleStepWidth: Math.ceil(max / steps),
+       scaleStartValue: 0,
+       scaleShowVerticalLines: true,
+       scaleShowGridLines : true,
+       barShowStroke : true,
+       scaleShowLabels: true
+       }
+     );
+
+    </script>
+  </center>
+</body>
+{% endblock %}

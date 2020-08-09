@@ -1,0 +1,90 @@
+{% extends 'Compounder/home.html' %}
+{% block content %}
+
+<div class="container">
+  <div class="row">
+    <div class="col">
+        <!-- Heading -->
+        <div class="card mb-4 wow fadeIn winter-neva-gradient">
+          <!--Card content-->
+          <div class="card-body">
+            <div>
+              <h4 class="mb-2 mb-sm-0 pt-1">
+              <strong>Treatment  </strong><br>
+              <small class="text-muted"><a href="{{url_for('admin.user_details',username = username)}}" >{{username}}</a></small>
+              </h4>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="col">
+      <div class="card mb-4 wow fadeIn winter-neva-gradient">
+        <!--Card content-->
+        <div class="card-body">
+          <div>
+            <h4 class="mb-2 mb-sm-0 pt-1">
+            <strong>Start New Treatment  </strong><br>
+            <button><a href="{{url_for('comp.comp_new_start_treatment',username = username)}}" ><h6>Start New Treatment</h6> </a> </button>
+    
+            </h4>
+          </div>
+        </div>
+      </div>
+    </div> 
+  </div>
+</div>
+
+
+
+
+
+  
+  <div>
+
+<table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">Treatment ID
+      </th>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Name
+      </th>
+      <th class="th-sm">Doctor
+      </th>
+      <th class="th-sm">Started on
+      </th>
+      <th class="th-sm">Disease
+      </th>
+      <th class="th-sm">Continue Treatment
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for treat in treatments %}
+       <tr>
+           <td>{{treat.treat_id}}</td>
+           <td><a href="{{url_for('admin.user_details',username = username)}}" >{{treat.patient_userid}}</a></td>
+           <td>{{treat.patient_name}}</td>
+           <td>{{treat.doctorid}}</td>
+           <td>{{treat.time_stamp}}</td>
+           <td>{{treat.disease_name}}</td>
+           <td><a href="{{url_for('comp.comp_continue_treatment' , treat_id = treat.treat_id)}}" > click here </a> </td>
+        </tr>
+    {% endfor %}   
+  </tbody>
+</table>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+<script>
+$(document).ready(function () {
+  $('#dtBasicExample').DataTable();
+  $('.dataTables_length').addClass('bs-select');
+  });
+</script> 
+{% endblock %}
+
