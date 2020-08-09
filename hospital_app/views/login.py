@@ -53,7 +53,7 @@ def login():
         if current_user.role=="user" :
             return redirect(url_for('user.home_page'))
         if current_user.role=="admin":
-            return redirect(url_for('admin.home_page'))
+            return redirect(url_for('admin.registration_request'))
         if current_user.role=="doctor":
             return redirect(url_for('doctor_routes.home_page'))      
 

@@ -18,8 +18,16 @@
   <link rel="stylesheet" href="../static/css/mdb.min.css">
   <!-- Your custom styles (optional) -->
   <link rel="stylesheet" href="../static/css/style.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
 
   <link href="../static/css1/simple-sidebar.css" rel="stylesheet">
+  <style>
+    tfoot input {
+        width: 100%;
+        padding: 3px;
+        box-sizing: border-box;
+    }
+  </style>
   {% endblock %}
 </head>
 <body class = "fixed-sn light-blue-skin">
@@ -63,7 +71,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
                 <li class="nav-item active">
-                  <a class="nav-link" href="{{url_for('admin.home_page')}}">Home <span class="sr-only">(current)</span></a>
+                  {% block home %}<a class="nav-link" href= "{{url_for('admin.home_page')}}">Home <span class="sr-only">(current)</span></a>{% endblock %}
                 </li>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

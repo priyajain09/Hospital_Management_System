@@ -25,20 +25,27 @@
 <div class="card text-center">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item">
-        <a class="nav-link " href="{{url_for('admin.registration_request')}}">Doctor</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{{url_for('admin.assistant_registration_requests',role='assistant')}}" >Assistant</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link " href="{{url_for('admin.assistant_registration_requests',role='compounder')}}">Compounder</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link active" href="{{url_for('admin.assistant_registration_requests',role='reception')}}">Receptionist</a>
-      </li>
-    </ul>
+        <li class="nav-item">
+          <a class="nav-link" href="">Doctor<span class="badge badge-danger ml-2">{{len_doctor}}</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{{url_for('admin.assistant_registration_requests',role='assistant')}}" >Assistant<span class="badge badge-danger ml-2">{{len_assistant}}</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('admin.assistant_registration_requests',role='compounder')}}">Compounder<span class="badge badge-danger ml-2">{{len_comp}}</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{{url_for('admin.assistant_registration_requests',role='reception')}}">Receptionist<span class="badge badge-danger ml-2">{{len_recep}}</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('admin.assistant_registration_requests',role='chief_doctor')}}">Chief Medical Officer<span class="badge badge-danger ml-2">{{len_chief}}</span></a>
+        </li>
+      </ul>
   </div>
+  <br>
+  {% for message in get_flashed_messages() %}
+  <div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
   
   {% for row in list %}
   <div class="jumbotron text-center hoverable p-4">
@@ -66,7 +73,6 @@
       </h4>
 
       <p class="font-weight-normal">
-          <strong>Under : </strong> {{row.doctor_username}}<br>
           <strong>Birthdate : </strong> {{row.birthdate}}<br>
           <strong>Age : </strong> {{row.age}}<br>
           <strong>Gender : </strong> {{row.gender}}<br>

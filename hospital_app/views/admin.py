@@ -1,4 +1,5 @@
 from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users,temporary_role_users
+from hospital_app.models import user_role
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form,disease_statistic_form
 from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
@@ -6,15 +7,18 @@ from hospital_app import db,mongo
 from _datetime import datetime
 from hospital_app.email import send_request_accepted_mail, send_request_rejected_mail
 import datetime
+from flask_login import current_user, login_required
 
 admin_bp = Blueprint('admin', __name__)
 
 
 @admin_bp.route('/admin/home_page')
+@login_required
 def home_page():
     return render_template('Admin/home_page.html')
 
 @admin_bp.route('/admin/doctor_list',methods = ['GET','POST'])
+@login_required
 def doctor_list():
     form = search_doctor_form()
     if form.validate_on_submit():
@@ -41,11 +45,6 @@ def user_list():
     return render_template('Admin/admin_sites/list_of_users.html',q=q,form= form)
 
 
-@admin_bp.route('/admin/registration_request/<username>')
-def action_reg_request(username):
-    q = temporary_users.query.get(username)
-    return render_template('Admin/admin_sites/registration_request_action.html',row=q)
-
 @admin_bp.route('/admin/<username>/<action>')
 def action_taken_on_request(username,action):
     if action == "Reject":
@@ -69,14 +68,18 @@ def action_taken_on_request(username,action):
         # send_request_accepted_mail(y)
     return redirect(url_for('admin.registration_request'))   
 
-
-
 @admin_bp.route('/admin/registration_requests')
 def registration_request():
     q = temporary_users.query.filter_by(role='doctor').all()
     if len(q) == 0:
         flash("No pending requests")
-    return render_template('Admin/admin_sites/registration_request.html',q=q)
+    len_doctor = len(q)
+    len_assistant = len(temporary_role_users.query.filter_by(role = "assistant").all())
+    len_recep = len(temporary_role_users.query.filter_by(role = "reception").all())
+    len_comp = len(temporary_role_users.query.filter_by(role = "compounder").all())
+    len_chief = len(temporary_role_users.query.filter_by(role = "chief_doctor").all())
+    return render_template('Admin/admin_sites/registration_request.html',q=q,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
+    len_comp= len_comp, len_chief = len_chief)
 
 @admin_bp.route('/admin/departments', methods = ['GET','POST'])
 def departments():
@@ -176,18 +179,59 @@ def assistant_registration_requests(role):
     if (len(u) == 0):
         flash("No pending requests")
 
-    if role == "assistant":    
-        return render_template('Admin/admin_sites/assistant_requests.html',list = u)   
-    elif role =="compounder":
-        return render_template('Admin/admin_sites/compounder_requests.html',list = u)  
+    if role == "assistant":
+        len_assistant = len(u)
+        len_doctor = len(temporary_users.query.filter_by(role='doctor').all())
+        len_recep = len(temporary_role_users.query.filter_by(role = "reception").all())
+        len_comp = len(temporary_role_users.query.filter_by(role = "compounder").all())
+        len_chief = len(temporary_role_users.query.filter_by(role = "chief_doctor").all())   
     elif role == "reception":
-        return render_template('Admin/admin_sites/reception_requests.html',list = u)  
-        
+        len_recep = len(u)
+        len_doctor = len(temporary_users.query.filter_by(role='doctor').all())
+        len_assistant = len(temporary_role_users.query.filter_by(role = "assistant").all())
+        len_comp = len(temporary_role_users.query.filter_by(role = "compounder").all())
+        len_chief = len(temporary_role_users.query.filter_by(role = "chief_doctor").all())  
+    elif role == "compounder":
+        len_comp = len(u)
+        len_doctor = len(temporary_users.query.filter_by(role='doctor').all())
+        len_assistant = len(temporary_role_users.query.filter_by(role = "assistant").all())
+        len_recep = len(temporary_role_users.query.filter_by(role = "reception").all())
+        len_chief = len(temporary_role_users.query.filter_by(role = "chief_doctor").all()) 
+    elif role == "chief_doctor":
+        len_chief = len(u)
+        len_doctor = len(temporary_users.query.filter_by(role='doctor').all())
+        len_assistant = len(temporary_role_users.query.filter_by(role = "assistant").all())
+        len_recep = len(temporary_role_users.query.filter_by(role = "reception").all())
+        len_comp = len(temporary_role_users.query.filter_by(role = "compounder").all()) 
+    
+
+    if role == "assistant":    
+        return render_template('Admin/admin_sites/assistant_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
+    len_comp= len_comp, len_chief = len_chief)   
+    elif role =="compounder":
+        return render_template('Admin/admin_sites/compounder_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
+    len_comp= len_comp, len_chief = len_chief)  
+    elif role == "reception":
+        return render_template('Admin/admin_sites/reception_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
+    len_comp= len_comp, len_chief = len_chief) 
+    elif role == "chief_doctor":
+        return render_template('Admin/admin_sites/chief_doctor_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
+    len_comp= len_comp, len_chief = len_chief) 
+
+
 @admin_bp.route('/admin/assistant_registration_requests/<username>/<action>/<role>')
 def action_role_reg(username,action,role):
 
     if action == "Accept":
         user = temporary_role_users.query.filter_by(username=username).first()
+        if (role == "assistant"):
+            x = user_role.query.filter_by(role = "assistant",doctor_username = user.doctor_username).first()
+            if x is not None:
+                flash("Assistant for doctor "+user.doctor_username+" already exists. To add this assistant remove the existing one.")
+        else:
+            x = user_role.query.filter_by(role = role).first()
+            if x is not None:
+                flash("Already exists a person for "+role+" role. Remove the existing person to add new.")
         if user is not None:
             u = User(username = user.username, email = user.email, role = user.role, password_hash = user.password)
             db.session.add(u)
