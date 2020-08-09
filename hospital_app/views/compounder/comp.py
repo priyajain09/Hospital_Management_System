@@ -61,6 +61,8 @@ def add_prescription(treat_id):
         chronic = chronic.split()
         if treatment['doctorid'] == '':
             doctorid = request.form['doctor']
+        else:
+            doctorid = treatment['doctorid']
         print(temperature)
 
         #new treatment
@@ -79,7 +81,32 @@ def add_prescription(treat_id):
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'allergies' : { '$each': allergies }}})
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'chronic' : { '$each': chronic }}})
 
+        flag = 0
+        #add treatment to patient queue
+        try:    
+            doctor_username = doctorid
+            doctor = Doctor.query.filter_by(username = doctor_username).first()
+            patient = Patient.query.filter_by(username = treatment['patient_userid']).first()
+            doctor_name = doctor.name
+            patient = patient_queue(name = patient.name, username = patient.username, treat_id = treat_id, doctor = doctor_name,
+            doctor_username = doctor_username)
+            db.session.add(patient)
+            db.session.commit()
+            print('Successfully added to patient Queue')
+            flag = 1
+        except:
+            db.session.rollback()
 
+        if flag == 1 :
+            try:
+                u = compounder_queue.query.get(treatment['patient_userid'])
+                db.session.delete(u)
+                db.session.commit()
+                print("Removed successfully!")
+            except:
+                db.session.rollback()
+                print("Try again!")
+            
     return redirect(url_for('comp.queue'))
 
 @comp_bp.route('/comp_continue_treatment/<treat_id>')

@@ -1,0 +1,103 @@
+{% extends 'Doctor/home.html' %}
+{% block heading %}
+<h3 >
+  <strong>Start Treatment</strong><br>
+  <small class="text-muted">faded secondary text</small>
+</h3>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-4">
+            <!--Treatment Detail Card -->
+            <div class="card">
+                <!-- Card content -->
+                <div class="card-body">
+                <!-- Title -->
+                <h4 class="card-title"><b>Treatment Id: </b>{{ treatment.treat_id }}</h4>
+                <!-- Text -->
+                <p class="card-text">
+                <b>Started on :  </b>{{ treatment.time_stamp }}<br>
+                <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+                <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+                <b>Age:  </b>{{ treatment.age}}<br>
+                <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+                <b>Gender:  </b>{{ treatment.gender}}<br>
+                {% if treatment.doctorid != '' %}
+                    <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
+                    <b>Allergies:  </b>{{ treatment.allergies}}<br>
+                    <b>Chronic Diseases:  </b>{{ treatment.chronic}}<br>
+                {% endif %}
+                </p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <!--Fill Prescription Card -->
+            <div class="card">
+                <!-- Card content -->
+                <div class="card-body">
+                    <!-- Title -->
+                    <h4 class="card-title">Fill Prescription Form</h4>
+                        <!-- Form -->
+                        <form method=POST action="{{ url_for('comp.add_prescription', treat_id = treatment.treat_id ) }}">
+                            <div class="row">
+                                <div class="col">
+                                    <p class="card-text">
+                                        <div class="form-group">
+                                            <label for="temp">Temperature</label>
+                                            <input type="number" name="temperature" min="90" max="112" step="0.1" value="97">
+                                        </div>
+                                    </p>
+                                    <p class="card-text">
+                                        <div class="form-group">
+                                            <label for="BP">Blood Pressure</label><br>
+                                            <label for="Sys">  <small class="text-muted">Systolic (mm Hg) </small></label><input type="number" name="Sys"  value="120">
+                                            <label for="Dia">  <small class="text-muted">Diastolic (mm Hg) </small></label><input type="number" name="Dia"  value="80">
+                                        </div>
+                                    </p>
+                                    <hr>
+                                    <p class="card-text">
+                                        <div class="form-group">
+                                            <label for="allergies">Allergies <small class="text-muted"> (comma or space separated) </small></label>
+                                            <input type="textarea" name="allergies" >
+                                        </div>
+                                    </p>
+                                    <p class="card-text">
+                                        <div class="form-group">
+                                            <label for="chronic">Chronic <small class="text-muted"> (comma or space separated) </small></label>
+                                            <input type="textarea" name="chronic" >
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                            <br>
+                            <div>    {% if treatment.doctorid == '' %}
+                                <div class="form-group">
+                                    <label for="doctor">Choose Doctor</label>
+                                    <input type="text" name="doctor" >
+                                </div>
+                                    {% endif %}
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Add Prescription</button> 
+                        </form>
+                        <!--form--->
+                </div>
+            </div>
+            <br>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+
+{% endblock %}
+

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor
+from hospital_app.models import User,Doctor , patient_queue
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -267,3 +267,14 @@ def query():
         predocs = mongo.db.Treatment.find({ 'prescription' :{ '$elemMatch': {  'symptoms_inputs':{ '$all': symptoms_inputs }}}})
         return render_template('Doctor/doctor_sites/query.html', docs = docs, predocs = predocs)
     return render_template('Doctor/doctor_sites/query.html')    
+
+@doctor_routes_bp.route('/doc-queue')
+def doc_queue():
+    u = patient_queue.query.all()       
+    return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
+
+@doctor_routes_bp.route('/doc-visit_patient/<treat_id>')
+def visit_patient(treat_id):
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+    return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment)
+    
