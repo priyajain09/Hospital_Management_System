@@ -5,3 +5,38 @@ u.set_password('pj')
 db.session.add(u)
 db.session.commit()
 
+/*************
+Fake data Docotor
+************/
+
+u = User(username = 'Da', email='Da@gmail.com', role='doctor')
+u.set_password('pass')
+db.session.add(u)
+db.session.commit()
+
+u = User(username = 'Db', email='Db@gmail.com', role='doctor')
+u.set_password('pass')
+db.session.add(u)
+db.session.commit()
+
+u = User(username = 'Dc', email='Dc@gmail.com', role='doctor')
+u.set_password('pass')
+db.session.add(u)
+db.session.commit()
+
+users = User.query.all()
+for user in users:
+    print(user.username)
+
+
+u = Doctor(id = 1, username = 'Da', name = 'Dr. Da', gender_doctor = 'Female' , age = '30', contact_number = '12121212', qualification = 'abcdefg', experience = '5 years', specialization = 'Dentist')
+db.session.add(u)
+db.session.commit()
+
+u = Doctor(id = 2, username = 'Db', name = 'Dr. Db', gender_doctor = 'Male' , age = '35', contact_number = '121212', qualification = 'defg', experience = '5 years', specialization = 'General Physician')
+db.session.add(u)
+db.session.commit()
+
+u = Doctor(id = 3, username = 'Dc', name = 'Dr. Dc', gender_doctor = 'Male' , age = '45', contact_number = '12121234', qualification = 'Something qualified', experience = '5 years', specialization = 'General Physician')
+db.session.add(u)
+db.session.commit()
