@@ -77,7 +77,12 @@
                             <div>    {% if treatment.doctorid == '' %}
                                 <div class="form-group">
                                     <label for="doctor">Choose Doctor</label>
-                                    <input type="text" name="doctor" >
+                                    <select class="browser-default custom-select mb-4" name="doctor" required="required">
+                                        <option value="" selected>userid</option>
+                                        {% for row in doctor_list %}
+                                            <option value= {{row.username}} >{{row.username}}</option>
+                                        {% endfor %}
+                                    </select>
                                 </div>
                                     {% endif %}
                             </div>

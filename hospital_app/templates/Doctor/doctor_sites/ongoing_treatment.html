@@ -1,40 +1,43 @@
 {% extends 'Doctor/home.html' %}
+
+{% block links %}
+{{super()}}
+<link rel="stylesheet" href="../../../static/css1/doctor/bootstrap-multiselect.css" type="text/css"/>
+ {% endblock %}
 {% block heading %}
-<h3 >
-  <strong>Start Treatment</strong><br>
-  <small class="text-muted">faded secondary text</small>
-</h3>
 {% endblock %}
 
 
 {% block content %}
-<div class="container">
-    <div class="row">
-        <div class="col-4">
+<div class="container-fluid">
+        <div class="col-8">
             <!--Treatment Detail Card -->
             <div class="card">
                 <!-- Card content -->
                 <div class="card-body">
-                <!-- Title -->
-                <h4 class="card-title"><b>Treatment Id: </b>{{ treatment.treat_id }}</h4>
-                <!-- Text -->
-                <p class="card-text">
-                <b>Started on :  </b>{{ treatment.time_stamp }}<br>
-                <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
-                <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
-                <b>Age:  </b>{{ treatment.age}}<br>
-                <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
-                <b>Gender:  </b>{{ treatment.gender}}<br>
-                {% if treatment.doctorid != '' %}
-                    <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
-                    <b>Allergies:  </b>{{ treatment.allergies}}<br>
-                    <b>Chronic Diseases:  </b>{{ treatment.chronic}}<br>
-                {% endif %}
-                </p>
+                    <div class="row">
+                        <div class="col">
+                            <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
+                            <b>Started on :  </b>{{ treatment.time_stamp }}<br>
+                            <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+                            <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+                            <b>Doctor ID:  </b>{{ treatment.doctorid}}
+                        </div>
+                        <div class="col">
+                            <b>Age:  </b>{{ treatment.age}}<br>
+                            <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+                            <b>Gender:  </b>{{ treatment.gender}}<br>
+                            <hr>
+                            <b>Allergies:  </b>{{ treatment.allergies}}<br>
+                            <b>Chronic Diseases:  </b>{{ treatment.chronic}}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col">
+    <br>
+    <div class = "row">
+        <div class="col-8">
             <!--Fill Prescription Card -->
             <div class="card">
                 <!-- Card content -->
@@ -42,46 +45,45 @@
                     <!-- Title -->
                     <h4 class="card-title">Fill Prescription Form</h4>
                         <!-- Form -->
-                        <form method=POST action="{{ url_for('comp.add_prescription', treat_id = treatment.treat_id ) }}">
+                        <form method=POST action="{{ url_for('doctor_routes.prescription', treat_id = treatment.treat_id ) }}">
                             <div class="row">
                                 <div class="col">
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="temp">Temperature</label>
-                                            <input type="number" name="temperature" min="90" max="112" step="0.1" value="97">
-                                        </div>
-                                    </p>
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="BP">Blood Pressure</label><br>
-                                            <label for="Sys">  <small class="text-muted">Systolic (mm Hg) </small></label><input type="number" name="Sys"  value="120">
-                                            <label for="Dia">  <small class="text-muted">Diastolic (mm Hg) </small></label><input type="number" name="Dia"  value="80">
-                                        </div>
-                                    </p>
+                                    <label for="multiselect1">Symptoms</label>
+                                    <select id="multiselect1" multiple="multiple" name="multiselect1">
+                                        <option value="Sweating">Sweating</option>
+                                        <option value="Weekness">Weekness</option>
+                                        <option value="Abdominal Pain">Abdominal Pain</option>
+                                        <option value="Soar Throat">Soar Throat</option>
+                                        <option value="Rashes">Rashes</option>
+                                        <option value="Vomiting">Vomiting</option>
+                                    </select>
                                     <hr>
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="allergies">Allergies <small class="text-muted"> (comma or space separated) </small></label>
-                                            <input type="textarea" name="allergies" >
-                                        </div>
-                                    </p>
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="chronic">Chronic <small class="text-muted"> (comma or space separated) </small></label>
-                                            <input type="textarea" name="chronic" >
-                                        </div>
-                                    </p>
+                                </div>
+                                <div class="col">
+                                    <label for="multiselect2">Disease</label>
+                                    <select id="multiselect2" multiple="multiple" name="multiselect2">
+                                        <option value="Common cold">Common cold</option>
+                                        <option value="Viral fever">Viral fever</option>
+                                        <option value="Bacterial fever">Bacterial fever</option>
+                                        <option value="Diabetes type 1">Diabetes type 1</option>
+                                        <option value="Diabetes type 2">Diabetes type 2</option>
+                                        
+                                    </select>
+                                    <hr>
+                                </div>
+                                <div class="col">
+                                    <label for="multiselect3">Medicines</label>
+                                    <select id="multiselect3" multiple="multiple" name="multiselect3">
+                                        <option value="Combiflame">Combiflame</option>
+                                        <option value="Paracetamol">Paracetamol</option>
+                                        <option value="ORS">ORS</option>
+                                        <option value="Lever - 52">Lever - 52</option>
+                                    </select>
+                                    <hr>
                                 </div>
                             </div>
                             <br>
-                            <div>    {% if treatment.doctorid == '' %}
-                                <div class="form-group">
-                                    <label for="doctor">Choose Doctor</label>
-                                    <input type="text" name="doctor" >
-                                </div>
-                                    {% endif %}
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block">Add Prescription</button> 
+                            <button type="submit" class="btn btn-primary">Next</button> 
                         </form>
                         <!--form--->
                 </div>
@@ -97,7 +99,31 @@
 
 
 {% block scripts %}
-{{super()}}
+<script type="text/javascript" src="../../../static/js_doctor/bootstrap-multiselect.js"></script>
 
+<script>
+    {{super()}}
+    $(function() {  
+     $('#multiselect1').multiselect({
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Search for something...'
+            }); 
+    });
+    $(function() {  
+     $('#multiselect2').multiselect({
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Search for something...'
+            }); 
+    });
+    $(function() {  
+     $('#multiselect3').multiselect({
+                enableFiltering: true,
+                enableCaseInsensitiveFiltering: true,
+                filterPlaceholder: 'Search for something...'
+            }); 
+    });
+    </script>
 {% endblock %}
 

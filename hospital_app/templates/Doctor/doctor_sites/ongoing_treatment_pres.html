@@ -1,0 +1,122 @@
+{% extends 'Doctor/home.html' %}
+
+{% block links %}
+{{super()}}
+
+ {% endblock %}
+{% block heading %}
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
+        <div class="col-8">
+            <!--Treatment Detail Card -->
+            <div class="card">
+                <!-- Card content -->
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
+                            <b>Started on :  </b>{{ treatment.time_stamp }}<br>
+                            <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+                            <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+                            <b>Doctor ID:  </b>{{ treatment.doctorid}}
+                        </div>
+                        <div class="col">
+                            <b>Age:  </b>{{ treatment.age}}<br>
+                            <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+                            <b>Gender:  </b>{{ treatment.gender}}<br>
+                            <hr>
+                            <b>Allergies:  </b>{{ treatment.allergies}}<br>
+                            <b>Chronic Diseases:  </b>{{ treatment.chronic}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <br>
+    <!--Fill Prescription Card -->
+    <div class="card">
+                <!-- Card content -->
+                <div class="card-body">
+                    <!-- Title -->
+                    <h4 class="card-title">Fill Prescription Form</h4>
+                        <!-- Form -->
+                        <form method=POST action="{{ url_for('doctor_routes.prescription_two', treat_id = treatment.treat_id , pres_id = pres_id ) }}">
+                            <div class = "row">
+                                <div class="col-12">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th> Medicine </th>
+                                        <th> Moring Dosage</th>
+                                        <th> Afternoon Dosage</th>
+                                        <th> Night Dosage</th>
+                                        <th> Quantity</th>
+                                        <th> </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for m in med %}
+                                    <tr>
+                                        <td>{{m}} </td>
+                                        <td><input type="number" name="{{m}}_morndos" min="0" step="1" value="0"></td>
+                                        <td><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0"></td>
+                                        <td><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0"></td>
+                                        <td><input type="number" name="{{m}}_quantity" min="0" step="1" value="0"></td>
+                                        <td><select name="Dosage" required="required">
+                                            <option value="" selected>dosage</option>
+                                            <option value="Empty stomach">Empty stomach</option>
+                                            <option value="After having some food">After having some food</option>                                            
+                                            <option value="Either way">Either way</option>
+                                        </select></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                </table>
+                                <br>
+                                <div class = "row">
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="reports">Reports <small class="text-muted"> (comma or space separated) </small></label>
+                                            <input type="textarea" name="reports" >
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                            <label for="next_visit_date">Next Visit Date</label>
+                                            <input type="date" class="form-control" name="next_visit_date" >
+                                        </div>
+                                    </div> 
+                                    <div class="col-4">
+                                        <div class="form-group">
+                                        <label>Note </label>
+                                        <input type="textarea" name="note"> 
+                                        </div>
+                                    </div>
+                                </div>   
+                                </div>
+
+                            <br>
+                            <button type="submit" class="btn btn-primary">Appointment Done</button> 
+                            </div>
+                        </form>
+                        <!--form--->
+            <br>
+        </div>
+    </div>
+</div>
+<br>
+<br>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    {{super()}}
+    </script>
+{% endblock %}
+

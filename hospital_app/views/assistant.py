@@ -4,6 +4,7 @@ from flask_login import current_user, login_required
 from hospital_app import user_collection
 from flask import request
 from sqlalchemy import func
+from hospital_app import db
 
 assistant_bp = Blueprint('assistant', __name__)
 

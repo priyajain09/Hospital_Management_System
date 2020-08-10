@@ -9,6 +9,7 @@ from flask import request
 from hospital_app.forms import patient_registration_form,queue_form
 import random, string
 from sqlalchemy import func
+from datetime import date, datetime, timedelta
 
 recep_bp = Blueprint('recep', __name__)
 
@@ -73,7 +74,15 @@ def add_to_queue(name, username):
             if (patient_queue.query.get(treat_id) is not None):
                 flash("Already added!")
                 return redirect(url_for('recep.patient_enquiry'))
-                
+            
+            treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })    
+            #existing treatment
+            if treatment['total_prescriptions'] != 0:
+                mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 }})
+                mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now()} } })
+            else:
+                flash("No existing treatment with this treatment ID!")
+                return redirect(url_for('recep.patient_enquiry'))
             doctor_username = form.doctor_username.data
             doctor = Doctor.query.filter_by(username = doctor_username).first()
             doctor_name = doctor.name
