@@ -46,7 +46,7 @@ def update_profile():
 
 @doctor_routes_bp.route('/doc-queue')
 def doc_queue():
-    u = patient_queue.query.all()       
+    u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
     return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
 
 @doctor_routes_bp.route('/doc-visit_patient/<treat_id>')
