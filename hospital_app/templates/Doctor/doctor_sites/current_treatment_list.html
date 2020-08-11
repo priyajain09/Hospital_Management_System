@@ -2,29 +2,9 @@
 
   {% block links %}
   {{super()}}
-  <!-- Custom styles for this template -->
-  <link href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="https://cdn.datatables.net/fixedcolumns/3.3.1/css/fixedColumns.dataTables.min.css" rel="stylesheet">
-<link href="..static/css1/doctor/styles.css" rel="stylesheet">
 
 {% endblock %}
 
-  {% block head %}
-  {{super()}}
-    <style type="text/css">
- /* Ensure that the demo table scrolls */
- th, td { white-space: nowrap; }
-    div.dataTables_wrapper {
-        width: 800px;
-        margin: 0 auto;
-    }
- 
-    th input {
-        width: 90%;
-    }
-      </style>
-  
-{% endblock %}
 {% block heading %}
 
 <!-- Heading -->
@@ -50,35 +30,65 @@
   <!--Card content-->
   <div class="card-body ">
 
-    <table id="example" class="stripe row-border order-column" style="width:100%">
+    <table id="dt-filter-search" class="table" cellspacing="0" width="100%">
         <thead>
             <tr>
-              <th>Treatment ID</th>
-              <th>Start Date</th>
-              <th>Patient User ID</th>
-                <th>Patient Name</th>
-                <th>Disease Name</th>
-                <th>Symptoms</th>
-                <th>Medicines</th>
-
+              <th class="th-sm">Treatment ID</th>
+              <th class="th-sm">Start Date</th>
+              <th class="th-sm">Patient User ID</th>
+                <th class="th-sm">Patient Name</th>
+                <th class="th-sm">Disease Name</th>
+                <th class="th-sm">Symptoms</th>
+                <th class="th-sm">Medicines</th>
+                <th class="th-sm">View</th> 
             </tr>
         </thead>
         <tbody>
           {% for roww in treatment %}
+          <div class="text-white-50">
+          {% set symList = [] %} 
+          {% set medList = [] %}
+          
+          {% for pres in roww.prescription %}
+            {% for sym in pres.symptoms %}
+              {{ symList.append(sym) }}
+            {% endfor %}
+            {% for med in pres.medicines %}
+            {{ medList.append(med) }}
+            {% endfor %}
+          {% endfor %}  
+          </div>
             <tr>
               <td>{{roww.treat_id}}</td>
               <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
               <td>{{roww.patient_userid}}</td>
                 <td>{{roww.patient_name}}</td>
-                <td>{{roww.disease_name}}</td>
-                <td>{{roww.symptoms_inputs}}</td>
-                <td>{{roww.medicines_inputs}}</td>
+                <td> 
+                  {% for dis in roww.disease %}
+                   {{dis}}
+                  {% endfor %}  
+                </td>
+                <td>
+                  {% for x in symList|unique %}
+                    {{x}}                 
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for x in medList|unique %}
+                    {{x}}                 
+                  {% endfor %}</td>
+                <td>
+                  <a href = "{{url_for('doctor_routes.prescription_history',treat_id = roww.treat_id)}}" target="_blank">
+                  View 
+                  </a>  
+                  </td>
             </tr>
             {% endfor %}
 
         </tbody>
         <tfoot>
             <tr>
+              <th>Treatment ID</th>
               <th>Started On</th>        
               <th>Patient User ID</th>
               <th>Patient Name</th>
@@ -94,34 +104,28 @@
 {% endblock %}
 
 {% block scripts %}
-
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" src="https://cdn.datatables.net/fixedcolumns/3.3.1/js/dataTables.fixedColumns.min.js"></script>
-
+{{super()}}
 <script>
-$(document).ready(function() {
-    // Setup - add a text input to each footer cell
-    $('#example tfoot th').each( function (i) {
-        var title = $('#example thead th').eq( $(this).index() ).text();
-        $(this).html( '<input type="text" placeholder="Search '+title+'" data-index="'+i+'" />' );
-    } );
-  
-    // DataTable
-    var table = $('#example').DataTable( {
-        scrollY:        "300px",
-        scrollX:        true,
-        scrollCollapse: true,
-        paging:         false,
-        fixedColumns:   true
-    } );
- 
-    // Filter event handler
-    $( table.table().container() ).on( 'keyup', 'tfoot input', function () {
-        table
-            .column( $(this).data('index') )
-            .search( this.value )
-            .draw();
-    } );
-} );</script> 
+$(document).ready(function () {
+  $('#dt-filter-search').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var search = $(`<input class="form-control form-control-sm" type="text" placeholder="Search">`)
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change input', function () {
+                  var val = $(this).val()
+
+                  column
+                      .search( val ? val : '', true, false )
+                      .draw();
+              } );
+
+      } );
+  }
+  });
+});
+</script>
+
 {% endblock %}
