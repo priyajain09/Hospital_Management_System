@@ -31,6 +31,9 @@
                             <b>Allergies:  </b>{{ treatment.allergies}}<br>
                             <b>Chronic Diseases:  </b>{{ treatment.chronic}}
                         </div>
+                        <div class="col">
+                            <a href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > View Prescriptions </a>
+                        </div>
                     </div>
                 </div>
             </div>

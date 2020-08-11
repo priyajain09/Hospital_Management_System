@@ -40,7 +40,7 @@
                 <th class="th-sm">Disease Name</th>
                 <th class="th-sm">Symptoms</th>
                 <th class="th-sm">Medicines</th>
-
+                <th class="th-sm">View</th> 
             </tr>
         </thead>
         <tbody>
@@ -77,6 +77,11 @@
                   {% for x in medList|unique %}
                     {{x}}                 
                   {% endfor %}</td>
+                <td>
+                  <a href = "{{url_for('doctor_routes.prescription_history',treat_id = roww.treat_id)}}" target="_blank">
+                  View 
+                  </a>  
+                  </td>
             </tr>
             {% endfor %}
 

@@ -51,7 +51,9 @@ def doc_queue():
 
 @doctor_routes_bp.route('/doc-visit_patient/<treat_id>')
 def visit_patient(treat_id):
+    mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'status': "doctor" }})
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+
     return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment)
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>',methods = ['GET','POST'])
@@ -154,6 +156,10 @@ def prescription_two(treat_id, pres_id):
                     }
                 }
         )
-        print(med)
-        print(note)
     return redirect(url_for('doctor_routes.doc_queue'))
+
+@doctor_routes_bp.route('/prescription-history/<treat_id>')
+def prescription_history(treat_id):
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
+
+    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'])

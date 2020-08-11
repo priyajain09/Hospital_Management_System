@@ -1,0 +1,87 @@
+{% extends 'Doctor/home.html' %}
+
+  {% block links %}
+  {{super()}}
+
+{% endblock %}
+
+{% block heading %}
+
+<!-- Heading -->
+<div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+
+    <h4 class="mb-2 mb-sm-0 pt-1">
+      Prescriptions 
+    </h4>
+  </div>
+
+
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <input class="form-control" id="listSearch" type="text" placeholder="Type something to search list items">
+    <br>
+    <ul class="list-group" id="myList">
+       {% for pres in prescriptions %} 
+      <li class="list-group-item">
+        <b>Prescription ID : </b>      {{pres.pres_id}}<br>
+        <b>Dated : </b>    {{pres.timestamp}}<br>
+        <b>Tests : </b>{{pres.blood_pressure}}  {{pres.temperature}} <br> 
+        <b>Symptoms : </b>{% for sym in pres.symptoms %} {{sym}},  {% endfor %}<br>
+            <table  class="table">
+                
+                    <thead>
+                        <tr>
+                        <th> Medicine </th>
+                        <th> Morning Dosage </th>
+                        <th> Afternoon Dosage </th>
+                        <th> Night Dosage </th>
+                        <th> Quantity </th>
+                        <th> Empty/Filled Stomach</th>
+                        </tr>
+                    </thead>
+                <tbody>
+                    {% for dos in pres.dosage %}
+                    <tr>
+                        <td> {{dos.medicine}}  </td>  
+                        <td> {{dos.morning_dosage}}  </td>  
+                        <td> {{dos.noon_dosage}}  </td>  
+                        <td> {{dos.night_dosage}}  </td>  
+                        <td> {{dos.quantity}}  </td>  
+                        <td> {{dos.Dose}}  </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table><br>
+            {% for nt in pres.note %}
+                {{nt}}<br>
+            {% endfor %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+
+$(document).ready(function(){
+  $("#listSearch").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myList li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
+{% endblock %}
