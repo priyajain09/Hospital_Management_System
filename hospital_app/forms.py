@@ -162,13 +162,13 @@ class queue_form(FlaskForm):
 
 class register_role_form(FlaskForm):
     username = StringField('Username', validators=[InputRequired()])
-    doctor_username = StringField('Doctor username')
+    doctor_username = StringField('Doctor username',default = None)
     password = PasswordField('Password', validators=[InputRequired()])
     password2 = PasswordField(
         'Retype Password', validators=[InputRequired(), EqualTo('password')])
     email = StringField('Email', validators=[InputRequired(), Email()])
     birthdate = DateField("Birthdate", validators=[InputRequired()])
-    role = SelectField('Select role',choices=[('reception','Receptionist'),('compounder','Compounder'),('assistant','Assistant')])
+    role = SelectField('Select role',choices=[('reception','Receptionist'),('compounder','Compounder'),('assistant','Assistant'),('chief_doctor','Chief Medical Officer')])
     firstname = StringField('First name',validators=[InputRequired()])
     lastname = StringField('Last name ')
     age = IntegerField('Age in years',validators=[InputRequired(), NumberRange(1,150)])

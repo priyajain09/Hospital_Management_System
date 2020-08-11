@@ -114,6 +114,7 @@ class deleted_patients(db.Model):
     address = db.Column(db.String(80))
     gender_user = db.Column(db.String(15))
     deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
+    joined_on = db.Column(db.DateTime)
 
 class deleted_doctors(db.Model):
     username = db.Column(db.String(64),primary_key = True)
@@ -242,4 +243,5 @@ class past_user_role(db.Model):
     work_timings = db.Column(db.String(50))
     date_of_joining = db.Column(db.Date)
     end_date = db.Column(db.Date)
+    role = db.Column(db.String(20),nullable = False)
 

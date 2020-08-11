@@ -1,72 +1,93 @@
 {% extends 'Admin/home_page.html' %}
 
 {% block content %}
-
-
-<table id="example" class="display" style="width:100%">
+<div class="card ">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="">Current Patients</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{url_for('admin.deleted_users')}}" >Past Patients</a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+<table id="dt-filter-select" class="table" cellspacing="0" width="100%">
   <thead>
-      <tr>
-          <th>Name</th>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Date of joining</th>
-          <th>Start date</th>
-          <th>More details</th>
-      </tr>
+    <tr>
+      <th class="th-sm">Name
+      </th>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Email
+      </th>
+      <th class="th-sm">Date of joining
+      </th>
+      <th class="th-sm">More Details
+      </th>
+    </tr>
   </thead>
- 
   <tbody>
-      <tr>
-          <td>Tiger Nixon</td>
-          <td>System Architect</td>
-          <td>Edinburgh</td>
-          <td>61</td>
-          <td>2011/04/25</td>
-          <td><a href = "">Click here</a></td>
-      </tr>
-    </tbody>
-    
-    <tfoot>
-        <tr>
-            <th>Name</th>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Date of joining</th>
-            <th>More Details</th>
-        </tr>
-    </tfoot>
+    {% for user in list %}
+    <tr>
+      <td>{{user[1].name}}</td>
+      <td>{{user[0].username}}</td>
+      <td>{{user[0].email}}</td>
+      <td>{{user[1].timestamp.day}}-{{user[1].timestamp.month}}-{{user[1].timestamp.year}}</td>
+      <td><a href="{{url_for('admin.user_details',username = user[0].username, email = user[0].email)}}">Click here</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>Name
+      </th>
+      <th>Username
+      </th>
+      <th>Email
+      </th>
+      <th>Date of joining
+      </th>
+      <th>More Details
+      </th>
+    </tr>
+  </tfoot>
 </table>
-
-<script>
-  $(document).ready(function() {
-    // Setup - add a text input to each footer cell
-    $('#example tfoot th').each( function () {
-        var title = $(this).text();
-        $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
-    } );
- 
-    // DataTable
-    var table = $('#example').DataTable({
-        initComplete: function () {
-            // Apply the search
-            this.api().columns().every( function () {
-                var that = this;
- 
-                $( 'input', this.footer() ).on( 'keyup change clear', function () {
-                    if ( that.search() !== this.value ) {
-                        that
-                            .search( this.value )
-                            .draw();
-                    }
-                } );
-            } );
-        }
-    });
- 
-} );
-</script>
-<script type="text/javascript" src = "https://code.jquery.com/jquery-3.5.1.js"></script>
-<script type = "text/javascript" src = "https://cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script>
+</div>
+</div>
 
 {% endblock %}
+
+{% block add_script %}
+
+<script>
+  $(document).ready(function () {
+  $('#dt-filter-select').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change', function () {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                      $(this).val()
+                  );
+
+                  column
+                      .search( val ? '^'+val+'$' : '', true, false )
+                      .draw();
+              } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+              select.append( '<option value="'+d+'">'+d+'</option>' )
+          } );
+      } );
+  }
+  });
+});
+</script>
+{% endblock %}
+
 

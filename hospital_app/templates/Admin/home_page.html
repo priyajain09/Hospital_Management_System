@@ -6,11 +6,12 @@
       <div class="sidebar-heading"></div>
       <div class="list-group list-group-flush">
         <a href="{{url_for('admin.registration_request')}}" class="list-group-item list-group-item-action bg-light">Registration Requests</a>
-        <a href="{{url_for('admin.user_list')}}" class="list-group-item list-group-item-action bg-light">Users</a>
+        <a href="{{url_for('admin.user_list')}}" class="list-group-item list-group-item-action bg-light">Patients</a>
         <a href="{{url_for('admin.doctor_list')}}" class="list-group-item list-group-item-action bg-light">Doctors</a>
         <a href="{{url_for('admin.departments')}}" class="list-group-item list-group-item-action bg-light">Departments</a>
-        <a href="{{url_for('admin.deleted_users')}}" class="list-group-item list-group-item-action bg-light">Deleted Users</a>
-        <a href="{{url_for('admin.deleted_doctors_func')}}" class="list-group-item list-group-item-action bg-light">Deleted Doctors</a>
+        <a href="{{url_for('admin.role_user',role = 'receptionist')}}" class="list-group-item list-group-item-action bg-light">Receptionist</a>   
+        <a href="{{url_for('admin.role_user',role = 'compounder')}}" class="list-group-item list-group-item-action bg-light">Compounder</a>  
+        <a href="{{url_for('admin.role_user',role = 'chief_doctor')}}" class="list-group-item list-group-item-action bg-light">Chief Medical Officer</a>      
         <a href="{{url_for('admin.stats')}}" class="list-group-item list-group-item-action bg-light"> Statistics</a>
       </div>
     </div>

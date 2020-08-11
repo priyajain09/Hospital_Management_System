@@ -56,15 +56,12 @@
           <strong>Blood Group : </strong> {{row.blood_group}}<br>
           <strong>Qualification : </strong> {{row.qualification}}<br>
           <strong>Experience : </strong> {{row.experience}}<br>
-            <strong>Visiting hours : </strong> {{row.visiting_hours}}<br>
-            <strong>Consultant fee : </strong> {{row.consultant_fee}}<br>
             <strong>Address : </strong> {{row.address}}<br>
             <strong>Contact number : </strong> {{row.contact_number}}<br>
             <strong>Date of joining : </strong> {{row.date_of_joining}}<br>
+            <strong>Date of resignation : </strong> {{row.deleted_on}}<br>
             <strong>Status : </strong>{{row.status}}<br>
         </p>
-        <button type="button" onclick="window.location.href='{{ url_for( 'admin.delete_doctor' , username=row.username) }}';">Remove</button>
-
       </div>
       <!-- Grid column -->
 

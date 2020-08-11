@@ -1,0 +1,40 @@
+{% extends 'User/home.html' %}
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-4">
+    {% for doctor in doctors %}
+    <div class="col mb-3">
+        <div class="card card-cascade">
+
+            <!-- Card image -->
+            <div class="view view-cascade overlay">
+              <img class="card-img-top" src="https://mdbootstrap.com/img/Photos/Others/men.jpg" alt="Card image cap">
+              <a>
+                <div class="mask rgba-white-slight"></div>
+              </a>
+            </div>
+          
+            <!-- Card content -->
+            <div class="card-body card-body-cascade text-center">
+          
+              <!-- Title -->
+              <h4 class="card-title"><strong>{{doctor.name}}</strong></h4>
+              <!-- Subtitle -->
+              <h6 class="font-weight-bold indigo-text py-2">{{doctor.specialization}}</h6>
+              <!-- Text -->
+              <p class="card-text">{{doctor.qualification}}<br>
+                {{doctor.experience}}
+              </p>
+          
+          
+            </div>
+            <div class="card-footer text-muted ">
+                Visting Hours : {{doctor.visitig_hours}}<br>
+                Consultant Fee : {{doctor.consultant_fee}} <button class="btn blue-gradient btn-sm">{{doctor.status}}</button>
+            </div>
+          </div>
+      <!-- Card -->
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}  

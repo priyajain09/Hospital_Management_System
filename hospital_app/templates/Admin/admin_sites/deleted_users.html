@@ -1,45 +1,97 @@
 {% extends 'Admin/home_page.html' %}
-{% block title %}  {% endblock %}
 
-{% block heading %}
-{% endblock %}
 {% block content %}
-<h2>Deleted Users</h2>
-<br>
-<br>
-<h3>search by username</h3>
-<form action= "" method="post">
-    {{form.hidden_tag()}}
-    {{form.username.label}}
-    {{form.username()}}
-    {{form.submit()}}
-  </form>
-  <br>
-  <br>
-  {% with messages = get_flashed_messages() %}
-     {% if messages %}
-        {% for message in messages %}
-           {{ message }}
-        {% endfor %}
-     {% endif %}
-  {% endwith %}
-  {% for row in users %}
-  <a href = "#">
-  <div style="background-color:rgba(154, 199, 201, 0.945);color:hsl(180, 1%, 13%);padding:20px;">
-      <p>
-          Username: {{row.username}}<br>
-          Email: {{row.email}}<br>
-          Name: {{row.name}}<br>
-          Age: {{row.age}}<br>
-          Blood Group: {{row.blood_group}}
-          Contact Number: {{row.contact_number}}<br>
-          Address: {{row.address}}<br>
-          Gender: {{row.gender_user}}<br>
-          Deleted On: {{row.deleted_on}}<br>
-          <br>
-          
-      </p>
-    </div> 
-  </a>
-  {% endfor %}
+<div class="card ">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link " href="{{url_for('admin.user_list')}}">Current Patients</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{{url_for('admin.deleted_users')}}" >Past Patients</a>
+      </li>
+    </ul>
+  </div>
+<div class="card-body">
+<table id="dt-filter-select" class="table" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th class="th-sm">Name
+      </th>
+      <th class="th-sm">Username
+      </th>
+      <th class="th-sm">Email
+      </th>
+      <th class="th-sm">Joined on
+      </th>
+      <th class="th-sm">Deleted on
+      </th>
+      <th class="th-sm">More Details
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+    <tr>
+      <td>{{user.name}}</td>
+      <td>{{user.username}}</td>
+      <td>{{user.email}}</td>
+      <td>{{user.joined_on.day}}-{{user.joined_on.month}}-{{user.joined_on.year}}</td>
+      <td>{{user.deleted_on.day}}-{{user.deleted_on.month}}-{{user.deleted_on.year}}</td>
+      <td><a href="{{url_for('admin.deleted_user_details',username = user.username)}}">Click here</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>Name
+      </th>
+      <th>Username
+      </th>
+      <th>Email
+      </th>
+      <th>Joined on
+      </th>
+      <th>Deleted on
+      </th>
+      <th>More Details
+      </th>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+
 {% endblock %}
+
+{% block add_script %}
+
+<script>
+  $(document).ready(function () {
+  $('#dt-filter-select').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change', function () {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                      $(this).val()
+                  );
+
+                  column
+                      .search( val ? '^'+val+'$' : '', true, false )
+                      .draw();
+              } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+              select.append( '<option value="'+d+'">'+d+'</option>' )
+          } );
+      } );
+  }
+  });
+});
+</script>
+{% endblock %}
+

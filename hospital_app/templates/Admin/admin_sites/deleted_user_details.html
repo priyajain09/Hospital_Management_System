@@ -46,7 +46,7 @@
       </div>
       <div class="col-md-4 mb-3">
         <label for="email">Email Address</label>
-        <input class = "form-control" value = {{email}} readonly>
+        <input class = "form-control" value = {{user.email}} readonly>
     </div>
     </div>  
     <div class="form-row">
@@ -58,10 +58,6 @@
       
     </div>
     <div class="form-row">
-        <div class="col-md-4 mb-3">
-            <label for="birthdate">Birthdate</label>
-            <input class = "form-control" value = {{user.birthdate}} readonly>            
-          </div>
           <div class="col-md-4 mb-3">
             <label for="age">Age</label>
             <input class = "form-control" value = {{user.age}} readonly>            
@@ -92,9 +88,7 @@
             <input class = "form-control" value = {{user.blood_group}} readonly>          
           </div>
 
-    </div>
-    <button type="button" onclick="window.location.href='{{ url_for( 'admin.delete_user' , username=user.username) }}';">Remove</button>
-    
+    </div>    
   </form>
 </div>
 </div>

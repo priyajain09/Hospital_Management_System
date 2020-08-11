@@ -1,0 +1,158 @@
+{% extends 'Admin/home_page.html' %}
+
+{% block links %}
+<link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="../../../static/css/mdb.min.css">
+  <!-- Your custom styles (optional) -->
+  <link rel="stylesheet" href="../../../static/css/style.css">
+  <link href="../../../static/css/addons/datatables2.min.css" rel="stylesheet">
+  <link href="../../../static/css1/simple-sidebar.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block scripts %}
+<script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
+
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+{% endblock %}
+
+{% block content %}
+{% if row is not none %}
+<div class="jumbotron text-center hoverable p-4">
+
+    <!-- Grid row -->
+    <div class="row">
+  
+      <!-- Grid column -->
+      <div class="col-md-4 offset-md-1 mx-3 my-3">
+  
+        <!-- Featured image -->
+        <div class="view overlay">
+          <img src="https://mdbootstrap.com/img/Photos/Others/laptop-sm.jpg" class="img-fluid" alt="Sample image for first version of blog listing">
+          <a>
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div>
+  
+      </div>
+      <!-- Grid column -->
+  
+      <!-- Grid column -->
+      <div class="col-md-7 text-md-left ml-3 mt-3">
+  
+        <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
+            <small class="text-muted">{{row.role}}</small>
+        </h4>
+  
+        <p class="font-weight-normal">
+          <strong>Gender : </strong> {{row.gender}}<br>
+          <strong>Age : </strong> {{row.age}}<br>
+          <strong>Birthdate :</strong> {{row.birthdate}}<br>
+            <strong>Address : </strong> {{row.address}}<br>
+            <strong>Contact number : </strong> {{row.contact_number}}<br>
+            <strong>Date of joining : </strong> {{row.date_of_joining}}<br>
+            <strong>Working hours : </strong>{{row.working_timings}}<br>
+        </p>
+        <button type="button" onclick="window.location.href='{{ url_for( 'admin.delete_role_user' ,id=row.id,role = role) }}';">Remove</button>
+
+      </div>
+      <!-- Grid column -->
+
+  
+    </div>
+    <!-- Grid row -->
+  
+  </div>
+  {% else %}
+  <div class="alert alert-primary" role="alert">
+    No person is currently assigned for this position
+  </div>
+  {% endif %}
+  <div class="card ">
+    <div class="card-header">
+      History
+    </div>
+    <div class="card-body">
+  <table id="dt-filter-select" class="table" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm">Name
+        </th>
+        <th class="th-sm">Username
+        </th>
+        <th class="th-sm">Date of joining
+        </th>
+        <th class="th-sm">Date of resignation
+        </th>
+        <th class="th-sm">More Details
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in past_users %}
+      <tr>
+        <td>{{user.name}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.date_of_joining}}</td>
+        <td>{{user.end_date}}</td>
+        <td><a href="{{url_for('admin.role_user_details',id = user.id)}}">Click here</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Name
+        </th>
+        <th>Username
+        </th>
+        <th>Date of joining
+        </th>
+        <th >Date of resignation
+        </th>
+        <th>More Details
+        </th>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+  </div>
+  
+  {% endblock %}
+  
+  {% block add_script %}
+  
+  <script>
+    $(document).ready(function () {
+    $('#dt-filter-select').dataTable({
+  
+      initComplete: function () {
+        this.api().columns().every( function () {
+            var column = this;
+            var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+                .appendTo( $(column.footer()).empty() )
+                .on( 'change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                        $(this).val()
+                    );
+  
+                    column
+                        .search( val ? '^'+val+'$' : '', true, false )
+                        .draw();
+                } );
+  
+            column.data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            } );
+        } );
+    }
+    });
+  });
+  </script>
+{% endblock %}

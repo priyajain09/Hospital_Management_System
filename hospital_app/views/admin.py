@@ -1,5 +1,5 @@
 from hospital_app.models import User,Doctor,specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users,temporary_role_users
-from hospital_app.models import user_role
+from hospital_app.models import user_role, past_user_role
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app.forms import LoginForm, specialization_form, search_user,search_doctor_form,disease_statistic_form
 from hospital_app.forms import ResetPasswordRequestForm, ResetPasswordForm
@@ -20,29 +20,13 @@ def home_page():
 @admin_bp.route('/admin/doctor_list',methods = ['GET','POST'])
 @login_required
 def doctor_list():
-    form = search_doctor_form()
-    if form.validate_on_submit():
-        doctors = db.session.query(User,Doctor).join(Doctor).filter(Doctor.specialization == str(form.specialization.data)).all()
-        if len(doctors) == 0:
-            flash("No Doctors")
-        return render_template('Admin/admin_sites/list_of_doctors.html',q=doctors,form = form)
     q = db.session.query(User,Doctor).join(Doctor).all()
-    if len(q) == 0:
-            flash("No Doctors")
-    return render_template('Admin/admin_sites/list_of_doctors.html',q=q,form = form)
+    return render_template('Admin/admin_sites/list_of_doctors.html',q=q)
 
 @admin_bp.route('/admin/user_list',methods = ['GET','POST'])
 def user_list():
-    form = search_user()
-    if form.validate_on_submit():
-        user = User.query.filter_by(role='user',username = form.username.data).all()
-        if len(user) ==  0:
-            flash('User does not exist with the given username!')
-        return render_template('Admin/admin_sites/list_of_users.html',q = user,form=form)    
-    q = User.query.filter_by(role='user').all()
-    if len(q) == 0:
-        flash('No users')
-    return render_template('Admin/admin_sites/list_of_users.html',q=q,form= form)
+    users = db.session.query(User,Patient).join(Patient).filter(User.role == "user")
+    return render_template('Admin/admin_sites/list_of_users.html',list=users)
 
 
 @admin_bp.route('/admin/<username>/<action>')
@@ -92,10 +76,10 @@ def departments():
     return render_template('Admin/admin_sites/departments.html', q=q, form = form)
 
 
-@admin_bp.route('/admin/users/<username>')
-def user_details(username):
+@admin_bp.route('/admin/users/<username>/<email>')
+def user_details(username,email):
     q = Patient.query.filter_by(username = username).first()
-    return render_template('Admin/admin_sites/user_details.html',user=q)
+    return render_template('Admin/admin_sites/user_details.html',user=q,email = email)
 
 # ******************************************************************************
 # To be done later: move ongoing treatments to closed treatments and send an email for the same
@@ -105,7 +89,8 @@ def delete_user(username):
     # before deleting patient populate deleted_patients table
     user = User.query.get(username)
     patient = user.patient
-    u = deleted_patients(username = user.username,email=user.email,name= patient.name,age = patient.age,blood_group = patient.blood_group,contact_number = patient.contact_number,address = patient.address,gender_user = patient.gender_user)
+    u = deleted_patients(username = user.username,email=user.email,name= patient.name,age = patient.age,blood_group = patient.blood_group,
+    contact_number = patient.contact_number,address = patient.address,gender_user = patient.gender_user,joined_on = patient.timestamp)
     x = is_user_deleted.query.get(user.username)
     x.is_deleted = True
     db.session.add(u)
@@ -121,7 +106,7 @@ def delete_user(username):
 @admin_bp.route('/admin/doctor_details/<username>')
 def doctor_details(username):
     q = Doctor.query.filter_by(username = username).first()
-    return render_template('Admin/admin_sites/doctor_details.html',doctor=q)
+    return render_template('Admin/admin_sites/doctor_details.html',row=q)
 
 
 # **********************************************************************************
@@ -147,31 +132,26 @@ def delete_doctor(username):
 
 # here users are used to denote patients
 @admin_bp.route('/admin/deleted_users',methods=['GET','POST'])
-def deleted_users():
-    form = search_user()
-    if form.validate_on_submit():
-        user = deleted_users.query.filter_by(username = form.username.data).all()
-        if len(user) ==  0:
-            flash('User does not exist with the given username!')
-        return render_template('Admin/admin_sites/deleted_users.html',users = user,form=form)    
+def deleted_users(): 
     u = deleted_patients.query.all()
-    if len(u)==0:
-        flash("No deleted users")
-    return render_template('Admin/admin_sites/deleted_users.html',users = u,form=form)
+    return render_template('Admin/admin_sites/deleted_users.html',users = u)
+
+@admin_bp.route('/admin/patient_details/<username>')
+def deleted_user_details(username):
+    u = deleted_patients.query.get(username)
+    return render_template('Admin/admin_sites/deleted_user_details.html',user = u)
+
+@admin_bp.route('/admin/deleted_doctor_details/<username>')
+def deleted_doctor_details(username):
+    u = deleted_doctors.query.get(username)
+    return render_template('Admin/admin_sites/deleted_doctor_details.html',row = u)
+
 
 
 @admin_bp.route('/admin/deleted_doctors',methods=['GET','POST'])
 def deleted_doctors_func():
-    form = search_doctor_form()
-    if form.validate_on_submit():
-        doctors = deleted_doctors.query.filter_by(specialization=str(form.specialization.data)).all()
-        if len(doctors) == 0:
-            flash("No Doctors")
-        return render_template('Admin/admin_sites/deleted_doctors.html',doctors=doctors,form = form)
     u = deleted_doctors.query.all()
-    if len(u)==0:
-        flash("No deleted doctors")
-    return render_template('Admin/admin_sites/deleted_doctors.html',doctors = u,form = form)
+    return render_template('Admin/admin_sites/deleted_doctors.html',doctors = u)
 
 @admin_bp.route('/admin/assistant_registration_requests/<role>')
 def assistant_registration_requests(role):
@@ -219,7 +199,7 @@ def assistant_registration_requests(role):
     len_comp= len_comp, len_chief = len_chief) 
 
 
-@admin_bp.route('/admin/assistant_registration_requests/<username>/<action>/<role>')
+@admin_bp.route('/admin/registration_requests/<username>/<action>/<role>')
 def action_role_reg(username,action,role):
 
     if action == "Accept":
@@ -240,6 +220,7 @@ def action_role_reg(username,action,role):
             contact_number = user.contact_number, address = user.address, gender = user.gender, work_timings = user.work_timings,
             timestamp = user.timestamp, doctor_username = user.doctor_username,date_of_joining = datetime.datetime.now())
             db.session.add(u)
+            db.session.delete(user)
             db.session.commit()
             
     elif action == "Reject":
@@ -247,14 +228,45 @@ def action_role_reg(username,action,role):
         db.session.delete(user)
         db.session.commit()
     return  redirect(url_for('admin.assistant_registration_requests',role=role))
+
+
+
+@admin_bp.route('/admin/role_user/<role>')
+def role_user(role):
+     u = user_role.query.filter_by(role = role).first()
+     past_role_users = past_user_role.query.filter_by(role = role).all()
+     return render_template('Admin/admin_sites/role_user_page.html',row = u, past_users = past_role_users,role = role)    
+
+@admin_bp.route('/admin/assistants')
+def role_user_assistant():
+    u = user_role_query.query.all(role = "assistant").all()
+
+@admin_bp.route('/admin/delete_role_user/<id>/<role>')
+def delete_role_user(id,role):
+    now = datetime.datetime.now()
+    u = user_role.query.get(id)
+    db.session.delete(u)
+    x = past_user_role(username = u.username, name = u.name, birthdate = u.birthdate,age = u.age,contact_number=u.contact_number,
+    address = u.address, gender_user = u.gender,work_timings = u.work_timings,date_of_joining = u.date_of_joining,end_date = now ,role = u.role)
+    db.session.add(x)
+    try:
+        db.session.commit()
+        flash("Removed successfully!")
+    except:
+        db.session.rollback()
+        flash("Try again") 
+    return redirect(url_for('admin.role_user',role = role))     
+
+@admin_bp.route('/admin/deleted_role_user_details/<id>')
+def deleted_role_user_details(id):
+    u = past_role_user.query.get(id)
+    return render_template('Admin/admin_sites/deleted_role_user.html',row = u)
 # *******************************************************************************************************
 
 # Statistics
 @admin_bp.route('/admin/statistics')
 def stats():
     return render_template('/Admin/admin_sites/statistics.html')
-
-
 
 
 @admin_bp.route('/admin/statistics/diseases',defaults = {'year':None})

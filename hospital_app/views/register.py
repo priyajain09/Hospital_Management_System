@@ -84,13 +84,20 @@ def register_role_request():
             if u is None:
                 flash("Invalid doctor username for role Assistant.")
                 return redirect(url_for('login.home_page'))
-        user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
-        birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
-        work_timings = form.work_timings.data,doctor_username = form.doctor_username.data)
+
+            user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
+            birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
+            work_timings = form.work_timings.data,doctor_username = form.doctor_username.data)    
+        
+        else:
+            user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
+            birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
+            work_timings = form.work_timings.data,doctor_username = None)
+        
         passw = form.password.data 
         user.set_password(form.password.data)
+        db.session.add(user)
         try:
-            db.session.add(user)
             db.session.commit()
             flash("Your request has been submitted to admin.Check email for further information.")
             return redirect(url_for('login.login'))
