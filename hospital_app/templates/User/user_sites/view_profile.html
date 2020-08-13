@@ -1,0 +1,113 @@
+{% extends 'User/home.html' %}
+
+{% block content %}
+<div class="card text-center">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('user.update_profile')}}">Update Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="#">Change Password</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+      <p class="card-text">
+        <div class="row">
+  
+            <!-- Grid column -->
+            <div class="col-md-3 offset-md-1 mx-3 my-3">
+        
+              <!-- Featured image -->
+              <div class="view overlay">
+                <img src="data:;base64,{{ image }}" class="img-fluid" alt="Sample image for first version of blog listing">
+                <a>
+                  <div class="mask rgba-white-slight"></div>
+                </a>
+              </div>
+        
+            </div>
+            <!-- Grid column -->
+        
+            <!-- Grid column -->
+            <div class="col-md-8 text-md-left ml-3 mt-3">
+                <form>
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                          <label for="name">Full name</label>
+                          <input class = "form-control" value = "{{user.name}}" readonly>
+                          
+                        </div>
+                    </div>
+                    <div class = "form-row">
+                      <div class="col-md-4 mb-3">
+                          <label for="validationCustomUsername">Unique ID</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupPrepend">@</span>
+                            </div>
+                            <input class = "form-control" value = "{{user.username}}" readonly>
+                          </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                          <label for="email">Email Address</label>
+                          <input class = "form-control" value = "{{current_user.email}}" readonly>
+                      </div>
+                  
+                      
+                        
+                      </div>
+                      <div class="form-row">
+                          <div class="col-md-4 mb-3">
+                              <label for="birthdate">Birthdate</label>
+                              <input class = "form-control" value = "{{user.birthdate}}" readonly>            
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label for="age">Age</label>
+                              <input class = "form-control" value = "{{user.age}}" readonly>            
+                            </div>
+                  
+                      </div>
+                      <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                          <label for="address">Address</label>
+                          <input class = "form-control" value = "{{user.address}}" readonly>      
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                          <label for="phonenumber">Contact number</label>
+                          <input class = "form-control" value = "{{user.contact_number}}" readonly>        
+                        </div>
+                      </div>
+                      <div class="form-row">
+                          <div class ="col-md-6 mb-3">
+                              <label for="gender">Gender</label><br>
+                              <div class = ".custom-control-inline">
+                                <input class = "form-control" value = "{{user.gender_user}}" readonly>            
+                              </div>
+                              
+                          </div>
+                          <div class="col-md-3 mb-3">
+                              <label for="bloodgrp">Blood Group</label>
+                              <input class = "form-control" value = "{{user.blood_group}}" readonly>          
+                            </div>
+                  
+                      </div>                      
+                    </form>
+      
+            </div>
+            <!-- Grid column -->
+      
+        
+          </div>
+          <!-- Grid row -->
+        
+      </p>
+    </div>
+  </div>
+{% endblock %}

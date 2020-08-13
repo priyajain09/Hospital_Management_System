@@ -5,9 +5,7 @@ from hospital_app.models import User, specialization, temporary_users, temporary
 from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from hospital_app import db
 from wtforms.fields.html5 import TelField,DateField
-# from flask_wtf.file import FileField, FileRequired
-# from werkzeug.utils import secure_filename
-
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 
 class LoginForm(FlaskForm):
     username = StringField('Email or username',validators=[InputRequired()])
@@ -92,12 +90,11 @@ class search_doctor_form(FlaskForm):
     submit = SubmitField('Search')
 
 class update_user_form(FlaskForm):
-     name = StringField('Name: ')
-     age = IntegerField('Age: ')
-     blood_group = StringField('Blood Group: ')
-     contact_number = IntegerField('Contact Number: ')
-     address = TextAreaField('Address: ')
-     gender_user = StringField('Gender: ')
+     name = StringField('Full Name')
+     age = IntegerField('Age in years')
+     blood_group = SelectField('Blood Group ',choices = [('Unknown','Unknown'),('A+','A+'),('A-','A-'),('B+','B+'),('B-','B-'),('O+','O+'),('O-','O-'),('AB+','AB+'),('AB-','AB-')])
+     contact_number = IntegerField('Contact Number')
+     address = TextAreaField('Address')
      submit = SubmitField('Update')
 
 class update_doctor_form(FlaskForm):

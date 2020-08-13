@@ -6,11 +6,12 @@ import json
 from flask_login import current_user, login_required
 from hospital_app import user_collection
 from hospital_app.forms import search_doctor_form,update_user_form
-from hospital_app.models import Doctor,upload_medical_records,upload_report
+from hospital_app.models import Doctor,upload_medical_records,Patient
 from flask import request
 from werkzeug.datastructures import CombinedMultiDict
 from flask import send_file,Markup
 from io import BytesIO
+import base64
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -45,21 +46,49 @@ def doctor():
 @user_bp.route('/user/view_profile',methods = ['GET','POST'])
 def view_profile():
     patient = current_user.patient
-    return render_template('User/user_sites/view_profile.html',patient = patient)
+    image = base64.b64encode(patient.File).decode('ascii')
+    return render_template('User/user_sites/view_profile.html',user = patient,image = image)
 
 @user_bp.route('/user/update_profile',methods = ['GET','POST'])
 def update_profile():
-    form = update_user_form(obj = current_user.patient)
-    if form.validate_on_submit():
-        form.populate_obj(current_user.patient)
-        db.session.commit()
-    return render_template('User/user_sites/update_profile.html',form = form)
+    if request.method == "POST":
+        file = request.files['profile_photo']
 
-@user_bp.route('/user/upload_medical_records',methods=['GET','POST'])
-def upload_medical_records_func():
+        u = current_user.patient
+        
+        if file and file.filename != "":
+            u.File = file.read()
+
+        
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.blood_group = request.form['blood_group']
+        
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = current_user.patient
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('User/user_sites/update_profile.html',user = current_user.patient,image = image)
+
+@user_bp.route('/view_document/<Id>')
+def view_photo(Id):
+    u = Patient.query.get(Id)
+    return send_file(BytesIO(u.File),attachment_filename = "flask.png")
+
+
+# /*********************************************************************************************/
+
+@user_bp.route('/user/documents/<role>',methods=['GET','POST'])
+def upload_document(role):
     if request.method == "POST":
         file = request.files['in_file']
-        u = upload_medical_records(treat_id = int(request.form['treat_id']),type_doc=str(request.form['type_doc']),date=request.form['date'],File=file.read())
+        u = upload_medical_records(treat_id = int(request.form['treat_id']),type_doc=str(request.form['type_doc']),date=request.form['date'],File=file.read(),name = request.form['filename'],filename = file.filename)
         db.session.add(u)
         try:
             db.session.commit()
@@ -67,56 +96,31 @@ def upload_medical_records_func():
         except:
             db.session.rollback()    
             flash("Error! Try Again")
-    return render_template('User/user_sites/upload_document.html')
+    pres = upload_medical_records.query.filter_by(type_doc = role).all()  
+    if role == "Report":
+        return render_template('User/user_sites/upload_document_report.html',pres = pres)
+    elif role == "Invoice":
+        return render_template('User/user_sites/upload_document_invoice.html',pres = pres)
+    return render_template('User/user_sites/upload_document.html',pres = pres)
 
-@user_bp.route('/download')
-def download():
-    u = upload_medical_records.query.first()
-    return send_file(BytesIO(u.File),attachment_filename='flask.pdf',as_attachment=True)
-
-@user_bp.route('/user/<int:treat_id>/<int:pres_id>/add_reports/',methods=['GET','POST'])
-def add_reports(treat_id,pres_id):
-    t = mongo.db.Treatment.find_one({"treat_id":treat_id})
-    reports = upload_report.query.filter_by(treat_id=treat_id,pres_id=pres_id).all()
-    p = t["prescription"]
-    print(p[pres_id-1])
-    return render_template('User/user_sites/add_report.html',prescription=p[pres_id-1],added_reports=reports,treat_id=treat_id)
-
-
-# Assumption has been taken here that prescriptions are stored on the index equal to their pres_id
-@user_bp.route('/user/<int:treat_id>/<int:pres_id>/add_reports/<report_name>',methods=['GET','POST'])
-def upload_report_file(treat_id,pres_id,report_name):
-    if request.method=='POST':
-        file = request.files['input_report']
-        if file:
-            u = upload_report(treat_id = treat_id,pres_id = pres_id,report_name = report_name,file_name = file.filename,report = file.read())
-            db.session.add(u)
-            try:
-                db.session.commit()
-                flash("File Uploaded Successfully!")
-            except:
-                db.session.rollback()
-                flash("Error!Try Again")
-        else:
-            flash("File not selected")
-    return redirect(url_for('user.add_reports',treat_id = treat_id,pres_id=pres_id))
-
-@user_bp.route('/user/delete_report/<int:treat_id>/<int:pres_id>/<report_name>')
-def remove_report(treat_id,pres_id,report_name):
-    u = upload_report.query.filter_by(treat_id=treat_id,pres_id=pres_id,report_name=report_name).first()
+@user_bp.route('/delete_document/<Id>')
+def remove_document(Id):
+    u = upload_medical_records.query.get(Id)
     db.session.delete(u)
-    try:
-        db.session.commit()
-        flash("Deleted Successfully")
-    except:
-        db.session.rollback()
-        flash("Try Again")
-    return redirect(url_for('user.add_reports',treat_id = treat_id,pres_id=pres_id))        
+    db.session.commit()
+    return redirect(url_for('user.upload_document',role = u.type_doc))      
 
-@user_bp.route('/user/download_report/<treat_id>/<pres_id>/<report_name>')
-def download_report(treat_id,pres_id,report_name):
-    u = upload_report.query.filter_by(treat_id=treat_id,pres_id=pres_id,report_name=report_name).first()
-    return send_file(BytesIO(u.report),attachment_filename=u.file_name,as_attachment=True)
+@user_bp.route('/download/<Id>')
+def download(Id):
+    u = upload_medical_records.query.get(Id)
+    return send_file(BytesIO(u.File),attachment_filename = u.filename, as_attachment = True)
+
+@user_bp.route('/view_document/<Id>')
+def view_document(Id):
+    u = upload_medical_records.query.get(Id)
+    return send_file(BytesIO(u.File),attachment_filename = u.filename)
+
+# /***********************************************************************************/
 
 @user_bp.route('/user/close_treatment/<int:treat_id>')
 def close_treatment(treat_id):

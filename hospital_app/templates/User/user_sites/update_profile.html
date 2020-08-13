@@ -1,0 +1,147 @@
+{% extends 'User/home.html' %}
+{% from 'Reception/_render_field.html' import render_field %}
+
+{% block content %}
+<style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+
+
+<div class="card text-center">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link " href="{{url_for('user.view_profile')}}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{{url_for('user.update_profile')}}">Update Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="#">Change Password</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+      <p class="card-text">
+          <form action = "{{url_for('user.update_profile')}}" method = "post" enctype="multipart/form-data">
+        <div class="row">
+  
+            <!-- Grid column -->
+            <div class="col-md-3 offset-md-1 mx-3 my-3">
+        
+              <!-- Featured image -->
+
+              <div id="profile-container" class="view overlay">
+                <image id="profileImage" src="data:;base64,{{ image }}" />
+             </div>
+             <input id="imageUpload" type="file" 
+                    name="profile_photo" value ="data:;base64,{{ image }}" accept=".jpg, .jpeg, .png" placeholder="Photo" capture>
+        
+            </div>
+            <!-- Grid column -->
+        
+            <!-- Grid column -->
+            <div class="col-md-8 text-md-left ml-3 mt-3">
+
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}                    
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                          <label for="name">Full name</label>
+                          <input class = "form-control" name = "name" value = "{{user.name}}" >
+                          
+                        </div>
+                    </div>
+                    
+                      <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                              <label for="age">Age</label>
+                              <input class = "form-control" name = "age" value = "{{user.age}}" >         
+                            </div>
+                  
+                      </div>
+                      <div class="form-row">
+                        <div class="col-md-6 mb-3">
+                          <label for="address">Address</label>
+                          <input class = "form-control" name = "address" value = "{{user.address}}" >  
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                          <label for="phonenumber">Contact number</label>
+                          <input class = "form-control" name = "contact_number" value = "{{user.contact_number}}" >      
+                        </div>
+                      </div>
+                      <div class="form-row">
+                          <div class="col-md-3 mb-3">
+                              <label for="bloodgrp">Blood Group</label>
+                              <select name = "blood_group" class="browser-default custom-select">
+                                    <option value = "Unknown" selected>Unknown</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>         
+                            </div>
+                  
+                      </div> 
+                      <button class="btn btn-info btn-block my-4" type="submit">Update</button>                     
+                    </form>
+      
+            </div>
+            <!-- Grid column -->
+      
+        
+          </div>
+          <!-- Grid row -->
+          
+        
+      </p>
+    </div>
+  </div>
+{% endblock %}
+
+{% block add_scripts %}
+<script>
+$("#profileImage").click(function(e) {
+    $("#imageUpload").click();
+});
+
+function fasterPreview( uploader ) {
+    if ( uploader.files && uploader.files[0] ){
+          $('#profileImage').attr('src', 
+             window.URL.createObjectURL(uploader.files[0]) );
+    }
+}
+
+$("#imageUpload").change(function(){
+    fasterPreview( this );
+});
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+{% endblock %}
