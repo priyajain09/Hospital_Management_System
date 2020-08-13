@@ -1,0 +1,65 @@
+{% extends 'index.html' %}
+
+
+    {% block sidebar %}
+    <div class="heavy-rain-gradient border-right" id="sidebar-wrapper">
+      <div class="sidebar-heading"></div>
+      <div class="list-group list-group-flush">
+
+        <!----View Treatments-->
+        <a href="#TreatSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action list-group-item-info"> View Treatments <span style="float:right;"><i class="fa fa-angle-down"></i></span> </a>
+            <div id="TreatSubmenu" class="collapse list-unstyled" >
+                <a href="{{url_for('cmo.active_treatment')}}" class="list-group-item list-group-item-action " >Active Treatments</a>
+                <a href="{{url_for('cmo.closed_treatment')}}" class="list-group-item list-group-item-action " >Closed Treatments</a>      
+                <a href="{{url_for('cmo.all_treatment')}}" class="list-group-item list-group-item-action" >All Treatments</a>   
+            </div>
+        <!---View Treatments--->
+
+        <!----View Staff-->
+        <a href="#StaffSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action list-group-item-info"> View Hospital Staff <span style="float:right;"><i class="fa fa-angle-down"></i></span></a>
+            <div id="StaffSubmenu" class="collapse list-unstyled" >
+                <a href="#" class="list-group-item list-group-item-action " >Doctor</a>
+                <a href="#" class="list-group-item list-group-item-action " >Compunder</a>    
+                <a href="#" class="list-group-item list-group-item-action " >Reception</a>      
+            </div>
+        <!---View Staff--->
+
+        <!----View Patients-->
+        <a href="#" class="list-group-item list-group-item-action list-group-item-info"> View Patients</a>
+        <!---View Patients--->
+
+        <!----Stats-->
+        <a href="#StatsSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action list-group-item-info"> Statistics <span style="float:right;"><i class="fa fa-angle-down"></i></span></a>
+            <div id="StatsSubmenu" class="collapse list-unstyled" >
+                <a href="{{url_for('stats.symptoms_stats')}}" class="list-group-item list-group-item-action " >Symptoms Stats</a>
+                <a href="{{url_for('stats.disease_stats')}}" class="list-group-item list-group-item-action " >Diseases Stats</a>   
+                <a href="{{url_for('stats.treatment_stats')}}" class="list-group-item list-group-item-action " >Treatment Stats</a>      
+            </div>
+        <!---Stats--->
+    </li>
+    </div>
+    </div>
+    {% endblock %}
+    
+    {% block home %}
+    <a class="nav-link" href= "{{url_for('cmo.home_page')}}">Home <span class="sr-only">(current)</span></a>
+    {% endblock %}
+
+
+    
+
+
+{% block footer %}
+<!-- Footer -->
+<footer class="page-footer font-small blue">
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2018 Copyright:
+    <a href="https://mdbootstrap.com/education/bootstrap/"> MDBootstrap.com</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+{% endblock %}
+

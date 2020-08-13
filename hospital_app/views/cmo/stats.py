@@ -12,7 +12,7 @@ from operator import itemgetter
 from _datetime import datetime
 import datetime
   
-stats_bp = Blueprint('stats',__name__, url_prefix='/doctor')
+stats_bp = Blueprint('stats',__name__)
 
 @stats_bp.route('/symptoms-stats',methods = ['GET','POST'])
 def symptoms_stats():
@@ -46,10 +46,10 @@ def symptoms_stats():
         symp_table_data = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True))
         symp_stat = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True)[0:10])
         print(symp_stat)
-        return render_template('Doctor/doctor_sites/current_symptoms_stats.html', symp_stat = symp_stat, symp_table_data = symp_table_data)
+        return render_template('CMO/sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat, symp_table_data = symp_table_data)
 
     symp_stat = defaultdict(int) 
-    return render_template('Doctor/doctor_sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat)
+    return render_template('CMO/sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat)
 
 
 
@@ -128,7 +128,7 @@ def disease_stats(year):
 
     print(labels)
     print(values)
-    return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Disease Statistics", max = 10, values = values, labels= labels, year = current_year)
+    return render_template('CMO/sites/Stats/diseases.html',title = "Disease Statistics", max = 10, values = values, labels= labels, year = current_year)
     
 
 @stats_bp.route('/treatment-stats',defaults = {'year':None})
@@ -188,7 +188,7 @@ def treatment_stats(year):
 
     print(labels)
     print(values)
-    return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
+    return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
 
 def numberOfDays(y, m):
       leap = 0
@@ -262,7 +262,7 @@ def particular_disease():
 
             print(labels)
             print(values)
-            return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+            return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
             
 
         else :
@@ -313,9 +313,9 @@ def particular_disease():
 
             print(labels)
             print(values)
-            return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+            return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
                 
     else:
         labels = []
         values = []
-        return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+        return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)

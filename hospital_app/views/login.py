@@ -27,7 +27,8 @@ def login():
             return redirect(url_for('doctor_routes.home_page'))   
         if current_user.role == "receptionist":
             return redirect(url_for('receptionist.home_page'))  
-
+        if current_user.role == "chief_doctor":
+            return "Yes it is a chief doctor"
     form = LoginForm()
 
     if form.validate_on_submit():

@@ -162,4 +162,4 @@ def prescription_two(treat_id, pres_id):
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
 
-    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'])
+    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'])    
