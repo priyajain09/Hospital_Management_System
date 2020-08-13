@@ -82,7 +82,7 @@ class Patient( db.Model):
     gender_user = db.Column(db.String(15))
     timestamp = db.Column(db.DateTime,default = datetime.utcnow)
     birthdate = db.Column(db.Date)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 class Doctor( db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -101,7 +101,8 @@ class Doctor( db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_of_joining = db.Column(db.Date)
     status = db.Column(db.String(20), default = "Not Available")
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
+
     def __repr__(self):
         return '{}'.format(self.name)
 
@@ -116,7 +117,7 @@ class deleted_patients(db.Model):
     gender_user = db.Column(db.String(15))
     deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
     joined_on = db.Column(db.DateTime)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 class deleted_doctors(db.Model):
     username = db.Column(db.String(64),primary_key = True)
@@ -132,7 +133,7 @@ class deleted_doctors(db.Model):
     specialization = db.Column(db.String(20),nullable = False)
     date_of_joining = db.Column(db.Date)
     deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 class is_user_deleted(db.Model):
     username = db.Column(db.String(64),primary_key=True)
@@ -165,7 +166,7 @@ class temporary_users(db.Model):
     specialization = db.Column(db.String(20),nullable = True)
     contact_number = db.Column(db.String(15),nullable = True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 
 
@@ -215,7 +216,7 @@ class temporary_role_users(db.Model):
     work_timings = db.Column(db.String(50))
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
     def set_password(self, password):
         self.password = generate_password_hash(password)
 
@@ -234,7 +235,8 @@ class user_role(db.Model):
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
     date_of_joining = db.Column(db.Date)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
+
     
 
 class past_user_role(db.Model):
@@ -251,5 +253,6 @@ class past_user_role(db.Model):
     date_of_joining = db.Column(db.Date)
     end_date = db.Column(db.Date)
     role = db.Column(db.String(20),nullable = False)
-    File = db.Column(db.BLOB,nullable = True, default = None)
+    File = db.Column(db.LargeBinary,nullable = True, default = None)
+
 
