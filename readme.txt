@@ -28,3 +28,9 @@ flask db migrate
 For upgrade :
 flask db upgrade
 
+
+
+
+{% for message in get_flashed_messages() %}
+  <div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}

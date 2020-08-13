@@ -1,0 +1,190 @@
+{% extends 'User/home.html' %}
+{% block title %}  {% endblock %}
+
+{% block links %}
+<!-- Custom styles for this template -->
+<link href="../../../static/css1/doctor/sidebar.css" rel="stylesheet">
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+<!-- Material Design Bootstrap -->
+<link rel="stylesheet" href="../../../static/css/mdb.min.css">
+<!-- Your custom styles (optional) -->
+<link rel="stylesheet" href="../../../static/css/style.css">
+<!-- MDBootstrap Datatables  -->
+  <link href="../../../static/css/addons/datatables2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
+{% endblock %}
+
+{% block heading %}
+<div class="card text-center mb-4 wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+
+    <h4 class="mb-2 mb-sm-0 pt-1 ">
+      Medical Records
+    </h4>
+  </div>
+
+
+</div>
+{% endblock %}
+
+{% block content %}
+  <div class ="row">
+      <div class="card col-md-3">
+        <div class="card-body">
+          {% for message in get_flashed_messages() %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+          {% endfor %}
+          <p class="card-text">
+            <!-- Default form login -->
+<form  action="{{url_for('user.upload_document',role = 'Invoice')}}" method ="post" enctype="multipart/form-data">
+
+  <p class="h4 mb-4">Upload Document</p>
+
+  <!-- Email -->
+  <input type="number"  class="form-control mb-4" placeholder="Treatment ID" name = "treat_id">
+
+  <!-- Password -->
+  <input type="text"  class="form-control mb-4" placeholder="File name" name="filename">
+
+  <input class="form-control mb-4" type="date" id="birthday" placeholder="Birthdate" name="date">
+
+  <div class="custom-control custom-radio mb-1">
+    <input type="radio" class="custom-control-input" id="defaultUnchecked" name="type_doc" value = "Prescription">
+    <label class="custom-control-label" for="defaultUnchecked">Prescription</label>
+  </div>
+  <div class="custom-control custom-radio mb-1">
+    <input type="radio" class="custom-control-input" id="defaultChecked" name="type_doc"  value = "Report" checked>
+    <label class="custom-control-label" for="defaultChecked">Report</label>
+  </div>
+  <div class="custom-control custom-radio mb-1">
+    <input type="radio" class="custom-control-input" id="defaultChecked" name="type_doc" value = "Invoice" checked>
+    <label class="custom-control-label" for="defaultChecked">Invoice</label>
+  </div>
+  <br>
+  <div class="input-group mb-4">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+    </div>
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="inputGroupFile01"
+        aria-describedby="inputGroupFileAddon01" name="in_file">
+      <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+    </div>
+  </div>  
+  
+
+  <!-- Sign in button -->
+  <button class="btn btn-info btn-block my-4" type="submit">Upload</button>
+
+</form>
+<!-- Default form login -->
+            
+          </p>
+        </div>
+    </div>
+    <div class="col-md-9">
+      <div class="card ">
+        <div class="card-header">
+          <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+              <a class="nav-link " href="{{url_for('user.upload_document',role = 'Prescription')}}">Prescriptions</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{url_for('user.upload_document',role = 'Report')}}">Reports</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="">Invoices</a>
+            </li>
+          </ul>
+        </div>
+        <div class="card-body">
+      <table id="dt-filter-select" class="table" cellspacing="0" width="100%">
+        <thead>
+          <tr>
+            <th class="th-sm">Treatment ID
+            </th>
+            <th class="th-sm">Name
+            </th>
+            <th class="th-sm">Date
+            </th>
+            <th class="th-sm">Download
+            </th>
+            <th class="th-sm">View
+            </th>
+            <th class="th-sm">Delete
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for doc in pres %}
+          <tr>
+            <td>{{doc.treat_id}}</td>
+            <td>{{doc.name}}</td>
+            <td>{{doc.date}}</td>
+            <td><a href="{{url_for('user.download',Id = doc.id)}}">Click here</a></td>
+            <td><a href="{{url_for('user.view_document',Id = doc.id)}}">Click here</a></td>
+            <td><a href="{{url_for('user.remove_document',Id = doc.id)}}">Click here</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Treatment ID
+            </th>
+            <th>Name
+            </th>
+            <th>Date
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+      </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block add_scripts %}
+<script>
+  $(document).ready(function () {
+  $('#dt-filter-select').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change', function () {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                      $(this).val()
+                  );
+
+                  column
+                      .search( val ? '^'+val+'$' : '', true, false )
+                      .draw();
+              } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+              select.append( '<option value="'+d+'">'+d+'</option>' )
+          } );
+      } );
+  }
+  });
+});
+</script>
+{% endblock %}
