@@ -6,6 +6,8 @@ from wtforms.ext.sqlalchemy.fields import QuerySelectField
 from hospital_app import db
 from wtforms.fields.html5 import TelField,DateField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import current_user
 
 class LoginForm(FlaskForm):
     username = StringField('Email or username',validators=[InputRequired()])
@@ -96,6 +98,16 @@ class update_user_form(FlaskForm):
      contact_number = IntegerField('Contact Number')
      address = TextAreaField('Address')
      submit = SubmitField('Update')
+
+class change_password_form(FlaskForm):
+    old_password = PasswordField('Old Password', validators=[InputRequired()])
+    password = PasswordField('New Password', validators=[InputRequired()])
+    password2 = PasswordField(
+        'Retype Password', validators=[InputRequired(), EqualTo('password')]) 
+    
+    def validate_old_password(self,old_password):
+        if check_password_hash(current_user.password_hash, old_password.data) == False:
+            ValidationError("Wrong password!")
 
 class update_doctor_form(FlaskForm):
      name = StringField('Name: ')

@@ -5,7 +5,7 @@ from hospital_app import mongo
 import json
 from flask_login import current_user, login_required
 from hospital_app import user_collection
-from hospital_app.forms import search_doctor_form,update_user_form
+from hospital_app.forms import search_doctor_form,update_user_form,change_password_form
 from hospital_app.models import Doctor,upload_medical_records,Patient
 from flask import request
 from werkzeug.datastructures import CombinedMultiDict
@@ -55,7 +55,7 @@ def update_profile():
         file = request.files['profile_photo']
 
         u = current_user.patient
-        
+
         if file and file.filename != "":
             u.File = file.read()
 
@@ -80,6 +80,22 @@ def update_profile():
 def view_photo(Id):
     u = Patient.query.get(Id)
     return send_file(BytesIO(u.File),attachment_filename = "flask.png")
+
+@user_bp.route('/change_password',methods = ['GET','POST'])
+def change_password():
+    form = change_password_form()
+    if form.validate_on_submit():
+        
+        current_user.set_password(form.password.data)
+        try:
+            db.session.commit()
+            flash("Updated successfully")
+        except:
+            db.session.rollback()
+            flash("Try Again")
+
+    return render_template('User/user_sites/change_password.html',form = form)
+
 
 
 # /*********************************************************************************************/
