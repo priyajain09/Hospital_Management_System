@@ -73,7 +73,7 @@ Patient Enquiry
                  <td>{{row[1].name}}</td>
                  <td>{{row[0].username}}</td>
                  <td>{{row[0].email}}</td>
-                 <td ><a href="{{url_for('admin.user_details',username = row[0].username)}}" >Click here</a> </td>
+                 <td ><a href="{{url_for('admin.user_details',username = row[0].username, email = row[0].email)}}" >Click here</a> </td>
                  <td><a  data-toggle="modal" data-target="#modalConfirmDelete{{row[1].username}}"  >Click here</button></td>
                  <td ><a href = "{{url_for('recep.add_to_queue',name = row[1].name, username = row[0].username)}}">Click here</a> </td>   
              </tr>

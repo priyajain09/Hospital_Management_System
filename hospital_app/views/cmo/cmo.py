@@ -27,7 +27,6 @@ def closed_treatment():
 
 @cmo_bp.route('/cmo_all_treatment', methods=['GET', 'POST'])
 def all_treatment():
-    doc_treatment = mongo.db.Past_Treatments.find().sort([("time_stamp", -1)])
 
     doc_treatment = mongo.db['Past_Treatments'].aggregate( 
     [
@@ -52,12 +51,13 @@ def all_treatment():
         # upto here
         # sorted in the descending order of count
         {
-            '$sort' : { 'count': -1 }
+            '$sort' : { 'time_stamp': -1 }
         }
     ]
     )
 
     print(type(doc_treatment))
+    print(doc_treatment)
     return render_template('CMO/sites/treatment.html',treatment=doc_treatment, Status = 'All')
 
 @cmo_bp.route('/cmo-prescription-history/<treat_id>')
@@ -68,4 +68,4 @@ def prescription_history(treat_id):
     if treatment == None :
         return "This Treatment does not exist"
     prescriptions = reversed(treatment['prescription'])
-    return render_template('CMO/sites/prescription.html', prescriptions = prescriptions)
+    return render_template('CMO/sites/prescription.html', prescriptions = prescriptions, treatment = treatment)

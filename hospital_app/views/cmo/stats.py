@@ -22,24 +22,22 @@ def symptoms_stats():
         str_from_date = list_date_range[0] + " "+ "00:00:00.000000"
         str_to_date = list_date_range[2] + " "+ "00:00:00.000000"
 
-        from_date = datetime.strptime(str_from_date, '%m/%d/%Y %H:%M:%S.%f') 
+        from_date = datetime.datetime.strptime(str_from_date, '%m/%d/%Y %H:%M:%S.%f') 
         print(from_date)
         print(type(from_date))
 
-        to_date = datetime.strptime(str_to_date, '%m/%d/%Y %H:%M:%S.%f') 
+        to_date = datetime.datetime.strptime(str_to_date, '%m/%d/%Y %H:%M:%S.%f') 
         print(to_date)
         print(type(to_date))             
         symp_stat = defaultdict(int)
-        docs = mongo.db.Treatment.find({ 'prescription' : { '$elemMatch': {'time_stamp' : {'$gte': from_date , '$lt': to_date }}}})
-        docs_past = mongo.db.Past_Treatments.find({ 'prescription' : { '$elemMatch': {'time_stamp' : {'$gte': from_date , '$lt': to_date }}}})        
+        docs = mongo.db.Treatment.find({ 'prescription' : { '$elemMatch': {'timestamp' : {'$gte': from_date , '$lt': to_date }}}})
+        docs_past = mongo.db.Past_Treatments.find({ 'prescription' : { '$elemMatch': {'timestamp' : {'$gte': from_date , '$lt': to_date }}}})        
         #print(list(docs[0]['prescription']))
         docs = list(docs) + list(docs_past)
         for treatment in docs:
             print(treatment)
             for prescription in treatment['prescription']:
-                print(prescription['symptoms_inputs']) 
-                for symptom in prescription['symptoms_inputs']:
-                    print(symptom)
+                for symptom in prescription['symptoms']:
                     symp_stat[symptom] += 1
     
         print(symp_stat)

@@ -95,7 +95,7 @@ def prescription(treat_id):
         )
         print("pushed")
 
-    return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment , med = multiselect3, sym = multiselect1, pres_id = treatment['total_prescriptions'])
+    return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = multiselect2, med = multiselect3, sym = multiselect1, pres_id = treatment['total_prescriptions'])
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>/<pres_id>',methods = ['GET','POST'])
 def prescription_two(treat_id, pres_id):
@@ -162,4 +162,4 @@ def prescription_two(treat_id, pres_id):
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
 
-    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'])    
+    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'], treatment = treatment)    

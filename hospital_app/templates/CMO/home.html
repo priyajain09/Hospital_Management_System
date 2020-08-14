@@ -19,6 +19,7 @@
         <a href="#StaffSubmenu" data-toggle="collapse" aria-expanded="false" class="list-group-item list-group-item-action list-group-item-info"> View Hospital Staff <span style="float:right;"><i class="fa fa-angle-down"></i></span></a>
             <div id="StaffSubmenu" class="collapse list-unstyled" >
                 <a href="#" class="list-group-item list-group-item-action " >Doctor</a>
+                <a href="#" class="list-group-item list-group-item-action " >Assisstant</a>   
                 <a href="#" class="list-group-item list-group-item-action " >Compunder</a>    
                 <a href="#" class="list-group-item list-group-item-action " >Reception</a>      
             </div>
@@ -45,6 +46,10 @@
     <a class="nav-link" href= "{{url_for('cmo.home_page')}}">Home <span class="sr-only">(current)</span></a>
     {% endblock %}
 
+    {% block dropdown %}
+    <a class="dropdown-item" href="{{url_for('doctor_routes.view_profile')}}">Profile</a>
+    <a class="dropdown-item" href= "{{url_for('doctor_routes.update_profile')}}">Update Profile</a>
+    {% endblock %}
 
     
 

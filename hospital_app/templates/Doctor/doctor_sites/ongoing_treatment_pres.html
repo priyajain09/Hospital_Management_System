@@ -9,35 +9,41 @@
 
 
 {% block content %}
-<div class="container-fluid">
-        <div class="col-8">
-            <!--Treatment Detail Card -->
-            <div class="card">
-                <!-- Card content -->
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
-                            <b>Started on :  </b>{{ treatment.time_stamp }}<br>
-                            <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
-                            <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
-                            <b>Doctor ID:  </b>{{ treatment.doctorid}}
-                        </div>
-                        <div class="col">
-                            <b>Age:  </b>{{ treatment.age}}<br>
-                            <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
-                            <b>Gender:  </b>{{ treatment.gender}}<br>
-                            <hr>
-                            <b>Allergies:  </b>{{ treatment.allergies}}<br>
-                            <b>Chronic Diseases:  </b>{{ treatment.chronic}}
-                        </div>
-                        <div class="col">
-                            <a href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > View Prescriptions </a>
-                        </div>
-                    </div>
-                </div>
+<div class="container">
+    <div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+        <!--Card content-->
+        <div class="card-body d-sm-flex justify-content-between">
+          <h6>
+          <div class="row">
+            <div class="col">
+                <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
+                <b>Started on :  </b>{{ treatment.time_stamp }}<br>
             </div>
+            <div class="col">
+              <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+              <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+              <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
+              <b>Doctor Name:  </b>{{ treatment.doctor_name}}
+          </div>
+            <div class="col">
+                <b>Age:  </b>{{ treatment.age}}<br>
+                <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+                <b>Gender:  </b>{{ treatment.gender}}<br>
+            </div>
+            <div class="col">
+              <b>Allergies:  </b>{%for allergy in treatment.allergies%}{{allergy}}{% endfor %}<br>
+              <b>Chronic Diseases:  </b>{% for chron in treatment.chronic%}{{chron}}{% endfor %}
+          </div>
+          <div class="col">
+              <a class="btn btn-outline-black btn-sm" href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > Prescriptions </a>
+              <br>
+              <a class="btn btn-outline-black btn-sm" href = "#" target="_blank" > Test Reports </a>
+          </div>
+          </div>
+          </h6>
         </div>
+      </div>
     <br>
     <!--Fill Prescription Card -->
     <div class="card">
@@ -46,6 +52,9 @@
                     <!-- Title -->
                     <h4 class="card-title">Fill Prescription Form</h4>
                         <!-- Form -->
+                        <p><b>Symtoms:</b> {%for s in sym%} {{s}}, {%endfor%}</p>
+                        <p><b>Disease:</b> {%for d in dis%} {{d}}, {%endfor%}</p>
+                        <hr>
                         <form method=POST action="{{ url_for('doctor_routes.prescription_two', treat_id = treatment.treat_id , pres_id = pres_id ) }}">
                             <div class = "row">
                                 <div class="col-12">
@@ -64,10 +73,10 @@
                                     {% for m in med %}
                                     <tr>
                                         <td>{{m}} </td>
-                                        <td><input type="number" name="{{m}}_morndos" min="0" step="1" value="0"></td>
-                                        <td><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0"></td>
-                                        <td><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0"></td>
-                                        <td><input type="number" name="{{m}}_quantity" min="0" step="1" value="0"></td>
+                                        <td><input type="number" name="{{m}}_morndos" min="0" step="1" value="0" required="required"></td>
+                                        <td><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0" required="required"></td>
+                                        <td><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0" required="required"></td>
+                                        <td><input type="number" name="{{m}}_quantity" min="0" step="1" value="0" required="required"></td>
                                         <td><select name="Dosage" required="required">
                                             <option value="" selected>dosage</option>
                                             <option value="Empty stomach">Empty stomach</option>
@@ -78,11 +87,11 @@
                                     {% endfor %}
                                 </tbody>
                                 </table>
-                                <br>
+                                <hr>
                                 <div class = "row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="reports">Reports <small class="text-muted"> (comma or space separated) </small></label>
+                                            <label for="reports" placeholder="Blood-test Urine-test">Reports <small class="text-muted"> (space separated) </small></label>
                                             <input type="textarea" name="reports" >
                                         </div>
                                     </div>
@@ -94,8 +103,8 @@
                                     </div> 
                                     <div class="col-4">
                                         <div class="form-group">
-                                        <label>Note </label>
-                                        <input type="textarea" name="note"> 
+                                        <label id="note"> Note </label>
+                                        <textarea class="form-control rounded-0" id="note" rows="3" name="note"></textarea>
                                         </div>
                                     </div>
                                 </div>   
