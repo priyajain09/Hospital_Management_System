@@ -24,22 +24,24 @@ def home_page():
     
     if form.validate_on_submit():
         try:
+            file = request.files[form.image.name]
             u = is_user_deleted(username = form.username.data)
             db.session.add(u)
             user = User(username = form.username.data, email = form.email.data, role = "user")
-            password = get_random_alphanumeric_string(8)
+            # password = get_random_alphanumeric_string(8)
+            password = "password"
             user.set_password(password)   
             db.session.add(user)
             x = Patient(username = form.username.data, name = form.firstname.data+" "+form.lastname.data,
             age = form.age.data, blood_group = form.blood_group.data, contact_number= form.contact_number.data,
-            address = form.address.data, gender_user = form.gender.data, birthdate = form.birthdate.data)
+            address = form.address.data, gender_user = form.gender.data, birthdate = form.birthdate.data,File = file.read())
             db.session.add(x)
             db.session.commit()
-            flash("Added successfully!!")
+            flash("Added successfully!!") 
         except:
             db.session.rollback()
-            flash("Try Again!")    
-        return redirect(url_for('recep.home_page'))
+            flash("Try Again") 
+        return redirect_template(url_for('recep.home_page'))   
     return render_template('Reception/patient_registration.html',form = form)
 
 @recep_bp.route('/patient_enquiry', methods = ['GET','POST'])

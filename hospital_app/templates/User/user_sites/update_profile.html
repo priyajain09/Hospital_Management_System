@@ -53,7 +53,7 @@
               <!-- Featured image -->
 
               <div id="profile-container" class="view overlay">
-                <image id="profileImage" src="data:;base64,{{ image }}" />
+                <image id="profileImage" src="data:;base64,{{ image }}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';" />
              </div>
              <input id="imageUpload" type="file" 
                     name="profile_photo" value ="data:;base64,{{ image }}" accept=".jpg, .jpeg, .png" placeholder="Photo" capture>

@@ -1,28 +1,193 @@
-{% extends 'Authentication/base.html' %}
-{% from  'Authentication/_render_field.html' import render_field %}
+{% extends 'index.html' %}
+{% from 'Reception/_render_field.html' import render_field %}
+
+{% block heading %}
+Doctor Registration Form
+{% endblock %}
 
 
-{% block authentication %}
-{% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
-            <form class="text-center border border-light p-5" action="{{url_for('register.register_request')}}" method="post">
-                {{ form.hidden_tag() }}
-                <p class="h2 mb-4">Sign up</p>
-                    {{ render_field(form.name,placeholder = form.name.label.text) }}
-                    {{ render_field(form.username,placeholder = form.username.label.text) }}
-                    {{ render_field(form.email,placeholder = form.email.label.text) }}
-                    {{ render_field(form.password,placeholder = form.password.label.text) }}
-                    {{ render_field(form.password2,placeholder = form.password2.label.text) }}
-                    {{ render_field(form.qualification,placeholder = form.qualification.label.text) }}
-                    {{ render_field(form.experience,placeholder = form.experience.label.text) }}
-                    {{ render_field(form.specialization,placeholder = form.specialization.label.text) }}
-                    {{ render_field(form.phonenumber,placeholder = form.phonenumber.label.text) }}
-                <!-- Sign up button -->
-                <button class="btn btn-info btn-block my-4" type="submit">Sign up</button>
-            </form>
+{% block content %}
+<br>
+<div class = 'card'>
+    <div class = 'card-body'>
+  
+      <form  id = "form1" method = "post" action = "{{url_for('register.register_request')}}" enctype="multipart/form-data">
+        {{form.hidden_tag()}}
+        <div class="row">
+  
+    <!-- Grid column -->
+    <div class="col-md-3 offset-md-1 mx-3 my-3">
+
+      <!-- Featured image -->
+      
+
+      <div id="profile-container" class="view overlay">
+        <image id="profileImage" src="../../static/img/user.png" />
+     </div>
+     {{form.image}}
+    </div>
+    
+    <!-- Grid column -->
+
+    <!-- Grid column -->
+    <div class="col-md-8 text-md-left ml-3 mt-3">
+
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% endfor %} 
+    <div class="form-row">
+        <div class="col-md-5 mb-3">
+          <label for="name">Full name</label>
+          {{ render_field(form.name,placeholder = form.name.label.text) }}
+          
+        </div>
+ 
+        
+      </div>
+  
+    <div class = "form-row">
+    <div class="col-md-5 mb-3">
+        <label for="validationCustomUsername">Unique ID</label>
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupPrepend">@</span>
+          </div>
+          {{ render_field(form.username,placeholder = form.username.label.text) }}
+        </div>
+      </div>
+      <div class="col-md-5 mb-3">
+        <label for="email">Email Address</label>
+        {{ render_field(form.email,placeholder = form.email.label.text) }}
+    </div>
+    </div>  
+  
+    <div class="form-row">
+        <div class="col-md-5 mb-3">
+          <label for="name">Password</label>
+          {{ render_field(form.password,placeholder = form.password.label.text) }}
+          
+        </div>
+        <div class="col-md-5 mb-3">
+          <label for="validationCustom02">Retype Password</label>
+          {{ render_field(form.password2,placeholder = form.password2.label.text) }}
+          
+        </div>
+        
+      </div>
+    <div class ="form-row">
+        
+        <div class="col-md-4 mb-3">
+            <label for="birthdate">Specialization</label>
+            {{ render_field(form.specialization,placeholder = form.specialization.label.text) }}
+            
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="birthdate">Experience</label>
+            {{ render_field(form.experience,placeholder = form.experience.label.text) }}
+          </div>
+    </div>
+    <div class="form-row">
+      <div class ="col-md-5 mb-3">
+        <label for="bloodgrp">Qualification</label>
+        {{ render_field(form.qualification,placeholder = form.qualification.label.text) }}
+                </div>
+    </div>
+    
+    <div class="form-row">
+      
+      <div class="col-md-7 mb-3">
+        <label for="phonenumber">Contact number</label>
+        {{ render_field(form.phonenumber,placeholder = form.phonenumber.label.text) }}
+        
+      </div>
+    </div>
+  
+    </div>
+    </div>
+
+    </div>
+  </form>
+  <button class="btn btn-info btn-block my-4" onclick="submitForms()">Update</button> 
+</div>
+</div>
+
+
+<script>
+    submitForms = function(){
+    document.getElementById("form1").submit();
+}
+</script>
+
+<script>
+window.onload = function() {
+    document.getElementById('doctorUsername').style.display = 'none';}
+
+    let role = document.getElementById('role');
+    role.onchange = function() {
+        role_val = role.value;
+        if(role_val == "assistant") {
+        document.getElementById('doctorUsername').style.display = "block";
+        } else {
+            document.getElementById('doctorUsername').style.display = 'none';
+        }
+    }
+</script>
 
 {% endblock %}
+
+{% block add_script %}
+<script>
+$("#profileImage").click(function(e) {
+    $("#imageUpload").click();
+});
+
+function fasterPreview( uploader ) {
+    if ( uploader.files && uploader.files[0] ){
+          $('#profileImage').attr('src', 
+             window.URL.createObjectURL(uploader.files[0]) );
+    }
+}
+
+$("#imageUpload").change(function(){
+    fasterPreview( this );
+});
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

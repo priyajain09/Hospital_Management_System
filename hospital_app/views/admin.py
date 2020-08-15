@@ -8,6 +8,7 @@ from _datetime import datetime
 from hospital_app.email import send_request_accepted_mail, send_request_rejected_mail
 import datetime
 from flask_login import current_user, login_required
+import base64
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -42,19 +43,26 @@ def action_taken_on_request(username,action):
         u = User(username = user.username, email = user.email, password_hash = user.password_hash, 
         role = 'doctor')
         y = Doctor(username = user.username, name = user.name, qualification = user.qualification, experience = user.experience
-        , specialization = user.specialization, timestamp = user.timestamp, contact_number = user.contact_number)
-        db.session.delete(user) 
-        db.session.commit()
-        db.session.add(u)
-        db.session.commit()
-        db.session.add(y)
-        db.session.commit()
+        , specialization = user.specialization, timestamp = user.timestamp, contact_number = user.contact_number,File = user.File)
+        try:
+            db.session.delete(user) 
+            db.session.commit()
+            db.session.add(u)
+            db.session.commit()
+            db.session.add(y)
+            db.session.commit()
+        except:
+            db.session.rollback()    
         # send_request_accepted_mail(y)
     return redirect(url_for('admin.registration_request'))   
 
 @admin_bp.route('/admin/registration_requests')
 def registration_request():
     q = temporary_users.query.filter_by(role='doctor').all()
+    images = []
+    for i in q:
+        images.append(base64.b64encode(i.File).decode('ascii'))
+
     if len(q) == 0:
         flash("No pending requests")
     len_doctor = len(q)
@@ -63,7 +71,7 @@ def registration_request():
     len_comp = len(temporary_role_users.query.filter_by(role = "compounder").all())
     len_chief = len(temporary_role_users.query.filter_by(role = "chief_doctor").all())
     return render_template('Admin/admin_sites/registration_request.html',q=q,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
-    len_comp= len_comp, len_chief = len_chief)
+    len_comp= len_comp, len_chief = len_chief,images = images)
 
 @admin_bp.route('/admin/departments', methods = ['GET','POST'])
 def departments():
@@ -106,7 +114,8 @@ def delete_user(username):
 @admin_bp.route('/admin/doctor_details/<username>')
 def doctor_details(username):
     q = Doctor.query.filter_by(username = username).first()
-    return render_template('Admin/admin_sites/doctor_details.html',row=q)
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Admin/admin_sites/doctor_details.html',row=q,image = image)
 
 
 # **********************************************************************************
@@ -156,6 +165,9 @@ def deleted_doctors_func():
 @admin_bp.route('/admin/assistant_registration_requests/<role>')
 def assistant_registration_requests(role):
     u = temporary_role_users.query.filter_by(role = role).all()
+    images = []
+    for i in u:
+        images.append(base64.b64encode(i.File).decode('ascii'))
     if (len(u) == 0):
         flash("No pending requests")
 
@@ -187,16 +199,16 @@ def assistant_registration_requests(role):
 
     if role == "assistant":    
         return render_template('Admin/admin_sites/assistant_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
-    len_comp= len_comp, len_chief = len_chief)   
+    len_comp= len_comp, len_chief = len_chief,images= images)   
     elif role =="compounder":
         return render_template('Admin/admin_sites/compounder_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
-    len_comp= len_comp, len_chief = len_chief)  
+    len_comp= len_comp, len_chief = len_chief,images = images)  
     elif role == "reception":
         return render_template('Admin/admin_sites/reception_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
-    len_comp= len_comp, len_chief = len_chief) 
+    len_comp= len_comp, len_chief = len_chief,images= images) 
     elif role == "chief_doctor":
         return render_template('Admin/admin_sites/chief_doctor_requests.html',list = u,len_doctor = len_doctor,len_assistant = len_assistant,len_recep = len_recep,
-    len_comp= len_comp, len_chief = len_chief) 
+    len_comp= len_comp, len_chief = len_chief,images = images) 
 
 
 @admin_bp.route('/admin/registration_requests/<username>/<action>/<role>')
@@ -208,17 +220,19 @@ def action_role_reg(username,action,role):
             x = user_role.query.filter_by(role = "assistant",doctor_username = user.doctor_username).first()
             if x is not None:
                 flash("Assistant for doctor "+user.doctor_username+" already exists. To add this assistant remove the existing one.")
+                return  redirect(url_for('admin.assistant_registration_requests',role=role))
         else:
             x = user_role.query.filter_by(role = role).first()
             if x is not None:
                 flash("Already exists a person for "+role+" role. Remove the existing person to add new.")
+                return  redirect(url_for('admin.assistant_registration_requests',role=role))
         if user is not None:
             u = User(username = user.username, email = user.email, role = user.role, password_hash = user.password)
             db.session.add(u)
             db.session.commit()
             u = user_role(username = user.username, name = user.name,role = user.role, birthdate = user.birthdate,age = user.age,
             contact_number = user.contact_number, address = user.address, gender = user.gender, work_timings = user.work_timings,
-            timestamp = user.timestamp, doctor_username = user.doctor_username,date_of_joining = datetime.datetime.now())
+            timestamp = user.timestamp, doctor_username = user.doctor_username,date_of_joining = datetime.datetime.now(),File = user.File)
             db.session.add(u)
             db.session.delete(user)
             db.session.commit()
@@ -234,6 +248,10 @@ def action_role_reg(username,action,role):
 @admin_bp.route('/admin/role_user/<role>')
 def role_user(role):
      u = user_role.query.filter_by(role = role).first()
+     if u:
+        image = base64.b64encode(u.File).decode('ascii')
+        past_role_users = past_user_role.query.filter_by(role = role).all()
+        return render_template('Admin/admin_sites/role_user_page.html',row = u, past_users = past_role_users,role = role,image = image)
      past_role_users = past_user_role.query.filter_by(role = role).all()
      return render_template('Admin/admin_sites/role_user_page.html',row = u, past_users = past_role_users,role = role)    
 
@@ -247,20 +265,18 @@ def delete_role_user(id,role):
     u = user_role.query.get(id)
     db.session.delete(u)
     x = past_user_role(username = u.username, name = u.name, birthdate = u.birthdate,age = u.age,contact_number=u.contact_number,
-    address = u.address, gender_user = u.gender,work_timings = u.work_timings,date_of_joining = u.date_of_joining,end_date = now ,role = u.role)
+    address = u.address, gender_user = u.gender,work_timings = u.work_timings,date_of_joining = u.date_of_joining,end_date = now ,role = u.role,File = u.File)
     db.session.add(x)
-    try:
-        db.session.commit()
-        flash("Removed successfully!")
-    except:
-        db.session.rollback()
-        flash("Try again") 
+    db.session.commit()
+    flash("Removed successfully!")
+
     return redirect(url_for('admin.role_user',role = role))     
 
 @admin_bp.route('/admin/deleted_role_user_details/<id>')
 def deleted_role_user_details(id):
-    u = past_role_user.query.get(id)
-    return render_template('Admin/admin_sites/deleted_role_user.html',row = u)
+    u = past_user_role.query.get(id)
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('Admin/admin_sites/deleted_role_user.html',row = u,image = image)
 # *******************************************************************************************************
 
 # Statistics

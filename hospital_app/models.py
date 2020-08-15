@@ -8,7 +8,7 @@ from flask_login import UserMixin
 from time import time
 import jwt
 from hospital_app import app
-from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date, Boolean, LargeBinary
+from sqlalchemy import Table, Column, Float, Integer, String, MetaData, ForeignKey, Date, Boolean, LargeBinary,Text
 from datetime import datetime
 from sqlalchemy import Enum
 from flask.helpers import flash, url_for
@@ -30,10 +30,10 @@ def unauthorized():
 
 # username cannot be updated, patient and doctor can be deleted
 class User(UserMixin,db.Model):
-    username = db.Column(db.String(64), index=True, unique=True, primary_key=True,nullable= False)
-    email = db.Column(db.String(100), index=True, unique=True,nullable=False)
-    password_hash = db.Column(db.String(128))
-    role = db.Column(db.String(20),nullable=False)
+    username = db.Column(db.String(100), index=True, unique=True, primary_key=True,nullable= False)
+    email = db.Column(db.String(200), index=True, unique=True,nullable=False)
+    password_hash = db.Column(db.String(500))
+    role = db.Column(db.String(50),nullable=False)
     patient = db.relationship("Patient" , backref='user',uselist=False, cascade = 'save-update,delete')
     doctor = db.relationship("Doctor" , backref='user',uselist=False, cascade = 'save-update,delete')
     def get_reset_password_token(self,expires_in = 900):
@@ -63,7 +63,7 @@ class User(UserMixin,db.Model):
 
 #only delete, insert is allowed 
 class specialization(db.Model):
-    specialization = db.Column(db.String(50),primary_key=True,nullable=False)
+    specialization = db.Column(db.String(150),primary_key=True,nullable=False)
 
     def get_id(self):
         return str(self .specialization)
@@ -73,12 +73,12 @@ class specialization(db.Model):
 
 class Patient( db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable=False)
-    name = db.Column(db.String(50))
+    username = db.Column(db.String(100) , ForeignKey('user.username'),index = True,nullable=False)
+    name = db.Column(db.String(500))
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
     contact_number = db.Column(db.Unicode(20))
-    address = db.Column(db.String)
+    address = db.Column(db.Text)
     gender_user = db.Column(db.String(15))
     timestamp = db.Column(db.DateTime,default = datetime.utcnow)
     birthdate = db.Column(db.Date)
@@ -86,57 +86,57 @@ class Patient( db.Model):
 
 class Doctor( db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable = False)
-    name = db.Column(db.String(50),nullable = False)
+    username = db.Column(db.String(100) , ForeignKey('user.username'),index = True,nullable = False)
+    name = db.Column(db.String(500),nullable = False)
     gender_doctor = db.Column(db.String(15))
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
     contact_number = db.Column(db.String(15),nullable = False)
-    address = db.Column(db.String) 
-    qualification = db.Column(db.String(100),nullable = False)  
-    experience = db.Column(db.String(15),nullable = False)
-    specialization = db.Column(db.String(20),nullable = False)
+    address = db.Column(db.Text) 
+    qualification = db.Column(db.Text,nullable = False)  
+    experience = db.Column(db.Text,nullable = False)
+    specialization = db.Column(db.String(50),nullable = False)
     consultant_fee = db.Column(db.Float)
-    visiting_hours = db.Column(db.String(50))
+    visiting_hours = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
     date_of_joining = db.Column(db.Date)
-    status = db.Column(db.String(20), default = "Not Available")
+    status = db.Column(db.String(50), default = "Not Available")
     File = db.Column(db.LargeBinary,nullable = True, default = None)
 
     def __repr__(self):
         return '{}'.format(self.name)
 
 class deleted_patients(db.Model):
-    username = db.Column(db.String(64),primary_key = True)
+    username = db.Column(db.String(100),primary_key = True)
     email = db.Column(db.String(100),unique = True,nullable = False)
-    name = db.Column(db.String(50),nullable = False)
+    name = db.Column(db.String(500),nullable = False)
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
     contact_number = db.Column(db.Unicode(20))
-    address = db.Column(db.String(80))
+    address = db.Column(db.Text)
     gender_user = db.Column(db.String(15))
     deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
     joined_on = db.Column(db.DateTime)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 class deleted_doctors(db.Model):
-    username = db.Column(db.String(64),primary_key = True)
+    username = db.Column(db.String(100),primary_key = True)
     email = db.Column(db.String(100),unique = True,nullable = False)
-    name = db.Column(db.String(50),nullable = False)
+    name = db.Column(db.String(500),nullable = False)
     gender_doctor = db.Column(db.String(15))
     age = db.Column(db.Integer)
     blood_group = db.Column(db.String(15))
     contact_number = db.Column(db.String(15),nullable = False)
-    address = db.Column(db.String(80)) 
-    qualification = db.Column(db.String(100),nullable = False)  
-    experience = db.Column(db.String(15),nullable = False)
+    address = db.Column(db.Text) 
+    qualification = db.Column(db.Text,nullable = False)  
+    experience = db.Column(db.Text,nullable = False)
     specialization = db.Column(db.String(20),nullable = False)
     date_of_joining = db.Column(db.Date)
     deleted_on = db.Column(db.DateTime,default=datetime.utcnow)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
 
 class is_user_deleted(db.Model):
-    username = db.Column(db.String(64),primary_key=True)
+    username = db.Column(db.String(100),primary_key=True)
     is_deleted = db.Column(Boolean, unique=False, default=False)
 
 class upload_medical_records(db.Model):
@@ -145,7 +145,7 @@ class upload_medical_records(db.Model):
     type_doc = db.Column(Enum('Invoice','Prescription','Report',name="type_enum", create_type=False),nullable = False)
     date = db.Column(db.Date,nullable = False)
     filename = db.Column(db.String(200),nullable = False)
-    name = db.Column(db.String(200),nullable = False)
+    name = db.Column(db.String(500),nullable = False)
     File = db.Column(db.LargeBinary,nullable = False)
 
 # class upload_report(db.Model):
@@ -155,19 +155,19 @@ class upload_medical_records(db.Model):
 #     file_name = db.Column(db.String(50),nullable = False)
 #     report = db.Column(db.LargeBinary,nullable = False)
 
+
 class temporary_users(db.Model):
-    username = db.Column(db.String(64), index=True, unique=True, primary_key=True)
+    username = db.Column(db.String(100), index=True, unique=True, primary_key=True)
     email = db.Column(db.String(100), index=True, unique=True,nullable=False)
     password_hash = db.Column(db.String(128),nullable = False)
     role = db.Column(db.String(20),nullable=False)
-    name = db.Column(db.String(50),nullable = True)
-    qualification = db.Column(db.String(100),nullable = True)  
-    experience = db.Column(db.String(15),nullable = True)
-    specialization = db.Column(db.String(20),nullable = True)
+    name = db.Column(db.String(500),nullable = True)
+    qualification = db.Column(db.Text,nullable = True)  
+    experience = db.Column(db.Text,nullable = True)
+    specialization = db.Column(db.String(500),nullable = True)
     contact_number = db.Column(db.String(15),nullable = True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
-
 
 
     def get_reset_password_token(self,expires_in = 900):
@@ -188,34 +188,34 @@ class temporary_users(db.Model):
 
 class patient_queue(db.Model):
     treat_id = db.Column(db.Integer, nullable = False, primary_key = True)
-    name = db.Column(db.String(50),nullable = False)
-    username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
-    doctor = db.Column(db.String, nullable = False)
-    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False)
+    name = db.Column(db.String(500),nullable = False)
+    username = db.Column(db.String(100) , ForeignKey('user.username'), index = True, nullable=False)
+    doctor = db.Column(db.String(500), nullable = False)
+    doctor_username = db.Column(db.String(100) , ForeignKey('user.username'), index = True, nullable=False)
     status = db.Column(db.String(30),default = "in queue")
     timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
 class compounder_queue(db.Model):
-    name = db.Column(db.String(50),nullable = False)
-    username = db.Column(db.String(64) , ForeignKey('user.username'), index = True, nullable=False,primary_key = True)
+    name = db.Column(db.String(500),nullable = False)
+    username = db.Column(db.String(100) , ForeignKey('user.username'), index = True, nullable=False,primary_key = True)
     timestamp = db.Column(db.DateTime, nullable = False, default = datetime.utcnow)
 
 
 class temporary_role_users(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     email = db.Column(db.String(100), unique=True,nullable=False)
-    username = db.Column(db.String(64),index = True,nullable=False,unique = True)
-    name = db.Column(db.String(50))
+    username = db.Column(db.String(100),index = True,nullable=False,unique = True)
+    name = db.Column(db.String(500))
     password = db.Column(db.String(100),nullable = False)
     birthdate = db.Column(db.Date)
     role = db.Column(db.String(20),nullable = False)
     age = db.Column(db.Integer)
     contact_number = db.Column(db.Unicode(20))
-    address = db.Column(db.String(80))
+    address = db.Column(db.Text)
     gender = db.Column(db.String(15))
-    work_timings = db.Column(db.String(50))
+    work_timings = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
+    doctor_username = db.Column(db.String(100) , ForeignKey('user.username'),nullable=True)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -223,17 +223,17 @@ class temporary_role_users(db.Model):
 
 class user_role(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(64) , ForeignKey('user.username'),index = True,nullable=False)
-    name = db.Column(db.String(50))
+    username = db.Column(db.String(100) , ForeignKey('user.username'),index = True,nullable=False)
+    name = db.Column(db.String(500))
     role = db.Column(db.String(20),nullable = False)
     birthdate = db.Column(db.Date)
     age = db.Column(db.Integer)
     contact_number = db.Column(db.Unicode(20))
-    address = db.Column(db.String(80))
+    address = db.Column(db.Text)
     gender = db.Column(db.String(15))
-    work_timings = db.Column(db.String(50))
+    work_timings = db.Column(db.Text)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    doctor_username = db.Column(db.String(64) , ForeignKey('user.username'),nullable=True)
+    doctor_username = db.Column(db.String(100) , ForeignKey('user.username'),nullable=True)
     date_of_joining = db.Column(db.Date)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
 
@@ -241,15 +241,15 @@ class user_role(db.Model):
 
 class past_user_role(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(64),nullable = False)
-    doctor_username = db.Column(db.String(64),nullable=True)
-    name = db.Column(db.String(50))
+    username = db.Column(db.String(100),nullable = False)
+    doctor_username = db.Column(db.String(100),nullable=True)
+    name = db.Column(db.String(500))
     birthdate = db.Column(db.Date)
     age = db.Column(db.Integer)
     contact_number = db.Column(db.Unicode(20))
-    address = db.Column(db.String(80))
+    address = db.Column(db.Text)
     gender_user = db.Column(db.String(15))
-    work_timings = db.Column(db.String(50))
+    work_timings = db.Column(db.Text)
     date_of_joining = db.Column(db.Date)
     end_date = db.Column(db.Date)
     role = db.Column(db.String(20),nullable = False)
