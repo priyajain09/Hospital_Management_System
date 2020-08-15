@@ -1,4 +1,11 @@
 {% extends 'Compounder/home.html' %}
+
+{% block links %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block heading %}
 <h3 >
   <strong>Start Treatment</strong><br>
@@ -18,7 +25,6 @@
                 <!-- Title -->
                 <h4 class="card-title"><b>Treatment Id: </b>{{ treatment.treat_id }}</h4>
                 <!-- Text -->
-                <p class="card-text">
                 <b>Started on :  </b>{{ treatment.time_stamp }}<br>
                 <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
                 <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
@@ -30,7 +36,7 @@
                     <b>Allergies:  </b>{{ treatment.allergies}}<br>
                     <b>Chronic Diseases:  </b>{{ treatment.chronic}}<br>
                 {% endif %}
-                </p>
+                
                 </div>
             </div>
         </div>
@@ -58,19 +64,47 @@
                                             <label for="Dia">  <small class="text-muted">Diastolic (mm Hg) </small></label><input type="number" name="Dia"  value="80">
                                         </div>
                                     </p>
-                                    <hr>
-                                    <p class="card-text">
+                                    <br>
                                         <div class="form-group">
-                                            <label for="allergies">Allergies <small class="text-muted"> (space separated) </small></label>
-                                            <input type="textarea" name="allergies" >
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-3" for="chronic">Chronic</label>
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <div class="input-group control-group after-add-more1">
+                                                    <input type="text" name="chronic[]" id="chronic" class="form-control" placeholder="Enter chronic disease">
+                                                    <div class="input-group-btn"> 
+                                                        <button class="btn btn-success add-more1" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </p>
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="chronic">Chronic <small class="text-muted"> (space separated) </small></label>
-                                            <input type="textarea" name="chronic" >
+                                        <div class="copy1 hide">
+                                            <div class="control-group input-group" style="margin-top:10px">
+                                                <input type="text" name="chronic[]" class="form-control" placeholder="Enter chronic disease">
+                                                <div class="input-group-btn"> 
+                                                    <button class="btn btn-danger remove1" type="button"><i class="glyphicon glyphicon-remove"></i></button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </p>
+                                        <br>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-3" for="allergies">Allergies</label>
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <div class="input-group control-group after-add-more2">
+                                                <input type="text" name="allergies[]" id="allergies" class="form-control" placeholder="Enter Allergy">
+                                                <div class="input-group-btn"> 
+                                                    <button class="btn btn-success add-more2" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="copy2 hide">
+                                        <div class="control-group input-group" style="margin-top:10px">
+                                            <input type="text" name="allergies[]" class="form-control" placeholder="Enter Allergy">
+                                            <div class="input-group-btn"> 
+                                                <button class="btn btn-danger remove2" type="button"><i class="glyphicon glyphicon-remove"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <br>
                                 </div>
                             </div>
                             <br>
@@ -103,6 +137,26 @@
 
 {% block scripts %}
 {{super()}}
+<script>
+$(document).ready(function() {
+      $(".add-more1").click(function(){
+          var html = $(".copy1").html();
+          $(".after-add-more1").after(html);
+      });
+      $("body").on("click",".remove1",function(){ 
+          $(this).parents(".control-group").remove();
+      });
+    });
 
+    $(document).ready(function() {
+      $(".add-more2").click(function(){
+          var html = $(".copy2").html();
+          $(".after-add-more2").after(html);
+      });
+      $("body").on("click",".remove2",function(){ 
+          $(this).parents(".control-group").remove();
+      });
+    });   
+</script>
 {% endblock %}
 

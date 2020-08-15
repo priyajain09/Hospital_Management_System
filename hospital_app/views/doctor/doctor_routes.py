@@ -130,8 +130,9 @@ def prescription_two(treat_id, pres_id):
 
         note = request.form["note"]
         next_visit_date = request.form["next_visit_date"]
-        reports = request.form['reports']
-        reports = reports.split()
+        reports = request.form.getlist('reports[]')
+        print(reports)
+        reports.pop()
         mongo.db.Treatment.update(
         { "treat_id": int(treat_id), "prescription.pres_id": int(pres_id)},
                 {"$push": 

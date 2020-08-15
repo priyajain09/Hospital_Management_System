@@ -2,7 +2,8 @@
 
 {% block links %}
 {{super()}}
-
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
  {% endblock %}
 {% block heading %}
 {% endblock %}
@@ -10,11 +11,11 @@
 
 {% block content %}
 <div class="container">
-    <div class="card mb-4 wow fadeIn winter-neva-gradient">
+    <div class="card winter-neva-gradient">
 
         <!--Card content-->
-        <div class="card-body d-sm-flex justify-content-between">
-          <h6>
+        <div class="card-body justify-content-between">
+          <h5>
           <div class="row">
             <div class="col">
                 <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
@@ -41,7 +42,7 @@
               <a class="btn btn-outline-black btn-sm" href = "#" target="_blank" > Test Reports </a>
           </div>
           </div>
-          </h6>
+          </h5>
         </div>
       </div>
     <br>
@@ -58,30 +59,30 @@
                         <form method=POST action="{{ url_for('doctor_routes.prescription_two', treat_id = treatment.treat_id , pres_id = pres_id ) }}">
                             <div class = "row">
                                 <div class="col-12">
-                            <table>
+                            <table  style="font-size:20px;">
                                 <thead>
                                     <tr>
-                                        <th> Medicine </th>
-                                        <th> Moring Dosage</th>
-                                        <th> Afternoon Dosage</th>
-                                        <th> Night Dosage</th>
-                                        <th> Quantity</th>
+                                        <th style="font-size:15px;"><b> Medicine</b> </th>
+                                        <th style="font-size:15px;"><b>  Moring Dosage</b></th>
+                                        <th style="font-size:15px;"> <b>Afternoon Dosage</b></th>
+                                        <th style="font-size:15px;"><b> Night Dosage</b></th>
+                                        <th style="font-size:15px;"><b> Quantity</b></th>
                                         <th> </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for m in med %}
                                     <tr>
-                                        <td>{{m}} </td>
-                                        <td><input type="number" name="{{m}}_morndos" min="0" step="1" value="0" required="required"></td>
-                                        <td><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0" required="required"></td>
-                                        <td><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0" required="required"></td>
-                                        <td><input type="number" name="{{m}}_quantity" min="0" step="1" value="0" required="required"></td>
-                                        <td><select name="Dosage" required="required">
-                                            <option value="" selected>dosage</option>
-                                            <option value="Empty stomach">Empty stomach</option>
-                                            <option value="After having some food">After having some food</option>                                            
-                                            <option value="Either way">Either way</option>
+                                        <td style="font-size:15px;">{{m}} </td>
+                                        <td style="font-size:10px;"><input type="number" name="{{m}}_morndos" min="0" step="1" value="0" required="required"></td>
+                                        <td style="font-size:10px;"><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0" required="required"></td>
+                                        <td style="font-size:10px;"><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0" required="required"></td>
+                                        <td style="font-size:10px;"><input type="number" name="{{m}}_quantity" min="0" step="1" value="0" required="required"></td>
+                                        <td style="font-size:10px;"><select name="Dosage" required="required">
+                                            <option style="font-size:10px;" value="" selected>dosage</option>
+                                            <option  style="font-size:10px;" value="Empty stomach">Empty stomach</option>
+                                            <option style="font-size:10px;" value="After having some food">After having some food</option>                                            
+                                            <option style="font-size:10px;" value="Either way">Either way</option>
                                         </select></td>
                                     </tr>
                                     {% endfor %}
@@ -91,9 +92,25 @@
                                 <div class = "row">
                                     <div class="col-4">
                                         <div class="form-group">
-                                            <label for="reports" placeholder="Blood-test Urine-test">Reports <small class="text-muted"> (space separated) </small></label>
-                                            <input type="textarea" name="reports" >
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-3" for="reports">Reports</label>
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <div class="input-group control-group after-add-more2">
+                                                    <input type="text" name="reports[]" id="reports" class="form-control" placeholder="Enter Report">
+                                                    <div class="input-group-btn"> 
+                                                        <button class="btn btn-success add-more2" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
+                                        <div class="copy2 hide">
+                                            <div class="control-group input-group" style="margin-top:10px">
+                                                <input type="text" name="reports[]" class="form-control" placeholder="Enter Report">
+                                                <div class="input-group-btn"> 
+                                                    <button class="btn btn-danger remove2" type="button"><i class="glyphicon glyphicon-remove"></i></button>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                     <div class="col-4">
                                         <div class="form-group">
@@ -126,9 +143,19 @@
 
 
 {% block scripts %}
-
+{{super()}}
 <script>
-    {{super()}}
+
+
+    $(document).ready(function() {
+      $(".add-more2").click(function(){
+          var html = $(".copy2").html();
+          $(".after-add-more2").after(html);
+      });
+      $("body").on("click",".remove2",function(){ 
+          $(this).parents(".control-group").remove();
+      });
+    });       
     </script>
 {% endblock %}
 

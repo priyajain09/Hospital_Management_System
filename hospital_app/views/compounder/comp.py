@@ -62,10 +62,10 @@ def add_prescription(treat_id):
         temperature = request.form['temperature']
         Sys = request.form['Sys']
         Dia = request.form['Dia']
-        allergies = request.form['allergies']
-        allergies = allergies.split()
-        chronic = request.form['chronic']
-        chronic = chronic.split()
+        allergies = request.form.getlist('allergies[]')
+        allergies.pop()
+        chronic = request.form.getlist('chronic[]')
+        chronic.pop()
         if treatment['doctorid'] == '':
             doctorid = request.form['doctor']
         else:
