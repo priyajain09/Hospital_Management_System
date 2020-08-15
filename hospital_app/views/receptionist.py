@@ -41,7 +41,7 @@ def home_page():
         except:
             db.session.rollback()
             flash("Try Again") 
-        return redirect_template(url_for('recep.home_page'))   
+        return redirect(url_for('recep.home_page'))   
     return render_template('Reception/patient_registration.html',form = form)
 
 @recep_bp.route('/patient_enquiry', methods = ['GET','POST'])
