@@ -51,19 +51,17 @@
         </thead>
         <tbody>
           {% for roww in treatment %}
-          <div class="text-white-50">
           {% set symList = [] %} 
           {% set medList = [] %}
           
           {% for pres in roww.prescription %}
             {% for sym in pres.symptoms %}
-              {{ symList.append(sym) }}
+              {% set symList = symList.append(sym) %}
             {% endfor %}
             {% for med in pres.medicines %}
-            {{ medList.append(med) }}
+            {% set medList = medList.append(med) %}
             {% endfor %}
           {% endfor %}  
-          </div>
             <tr>
               <td>{{roww.treat_id}}</td>
               <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
