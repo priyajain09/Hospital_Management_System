@@ -61,13 +61,19 @@ def register_request():
         return redirect(url_for('login.index'))
     form = RegistrationForm_Doctor()
     if form.validate_on_submit():
+        file = request.files[form.image.name]
         spec = str(form.specialization.data)
         user = temporary_users(username = form.username.data, email = form.email.data, role = "doctor",name = form.name.data,qualification = form.qualification.data,
-        experience = form.experience.data,specialization = spec,contact_number = form.phonenumber.data)
+        experience = form.experience.data,specialization = spec,contact_number = form.phonenumber.data, File = file.read())
         user.set_password(form.password.data)  
         db.session.add(user)
-        db.session.commit()
-        flash("You will be notified through email if your request get approved/rejected.")
+        try:
+            db.session.commit()
+            flash("You will be notified through email if your request get approved/rejected.")
+        except:
+            db.session.rollback()
+            flash("Try Again!")
+            return redirect(url_for('register.register_request'))
         return redirect(url_for('login.login'))
     return render_template('Authentication/register_doctor.html',title = "Register Doctor",form = form)    
 
@@ -79,6 +85,7 @@ def register_role_request():
     form = register_role_form()
 
     if form.validate_on_submit():
+        file = request.files[form.image.name]
         if(form.role.data == "assistant"):
             u = User.query.filter_by(username=form.doctor_username.data, role = "doctor").first()
             if u is None:
@@ -87,12 +94,12 @@ def register_role_request():
 
             user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
             birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
-            work_timings = form.work_timings.data,doctor_username = form.doctor_username.data)    
+            work_timings = form.work_timings.data,doctor_username = form.doctor_username.data,File = file.read())    
         
         else:
             user = temporary_role_users(email = form.email.data,username = form.username.data,name = form.firstname.data + " " +form.lastname.data, 
             birthdate = form.birthdate.data, role = form.role.data, age = form.age.data, contact_number= form.contact_number.data,address = form.address.data,gender = form.gender.data,
-            work_timings = form.work_timings.data,doctor_username = None)
+            work_timings = form.work_timings.data,doctor_username = None,File = file.read())
         
         passw = form.password.data 
         user.set_password(form.password.data)

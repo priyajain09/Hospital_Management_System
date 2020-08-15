@@ -24,6 +24,29 @@
   <link href="../static/css1/simple-sidebar.css" rel="stylesheet">
  
   </style>
+  <style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
   {% endblock %}
 </head>
 <body class = "fixed-sn light-blue-skin">
@@ -223,7 +246,23 @@
   $('.dataTables_length').addClass('bs-select');
 });
   </script>
-
+  <script>
+    $("#profileImage").click(function(e) {
+        $("#imageUpload").click();
+    });
+    
+    function fasterPreview( uploader ) {
+        if ( uploader.files && uploader.files[0] ){
+              $('#profileImage').attr('src', 
+                 window.URL.createObjectURL(uploader.files[0]) );
+        }
+    }
+    
+    $("#imageUpload").change(function(){
+        fasterPreview( this );
+    });
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
   {% block add_script %}
   {% endblock %}
  

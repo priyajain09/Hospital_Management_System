@@ -8,6 +8,29 @@
   <link rel="stylesheet" href="../../../static/css/style.css">
   <link href="../../../static/css/addons/datatables2.min.css" rel="stylesheet">
   <link href="../../../static/css1/simple-sidebar.css" rel="stylesheet">
+  <style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
 {% endblock %}
 
 
@@ -34,8 +57,8 @@
       <div class="col-md-4 offset-md-1 mx-3 my-3">
   
         <!-- Featured image -->
-        <div class="view overlay">
-          <img src="https://mdbootstrap.com/img/Photos/Others/laptop-sm.jpg" class="img-fluid" alt="Sample image for first version of blog listing">
+        <div id="profile-container" class="view overlay">
+          <img class='backup_picture' src="data:;base64,{{ image}} " alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
           <a>
             <div class="mask rgba-white-slight"></div>
           </a>
@@ -48,19 +71,38 @@
       <div class="col-md-7 text-md-left ml-3 mt-3">
   
         <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
-            <small class="text-muted">{{row.role}}</small>
+          {% if row.role == "reception" %}
+          <small class="text-muted">Receptionist</small>
+        {% elif row.role=="compounder" %}
+        <small class="text-muted">Compounder</small>
+        {% else %}
+        <small class="text-muted">Chief Medical Officer</small>
+        {% endif %}
         </h4>
+        <dl class="row">
+      
+          <dt class="col-sm-3">Birthdate</dt>
+          <dd class="col-sm-9">{{row.birthdate}}</dd>
+        
+          <dt class="col-sm-3">Age </dt>
+          <dd class="col-sm-9">{{row.age}}</dd>
+          <dt class="col-sm-3">Gender </dt>
+          <dd class="col-sm-9">{{row.gender_user}}</dd>
   
-        <p class="font-weight-normal">
-        <strong>Gender : </strong> {{row.gender_user}}<br>
-        <strong>Age : </strong> {{row.age}}<br>
-        <strong>Birthdate :</strong> {{row.birthdate}}<br>
-        <strong>Address : </strong> {{row.address}}<br>
-        <strong>Contact number : </strong> {{row.contact_number}}<br>
-        <strong>Working hours : </strong>{{row.working_timings}}<br>
-        <strong>Date of joining : </strong> {{row.date_of_joining}}<br>
-        <strong>Date of resignation : </strong> {{row.end_date}}<br>
-        </p>
+          <dt class="col-sm-3">Contact number </dt>
+          <dd class="col-sm-9">{{row.contact_number}}</dd>
+  
+          <dt class="col-sm-3">Address</dt>
+          <dd class="col-sm-9">{{row.address}}</dd>
+          <dt class="col-sm-3">Work details</dt>
+          <dd class="col-sm-9">{{row.work_timings}}</dd>
+          <dt class="col-sm-3">Date of joining </dt>
+          <dd class="col-sm-9">{{row.date_of_joining}}</dd>
+          <dt class="col-sm-3">Date of resignation </dt>
+          <dd class="col-sm-9">{{row.end_date}}</dd>
+        
+          
+        </dl>
       </div>
       <!-- Grid column -->
     </div>

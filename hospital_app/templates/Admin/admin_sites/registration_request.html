@@ -22,18 +22,19 @@
     </ul>
   </div>
   {% for message in get_flashed_messages() %}
-            <div class="alert alert-info" role="alert">{{ message }}</div>
-          {% endfor %}
+      <div class="alert alert-info" role="alert">{{ message }}</div>
+  {% endfor %}
+
   {% for row in q %}
   <div class="jumbotron text-center hoverable p-4">
   <div class="row">
   
     <!-- Grid column -->
-    <div class="col-md-4 offset-md-1 mx-3 my-3">
+    <div class="col-md-4 offset-md-1 mx-2 my-2">
 
       <!-- Featured image -->
-      <div class="view overlay">
-        <img src="https://mdbootstrap.com/img/Photos/Others/laptop-sm.jpg" class="img-fluid" alt="Sample image for first version of blog listing">
+      <div id="profile-container" class="view overlay">
+        <img class='backup_picture' src="data:;base64,{{ images[loop.index-1]}}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
         <a>
           <div class="mask rgba-white-slight"></div>
         </a>
@@ -44,19 +45,25 @@
 
     <!-- Grid column -->
     <div class="col-md-7 text-md-left ml-3 mt-3">
-
       <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
-          <small class="text-muted">{{row.email}}</small>
-      </h4>
-
-      <p class="font-weight-normal">
-        <strong>Specialization : </strong> {{row.specialization}}<br>
-        <strong>Experience : </strong> {{row.experience}}<br>
-          <strong>Qualification : </strong> {{row.quallification}}<br>
-          <strong>Contact number : </strong> {{row.contact_number}}<br>
-
-          <strong>Request posted at : </strong>{{row.timestamp}}<br>
-      </p>
+        <small class="text-muted">{{row.email}}</small>
+    </h4>
+      <dl class="row">
+        <dt class="col-sm-3">Specialization</dt>
+        <dd class="col-sm-9">{{row.specialization}}</dd>
+      
+        <dt class="col-sm-3">Experience</dt>
+        <dd class="col-sm-9">{{row.experience}}</dd>
+      
+        <dt class="col-sm-3">Qualification </dt>
+        <dd class="col-sm-9">{{row.qualification}}</dd>
+        <dt class="col-sm-3">Contact number </dt>
+        <dd class="col-sm-9">{{row.contact_number}}</dd>
+        <dt class="col-sm-3">Request posted at </dt>
+        <dd class="col-sm-9">{{row.timestamp}}</dd>
+      
+        
+      </dl>
       <a class="btn btn-success" href = "{{url_for('admin.action_taken_on_request',username = row.username,action = 'Accept',role='assistant')}}">Accept</a>  
       <a class="btn btn-danger" href = "{{url_for('admin.action_taken_on_request',username = row.username,action = 'Reject',role='assistant')}}">Reject</a>  
     </div>
@@ -69,3 +76,5 @@
 </div>
 
 {% endblock %}
+
+

@@ -7,6 +7,29 @@
   <link rel="stylesheet" href="../../../static/css/style.css">
 
   <link href="../../../static/css1/simple-sidebar.css" rel="stylesheet">
+  <style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
 {% endblock %}
 
 
@@ -27,7 +50,7 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link " href="">Doctor<span class="badge badge-danger ml-2">{{len_doctor}}</span></a>
+        <a class="nav-link " href="{{url_for('admin.registration_request')}}">Doctor<span class="badge badge-danger ml-2">{{len_doctor}}</span></a>
       </li>
       <li class="nav-item">
         <a class="nav-link " href="{{url_for('admin.assistant_registration_requests',role='assistant')}}" >Assistant<span class="badge badge-danger ml-2">{{len_assistant}}</span></a>
@@ -56,8 +79,8 @@
     <div class="col-md-4 offset-md-1 mx-3 my-3">
 
       <!-- Featured image -->
-      <div class="view overlay">
-        <img src="https://mdbootstrap.com/img/Photos/Others/laptop-sm.jpg" class="img-fluid" alt="Sample image for first version of blog listing">
+      <div id="profile-container" class="view overlay">
+        <img class='backup_picture' src="data:;base64,{{ images[loop.index-1]}}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
         <a>
           <div class="mask rgba-white-slight"></div>
         </a>
@@ -73,15 +96,29 @@
           <small class="text-muted">{{row.email}}</small>
       </h4>
 
-      <p class="font-weight-normal">
-          <strong>Birthdate : </strong> {{row.birthdate}}<br>
-          <strong>Age : </strong> {{row.age}}<br>
-          <strong>Gender : </strong> {{row.gender}}<br>
-          <strong>Contact number : </strong> {{row.contact_number}}<br>
-          <strong>Address : </strong> {{row.address}}<br>
-          <strong>Work details : </strong>{{row.work_timings}}<br>
-          <strong>Request posted at : </strong>{{row.timestamp}}<br>
-      </p>
+      <dl class="row">
+
+      
+        <dt class="col-sm-3">Birthdate</dt>
+        <dd class="col-sm-9">{{row.birthdate}}</dd>
+      
+        <dt class="col-sm-3">Age </dt>
+        <dd class="col-sm-9">{{row.age}}</dd>
+        <dt class="col-sm-3">Gender </dt>
+        <dd class="col-sm-9">{{row.gender}}</dd>
+
+        <dt class="col-sm-3">Contact number </dt>
+        <dd class="col-sm-9">{{row.contact_number}}</dd>
+
+        <dt class="col-sm-3">Address</dt>
+        <dd class="col-sm-9">{{row.address}}</dd>
+        <dt class="col-sm-3">Work details</dt>
+        <dd class="col-sm-9">{{row.work_timings}}</dd>
+        <dt class="col-sm-3">Request posted at </dt>
+        <dd class="col-sm-9">{{row.timestamp}}</dd>
+      
+        
+      </dl>
       <a class="btn btn-success" href = "{{url_for('admin.action_role_reg',username = row.username,action = 'Accept',role='chief_doctor')}}">Accept</a>  
       <a class="btn btn-danger" href = "{{url_for('admin.action_role_reg',username = row.username,action = 'Reject',role='chief_doctor')}}">Reject</a>  
     </div>

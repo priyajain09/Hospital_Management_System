@@ -70,10 +70,11 @@ class RegistrationForm_Doctor(FlaskForm):
     password2 = PasswordField(
         'Retype Password', validators=[InputRequired(), EqualTo('password')])
     name = StringField('Name',validators=[InputRequired()])
-    qualification = StringField('Qualification',validators=[InputRequired()])
+    qualification = TextAreaField('Qualification',validators=[InputRequired()])
     experience = StringField('Experience',validators=[InputRequired()])
     specialization = QuerySelectField('Specialization',validators=[Required()],query_factory=get_specialization_list)
     phonenumber = StringField("Phone Number",validators=[InputRequired()])
+    image = FileField('image',id = 'imageUpload')
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
@@ -146,6 +147,7 @@ class patient_registration_form(FlaskForm):
     contact_number = IntegerField('Contact Number ',validators=[InputRequired()])
     address = TextAreaField('Address ')
     gender = RadioField('Gender ',validators=[InputRequired()], choices = [('Male','Male'),('Female','Female'),('Transgender','Transgender')])
+    image = FileField('image',id = 'imageUpload')
     submit = SubmitField('Submit')
 
     def validate_username(self, username):
@@ -185,6 +187,7 @@ class register_role_form(FlaskForm):
     address = TextAreaField('Address ')
     work_timings = StringField('Working days - working hours',validators=[InputRequired()])
     gender = SelectField('Gender ',validators=[InputRequired()], choices = [('Male','Male'),('Female','Female'),('Transgender','Transgender')])
+    image = FileField('image',id = 'imageUpload')
     submit = SubmitField('Submit')
 
     def validate_username(self, username):

@@ -57,8 +57,8 @@ def login():
         if current_user.role=="doctor":
             return redirect(url_for('doctor_routes.home_page'))      
 
-        if current_user.role == "receptionist":
-            return redirect(url_for('receptionist.home_page'))  
+        if current_user.role == "reception":
+            return redirect(url_for('recep.home_page'))  
 
     return render_template('Authentication/authentication/login.html', title = "Sign In", form = form)            
 
