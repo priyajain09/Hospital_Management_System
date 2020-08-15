@@ -1,4 +1,9 @@
-{% extends 'Doctor/home.html' %}
+{% extends 'CMO/home.html' %}
+
+{% block links %}
+{{super()}}
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+{% endblock %}
 
 {% block heading %}
 
@@ -67,6 +72,11 @@
 {% endblock %}
 
 {% block scripts %}
+{{super()}}
+<script type="text/javascript" src="//cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+
+<!-- Include Date Range Picker -->
+<script type="text/javascript" src="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js"></script>
 
 <script >
  $(document).ready(function () {

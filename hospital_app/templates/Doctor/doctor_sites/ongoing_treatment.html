@@ -9,38 +9,45 @@
 
 
 {% block content %}
-<div class="container-fluid">
-        <div class="col-8">
-            <!--Treatment Detail Card -->
-            <div class="card">
-                <!-- Card content -->
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
-                            <b>Started on :  </b>{{ treatment.time_stamp }}<br>
-                            <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
-                            <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
-                            <b>Doctor ID:  </b>{{ treatment.doctorid}}
-                        </div>
-                        <div class="col">
-                            <b>Age:  </b>{{ treatment.age}}<br>
-                            <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
-                            <b>Gender:  </b>{{ treatment.gender}}<br>
-                            <hr>
-                            <b>Allergies:  </b>{{ treatment.allergies}}<br>
-                            <b>Chronic Diseases:  </b>{{ treatment.chronic}}
-                        </div>
-                        <div class="col">
-                            <a href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > View Prescriptions </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <br>
+<div class="container">
+        <!-- Heading -->
+<div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+    <h6>
+    <div class="row">
+      <div class="col">
+          <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
+          <b>Started on :  </b>{{ treatment.time_stamp }}<br>
+      </div>
+      <div class="col">
+        <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+        <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
+        <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
+        <b>Doctor Name:  </b>{{ treatment.doctor_name}}
+    </div>
+      <div class="col">
+          <b>Age:  </b>{{ treatment.age}}<br>
+          <b>Blood Group:  </b>{{ treatment.blood_group}}<br>
+          <b>Gender:  </b>{{ treatment.gender}}<br>
+      </div>
+      <div class="col">
+        <b>Allergies:  </b>{%for allergy in treatment.allergies%}{{allergy}}{% endfor %}<br>
+        <b>Chronic Diseases:  </b>{% for chron in treatment.chronic%}{{chron}}{% endfor %}
+    </div>
+    <div class="col">
+        <a class="btn btn-outline-black btn-sm" href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > Prescriptions </a>
+        <br>
+        <a class="btn btn-outline-black btn-sm" href = "#" target="_blank" > Test Reports </a>
+    </div>
+    </div>
+    </h6>
+  </div>
+</div>
+
     <div class = "row">
-        <div class="col-8">
+        <div class="col-12">
             <!--Fill Prescription Card -->
             <div class="card">
                 <!-- Card content -->
@@ -51,7 +58,7 @@
                         <form method=POST action="{{ url_for('doctor_routes.prescription', treat_id = treatment.treat_id ) }}">
                             <div class="row">
                                 <div class="col">
-                                    <label for="multiselect1">Symptoms</label>
+                                    <label for="multiselect1">Symptoms</label><br>
                                     <select id="multiselect1" multiple="multiple" name="multiselect1">
                                         <option value="Sweating">Sweating</option>
                                         <option value="Weekness">Weekness</option>
@@ -63,7 +70,7 @@
                                     <hr>
                                 </div>
                                 <div class="col">
-                                    <label for="multiselect2">Disease</label>
+                                    <label for="multiselect2">Disease</label><br>
                                     <select id="multiselect2" multiple="multiple" name="multiselect2">
                                         <option value="Common cold">Common cold</option>
                                         <option value="Viral fever">Viral fever</option>
@@ -75,7 +82,7 @@
                                     <hr>
                                 </div>
                                 <div class="col">
-                                    <label for="multiselect3">Medicines</label>
+                                    <label for="multiselect3">Medicines</label><br>
                                     <select id="multiselect3" multiple="multiple" name="multiselect3">
                                         <option value="Combiflame">Combiflame</option>
                                         <option value="Paracetamol">Paracetamol</option>

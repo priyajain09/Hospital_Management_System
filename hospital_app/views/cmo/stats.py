@@ -12,7 +12,7 @@ from operator import itemgetter
 from _datetime import datetime
 import datetime
   
-stats_bp = Blueprint('stats',__name__, url_prefix='/doctor')
+stats_bp = Blueprint('stats',__name__)
 
 @stats_bp.route('/symptoms-stats',methods = ['GET','POST'])
 def symptoms_stats():
@@ -22,34 +22,32 @@ def symptoms_stats():
         str_from_date = list_date_range[0] + " "+ "00:00:00.000000"
         str_to_date = list_date_range[2] + " "+ "00:00:00.000000"
 
-        from_date = datetime.strptime(str_from_date, '%m/%d/%Y %H:%M:%S.%f') 
+        from_date = datetime.datetime.strptime(str_from_date, '%m/%d/%Y %H:%M:%S.%f') 
         print(from_date)
         print(type(from_date))
 
-        to_date = datetime.strptime(str_to_date, '%m/%d/%Y %H:%M:%S.%f') 
+        to_date = datetime.datetime.strptime(str_to_date, '%m/%d/%Y %H:%M:%S.%f') 
         print(to_date)
         print(type(to_date))             
         symp_stat = defaultdict(int)
-        docs = mongo.db.Treatment.find({ 'prescription' : { '$elemMatch': {'time_stamp' : {'$gte': from_date , '$lt': to_date }}}})
-        docs_past = mongo.db.Past_Treatments.find({ 'prescription' : { '$elemMatch': {'time_stamp' : {'$gte': from_date , '$lt': to_date }}}})        
+        docs = mongo.db.Treatment.find({ 'prescription' : { '$elemMatch': {'timestamp' : {'$gte': from_date , '$lt': to_date }}}})
+        docs_past = mongo.db.Past_Treatments.find({ 'prescription' : { '$elemMatch': {'timestamp' : {'$gte': from_date , '$lt': to_date }}}})        
         #print(list(docs[0]['prescription']))
         docs = list(docs) + list(docs_past)
         for treatment in docs:
             print(treatment)
             for prescription in treatment['prescription']:
-                print(prescription['symptoms_inputs']) 
-                for symptom in prescription['symptoms_inputs']:
-                    print(symptom)
+                for symptom in prescription['symptoms']:
                     symp_stat[symptom] += 1
     
         print(symp_stat)
         symp_table_data = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True))
         symp_stat = dict(sorted(symp_stat.items(), key = itemgetter(1), reverse = True)[0:10])
         print(symp_stat)
-        return render_template('Doctor/doctor_sites/current_symptoms_stats.html', symp_stat = symp_stat, symp_table_data = symp_table_data)
+        return render_template('CMO/sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat, symp_table_data = symp_table_data)
 
     symp_stat = defaultdict(int) 
-    return render_template('Doctor/doctor_sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat)
+    return render_template('CMO/sites/Stats/current_symptoms_stats.html', symp_stat = symp_stat)
 
 
 
@@ -128,7 +126,7 @@ def disease_stats(year):
 
     print(labels)
     print(values)
-    return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Disease Statistics", max = 10, values = values, labels= labels, year = current_year)
+    return render_template('CMO/sites/Stats/diseases.html',title = "Disease Statistics", max = 10, values = values, labels= labels, year = current_year)
     
 
 @stats_bp.route('/treatment-stats',defaults = {'year':None})
@@ -188,7 +186,7 @@ def treatment_stats(year):
 
     print(labels)
     print(values)
-    return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
+    return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year)
 
 def numberOfDays(y, m):
       leap = 0
@@ -262,7 +260,7 @@ def particular_disease():
 
             print(labels)
             print(values)
-            return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+            return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
             
 
         else :
@@ -313,9 +311,9 @@ def particular_disease():
 
             print(labels)
             print(values)
-            return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+            return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
                 
     else:
         labels = []
         values = []
-        return render_template('Doctor/doctor_sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)
+        return render_template('CMO/sites/Stats/diseases.html',title = "Treatments Statistics", max = 10, values = values, labels= labels, year = current_year,form = form)

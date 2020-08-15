@@ -27,7 +27,7 @@
    {% for row in list %}
        <tr>
            <td>{{row.name}}</td>
-           <td><a href="{{url_for('admin.user_details',username = row.username)}}" >{{row.username}}</a></td>
+           <td><a href="#" >{{row.username}}</a></td>
            <td>{{row.timestamp}}</td>
            <td><a href="{{url_for('comp.visit_patient',username = row.username)}}" >Visit</a> </td>
            <td ><a href="{{url_for('recep.remove_compounder_queue',username = row.username)}}" >Click here</a> </td>

@@ -33,8 +33,8 @@
    {% for row in list %}
    <tr>
        <td>{{loop.index}}</td>
-       <td><a href="{{url_for('admin.user_details',username = row.username)}}" > {{row.name}} </a></td>
-       <td><a href="{{url_for('admin.user_details',username = row.username)}}" > {{row.username}} </a></td>
+       <td><a href="#" > {{row.name}} </a></td>
+       <td><a href="#" > {{row.username}} </a></td>
        <td>{{row.doctor}}</td>
        <td>{{row.doctor_username}}</td>
        <td>{{row.treat_id}}</td>

@@ -11,7 +11,7 @@
             <div>
               <h4 class="mb-2 mb-sm-0 pt-1">
               <strong>Treatment  </strong><br>
-              <small class="text-muted"><a href="{{url_for('admin.user_details',username = username)}}" >{{username}}</a></small>
+              <small class="text-muted"><a href="#" >{{username}}</a></small>
               </h4>
             </div>
           </div>
@@ -64,7 +64,7 @@
    {% for treat in treatments %}
        <tr>
            <td>{{treat.treat_id}}</td>
-           <td><a href="{{url_for('admin.user_details',username = username)}}" >{{treat.patient_userid}}</a></td>
+           <td><a href="#" >{{treat.patient_userid}}</a></td>
            <td>{{treat.patient_name}}</td>
            <td>{{treat.doctorid}}</td>
            <td>{{treat.time_stamp}}</td>

@@ -1,9 +1,8 @@
-{% extends 'Doctor/home.html' %}
+{% extends 'CMO/home.html' %}
 
-  {% block links %}
-  {{super()}}
-
-{% endblock %}
+    {% block links %}
+    {{super()}}
+    {% endblock %}
 
 {% block heading %}
 
@@ -14,7 +13,7 @@
   <div class="card-body d-sm-flex justify-content-between">
 
     <h4 class="mb-2 mb-sm-0 pt-1">
-      Active Treatments
+      {{Status}} Treatments
     </h4>
   </div>
 
@@ -23,18 +22,25 @@
 
 {% endblock %}
 
+{% block home %}
+<a class="nav-link" href= "{{url_for('cmo.home_page')}}">Home <span class="sr-only">(current)</span></a>
+{% endblock %}
+
+
 {% block content %}
 
 <div class="card mb-4 wow fadeIn cloudy-knoxville-gradient">
 
   <!--Card content-->
   <div class="card-body ">
-
+    <div class="table-responsive">
     <table id="dt-filter-search" class="table" cellspacing="0" width="100%">
         <thead>
             <tr>
               <th class="th-sm">Treatment ID</th>
               <th class="th-sm">Start Date</th>
+              <th class="th-sm">Doctor User ID</th>
+              <th class="th-sm">Doctor Name</th>
               <th class="th-sm">Patient User ID</th>
                 <th class="th-sm">Patient Name</th>
                 <th class="th-sm">Disease Name</th>
@@ -59,24 +65,26 @@
             <tr>
               <td>{{roww.treat_id}}</td>
               <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
+              <td>{{roww.doctorid}}</td>
+              <td>{{roww.doctor_name}}</td>
               <td>{{roww.patient_userid}}</td>
                 <td>{{roww.patient_name}}</td>
                 <td> 
                   {% for dis in roww.disease %}
-                   {{dis}}
+                   {{dis}},
                   {% endfor %}  
                 </td>
                 <td>
                   {% for x in symList|unique %}
-                    {{x}}                 
+                    {{x}},                 
                   {% endfor %}
                 </td>
                 <td>
                   {% for x in medList|unique %}
-                    {{x}}                 
+                    {{x}},                 
                   {% endfor %}</td>
                 <td>
-                  <a href = "{{url_for('doctor_routes.prescription_history',treat_id = roww.treat_id)}}" target="_blank">
+                  <a href = "{{url_for('cmo.prescription_history',treat_id = roww.treat_id)}}">
                   View 
                   </a>  
                   </td>
@@ -87,7 +95,9 @@
         <tfoot>
             <tr>
               <th>Treatment ID</th>
-              <th>Started On</th>        
+              <th>Started On</th>       
+              <th>Doctor User Id</th> 
+              <th>Doctor Name</th>
               <th>Patient User ID</th>
               <th>Patient Name</th>
               <th>Disease Name</th> 
@@ -96,6 +106,7 @@
             </tr>
         </tfoot>
     </table>
+    </div>
 </div>
 </div>
 

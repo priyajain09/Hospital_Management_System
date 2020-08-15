@@ -47,11 +47,12 @@ def comp_new_start_treatment(username):
         mongo.db.Treatment.update(query_total_treat,{"$set":{'total_treatments':bson_int64_treat_id}})
             
         #insert new treatment data
-        mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'status' : "compounder",'patient_userid' : username, 'patient_name' : user.name, 'gender' : user.gender_user, 'age' : user.age , 'blood_group' : user.blood_group,'disease' : [], 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'doctorid': '', 'allergies': [], 'chronic':[], 'prescription' : []})
+        mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'status' : "compounder", 'doctorid': '',  'doctor_name': '','patient_userid' : username, 'patient_name' : user.name, 'gender' : user.gender_user, 'age' : user.age , 'blood_group' : user.blood_group,'disease' : [], 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'allergies': [], 'chronic':[], 'prescription' : []})
         treatment = mongo.db.Treatment.find_one({'treat_id' : bson_int64_treat_id })
         return render_template('Compounder/sites/comp_start_treatment.html', treatment = treatment , doctor_list = doctor_list)
     else :
         return "can't continue treatment"
+
 @comp_bp.route('/comp_add_prescription/<treat_id>', methods=['GET', 'POST'])
 def add_prescription(treat_id):
 
@@ -70,10 +71,10 @@ def add_prescription(treat_id):
         else:
             doctorid = treatment['doctorid']
         print(temperature)
-
+        doctor = Doctor.query.filter_by(username = doctorid).first()
         #new treatment
         if treatment['total_prescriptions'] == 0:
-            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': 1 , 'doctorid': doctorid , 'status' : "assistant"}})
+            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': 1 , 'doctorid': doctorid , 'doctor_name': doctor.name,'status' : "assistant"}})
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : 1, 'timestamp' : datetime.now(), 'blood_pressure' : Sys+'/'+Dia+'mm Hg' , 'temperature' : temperature + " F" } } })
 
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'allergies' : { '$each': allergies }}})
@@ -82,7 +83,7 @@ def add_prescription(treat_id):
         #existing treatment
         if treatment['total_prescriptions'] != 0:
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 , 'status' : "assistant"}})
-            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now(), 'blood_pressure' : Sys+'/'+Dia+' mm Hg' , 'temperature' : temperature } } })
+            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now(), 'blood_pressure' : Sys+'/'+Dia+' mm Hg' , 'temperature' : temperature + " F"} } })
 
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'allergies' : { '$each': allergies }}})
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'chronic' : { '$each': chronic }}})
@@ -117,6 +118,7 @@ def add_prescription(treat_id):
 
 @comp_bp.route('/comp_continue_treatment/<treat_id>')
 def comp_continue_treatment(treat_id):
+    mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'status' : "compounder"}})
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })
     doctor_list = Doctor.query.all()
     return render_template('Compounder/sites/comp_start_treatment.html', treatment = treatment, doctor_list = doctor_list)
