@@ -4,10 +4,12 @@ from hospital_app.models import User,Doctor , patient_queue
 from hospital_app import db
 import json
 from flask_login import current_user
-from hospital_app.forms import update_doctor_form
+from hospital_app.forms import update_doctor_form , change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
 from collections import defaultdict
+from io import BytesIO
+import base64
 
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
@@ -34,15 +36,57 @@ def refer_info(treat_id):
 @doctor_routes_bp.route('/doctor/view_profile',methods = ['GET','POST'])
 def view_profile():
     doctor = current_user.doctor
-    return render_template('Doctor/doctor_sites/view_profile.html',doctor = doctor)
+    image = base64.b64encode(doctor.File).decode('ascii')
+    return render_template('Doctor/doctor_sites/view_profile.html',user = doctor,image = image)
 
 @doctor_routes_bp.route('/doctor/update_profile',methods = ['GET','POST'])
 def update_profile():
-    form = update_doctor_form(obj = current_user.doctor)
+    if request.method == "POST":
+        file = request.files['profile_photo']
+
+        u = current_user.doctor
+
+        if file and file.filename != "":
+            u.File = file.read()
+
+        
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.blood_group = request.form['blood_group']
+        u.gender_doctor = request.form['gender_doctor']
+        u.qualification = request.form['qualification']
+        u.experience = request.form['experience']
+        u.specialization = request.form['specialization']
+        u.consultant_fee = request.form['consultant_fee']
+        u.visiting_hours = request.form['visiting_hours']
+
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = current_user.doctor
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('Doctor/doctor_sites/update_profile.html',user = current_user.doctor,image = image)
+
+@doctor_routes_bp.route('/doctor/change_password',methods = ['GET','POST'])
+def change_password():
+    form = change_password_form()
     if form.validate_on_submit():
-        form.populate_obj(current_user.doctor)
-        db.session.commit()
-    return render_template('Doctor/doctor_sites/update_profile.html',form = form)
+        
+        current_user.set_password(form.password.data)
+        try:
+            db.session.commit()
+            flash("Updated successfully")
+        except:
+            db.session.rollback()
+            flash("Try Again")
+
+    return render_template('Doctor/doctor_sites/change_password.html',form = form)
+
 
 @doctor_routes_bp.route('/doc-queue')
 def doc_queue():
