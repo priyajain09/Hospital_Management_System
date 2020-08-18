@@ -39,7 +39,7 @@
     <div class="col">
         <a class="btn btn-outline-black btn-sm" href = "{{url_for('doctor_routes.prescription_history',treat_id = treatment.treat_id)}}" target="_blank" > Prescriptions </a>
         <br>
-        <a class="btn btn-outline-black btn-sm" href = "#" target="_blank" > Test Reports </a>
+        <a class="btn btn-outline-black btn-sm" href = "{{url_for('doctor_routes.treatment_reports',treat_id = treatment.treat_id)}}" target="_blank" > Test Reports </a>
     </div>
     </div>
     </h6>
