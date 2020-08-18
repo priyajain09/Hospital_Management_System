@@ -47,6 +47,24 @@
 
 {% block content %}
 <br>
+<div class="card text-center">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="">Doctor Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{url_for('admin.current_assistant',username = row.username)}}" >Current Assistant</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('admin.past_assistant',username = row.username)}}">Past Assistants</a>
+      </li>
+    </ul>
+  </div>
+  {% for message in get_flashed_messages() %}
+      <div class="alert alert-info" role="alert">{{ message }}</div>
+  {% endfor %}
+
 <div class="jumbotron text-center hoverable p-4">
 
     <!-- Grid row -->
@@ -115,4 +133,5 @@
   
   </div>
   <!-- News jumbotron -->
+  </div>
 {% endblock %}

@@ -17,8 +17,8 @@
       <div class="col-md-4 offset-md-1 mx-3 my-3">
   
         <!-- Featured image -->
-        <div class="view overlay">
-          <img src="https://mdbootstrap.com/img/Photos/Others/laptop-sm.jpg" class="img-fluid" alt="Sample image for first version of blog listing">
+        <div id="profile-container" class="view overlay">
+          <img class='backup_picture' src="data:;base64,{{ images[loop.index-1]}}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
           <a>
             <div class="mask rgba-white-slight"></div>
           </a>
@@ -33,15 +33,24 @@
         <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
             <small class="text-muted">{{row.specialization}}</small>
         </h4>
-  
-        <p class="font-weight-normal">
-            <strong>Visiting hours : </strong> {{row.visiting_hours}}<br>
-            <strong>Consultant fee : </strong> {{row.consultant_fee}}<br>
-            <strong>Address : </strong> {{row.address}}<br>
-            <strong>Contact number : </strong> {{row.contact_number}}<br>
-            <strong>Date of joining : </strong> {{row.date_of_joining}}<br>
-            <strong>Status : </strong>{{row.status}}<br>
-        </p>
+        <dl class="row">
+          <dt class="col-sm-3">Contact number </dt>
+          <dd class="col-sm-9">{{row.contact_number}}</dd>
+          <dt class="col-sm-3">Address </dt>
+          <dd class="col-sm-9">{{row.address}}</dd>
+         
+          <dt class="col-sm-3">Visiting Hours </dt>
+          <dd class="col-sm-9">{{row.visiting_hours}}</dd>
+          <dt class="col-sm-3">Consultant Fee </dt>
+          <dd class="col-sm-9">{{row.consultant_fee}}</dd>
+
+      
+          <dt class="col-sm-3">Date of joining </dt>
+          <dd class="col-sm-9">{{row.date_of_joining}}</dd>
+          <dt class="col-sm-3">Status</dt>
+          <dd class="col-sm-9">{{row.status}}</dd>
+    
+        </dl>
       </div>
       <!-- Grid column -->
   

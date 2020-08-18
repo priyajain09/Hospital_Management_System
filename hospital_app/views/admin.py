@@ -44,12 +44,15 @@ def action_taken_on_request(username,action):
         role = 'doctor')
         y = Doctor(username = user.username, name = user.name, qualification = user.qualification, experience = user.experience
         , specialization = user.specialization, timestamp = user.timestamp, contact_number = user.contact_number,File = user.File)
+        x = is_user_deleted(username = user.username)
         try:
             db.session.delete(user) 
             db.session.commit()
             db.session.add(u)
             db.session.commit()
             db.session.add(y)
+            db.session.commit()
+            db.session.add(x)
             db.session.commit()
         except:
             db.session.rollback()    
@@ -87,7 +90,8 @@ def departments():
 @admin_bp.route('/admin/users/<username>/<email>')
 def user_details(username,email):
     q = Patient.query.filter_by(username = username).first()
-    return render_template('Admin/admin_sites/user_details.html',user=q,email = email)
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Admin/admin_sites/user_details.html',user=q,email = email,image = image)
 
 # ******************************************************************************
 # To be done later: move ongoing treatments to closed treatments and send an email for the same
@@ -98,7 +102,7 @@ def delete_user(username):
     user = User.query.get(username)
     patient = user.patient
     u = deleted_patients(username = user.username,email=user.email,name= patient.name,age = patient.age,blood_group = patient.blood_group,
-    contact_number = patient.contact_number,address = patient.address,gender_user = patient.gender_user,joined_on = patient.timestamp)
+    contact_number = patient.contact_number,address = patient.address,gender_user = patient.gender_user,joined_on = patient.timestamp,File = patient.File)
     x = is_user_deleted.query.get(user.username)
     x.is_deleted = True
     db.session.add(u)
@@ -126,15 +130,20 @@ def delete_doctor(username):
     doctor = user.doctor
     u = deleted_doctors(username = str(user.username),email=user.email,name=doctor.name,gender_doctor=doctor.gender_doctor,
     age=doctor.age,blood_group=doctor.blood_group,contact_number=doctor.contact_number,address=doctor.address,qualification=doctor.qualification,
-    experience=doctor.experience,specialization=doctor.specialization,date_of_joining=doctor.date_of_joining)
+    experience=doctor.experience,specialization=doctor.specialization,date_of_joining=doctor.date_of_joining,File = doctor.File)
     x = is_user_deleted.query.get(username)
     x.is_deleted = True
     db.session.add(u)
     db.session.commit()
     q = User.query.get(username)
     if q is not None:
-        db.session.delete(q)
-        db.session.commit()
+        try:
+            db.session.delete(q)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            flash("Try Again!")   
+            return redirect(url_for(admin.doctor_details,username = username))
     return redirect(url_for('admin.doctor_list'))
 
 # *********************************************************************************
@@ -148,14 +157,14 @@ def deleted_users():
 @admin_bp.route('/admin/patient_details/<username>')
 def deleted_user_details(username):
     u = deleted_patients.query.get(username)
-    return render_template('Admin/admin_sites/deleted_user_details.html',user = u)
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('Admin/admin_sites/deleted_user_details.html',user = u,image = image)
 
 @admin_bp.route('/admin/deleted_doctor_details/<username>')
 def deleted_doctor_details(username):
     u = deleted_doctors.query.get(username)
-    return render_template('Admin/admin_sites/deleted_doctor_details.html',row = u)
-
-
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('Admin/admin_sites/deleted_doctor_details.html',row = u,image = image)
 
 @admin_bp.route('/admin/deleted_doctors',methods=['GET','POST'])
 def deleted_doctors_func():
@@ -255,9 +264,7 @@ def role_user(role):
      past_role_users = past_user_role.query.filter_by(role = role).all()
      return render_template('Admin/admin_sites/role_user_page.html',row = u, past_users = past_role_users,role = role)    
 
-@admin_bp.route('/admin/assistants')
-def role_user_assistant():
-    u = user_role_query.query.all(role = "assistant").all()
+
 
 @admin_bp.route('/admin/delete_role_user/<id>/<role>')
 def delete_role_user(id,role):
@@ -277,6 +284,41 @@ def deleted_role_user_details(id):
     u = past_user_role.query.get(id)
     image = base64.b64encode(u.File).decode('ascii')
     return render_template('Admin/admin_sites/deleted_role_user.html',row = u,image = image)
+
+
+@admin_bp.route('/admin/current_assistant/<username>')
+def current_assistant(username):
+    u = user_role.query.filter_by(role = "assistant",doctor_username = username).first()
+    if u is not None:
+        image = base64.b64encode(u.File).decode('ascii')
+        return render_template('Admin/admin_sites/current_assistants.html',row = u,username = username,image = image)
+    else:
+        flash("Assistant is not assigned")
+        return render_template('Admin/admin_sites/current_assistants.html',row = u,username = username)
+
+@admin_bp.route('/admin/past_assistants/<username>')
+def past_assistant(username):
+    u = past_user_role.query.filter_by(role = "assistant", doctor_username = username).all()
+    images = []
+    for i in u:
+        images.append(base64.b64encode(i.File).decode('ascii'))
+    if len(u) == 0:
+        flash("No past assistants")
+    return render_template('Admin/admin_sites/past_assistants.html',users = u,username = username,images = images)
+
+@admin_bp.route('/admin/remove_assistant/<username>')
+def remove_assistant(username):
+    u = user_role.query.filter_by(role = "assistant",doctor_username = username).first()
+    if u is not None:
+        try:
+            db.session.delete(u)
+            db.session.commit()
+            flash("Deleted successfully")
+        except:
+            flash("Try Again")
+    return redirect(url_for('admin.current_assistant',username = username))             
+
+
 # *******************************************************************************************************
 
 # Statistics

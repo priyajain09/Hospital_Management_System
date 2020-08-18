@@ -6,31 +6,6 @@ Compounder Queue
 {% block content %}
 
 
-<form class="needs-validation" method = "post" action = "{{url_for('recep.compounderQueue')}}"novalidate>
-    <div class = "form-row">
-        <div class="col-md-3 mb-3">
-            <label for="filter">Select filter</label>
-            <select class="browser-default custom-select" name = "filter">
-                <option value="none" selected>None</option>
-                <option value="username">Username</option>
-                <option value="name">Name</option>
-              </select>
-            
-        </div>
-        <div class = "col-md-3 mb-3">
-            <label for ="search_text">Search text</label>
-            <input type="text" class="form-control" id="search_text" placeholder="Type here" name = "search_text">
-        </div>
-        
-    </div>
-    <div class="form-row">
-        <div class="col-md-3 mb-5">
-            <button class="btn btn-primary btn-sm" type="submit">Search</button><br><br>
-        </div>
-    </div>
-    
-</form>       
-
 <!-- Card -->
 <div class="card">
 
@@ -71,7 +46,7 @@ Compounder Queue
                  <td>{{row.name}}</td>
                  <td>{{row.username}}</td>
                  <td>{{row.timestamp}}</td>
-                 <td ><a href="{{url_for('admin.user_details',username = row.username)}}" >Click here</a> </td>
+                 <td ><a href="{{url_for('recep.user_details',username = row.username)}}" >Click here</a> </td>
                  <td ><a href="{{url_for('recep.remove_compounder_queue',username = row.username)}}" >Click here</a> </td>
              </tr>
              

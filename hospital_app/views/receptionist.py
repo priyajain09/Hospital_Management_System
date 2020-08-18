@@ -1,4 +1,4 @@
-from hospital_app.models import User,Doctor, Patient, is_user_deleted, patient_queue,compounder_queue
+from hospital_app.models import User,Doctor, Patient, is_user_deleted, patient_queue,compounder_queue,user_role
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import db
 from hospital_app import mongo
@@ -10,6 +10,8 @@ from hospital_app.forms import patient_registration_form,queue_form
 import random, string
 from sqlalchemy import func
 from datetime import date, datetime, timedelta
+import base64
+from werkzeug.security import generate_password_hash, check_password_hash
 
 recep_bp = Blueprint('recep', __name__)
 
@@ -41,30 +43,23 @@ def home_page():
         except:
             db.session.rollback()
             flash("Try Again") 
-        return redirect_template(url_for('recep.home_page'))   
+        return redirect(url_for('recep.home_page'))   
     return render_template('Reception/patient_registration.html',form = form)
 
 @recep_bp.route('/patient_enquiry', methods = ['GET','POST'])
 def patient_enquiry():
-
-    if request.method == "POST":
-        search_text = request.form['search_text']
-        if request.form['filter'] == "username":
-            u = db.session.query(User, Patient).join(Patient).filter(User.username.contains(search_text))
-
-        elif request.form['filter'] == "name":
-            u = db.session.query(User, Patient).join(Patient).filter(Patient.name.contains(search_text))
-        
-        elif request.form['filter'] == "email":
-            u = db.session.query(User, Patient).join(Patient).filter(User.email.contains(search_text))
-
-        elif request.form['filter'] == "none":        
-            u = db.session.query(User, Patient).join(Patient).all()
-    else:
-        u = db.session.query(User, Patient).join(Patient).all()        
+    u = db.session.query(User, Patient).join(Patient).all()        
     return render_template("Reception/patient_enquiry.html",list = u)
 
-    
+@recep_bp.route('/reception/user_details/<username>',defaults={'email':None})
+@recep_bp.route('/reception/user_details/<username>/<email>')
+def user_details(username,email):
+    if email is None:
+        u = User.query.get(username)
+        email = u.email
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Reception/user_details.html',user=q,email = email,image = image)
 
 @recep_bp.route('/reception/add_to_queue/<name>/<username>',methods = ['GET','POST'])
 def add_to_queue(name, username):
@@ -122,18 +117,7 @@ def add_to_compounder_queue(name,username):
 
 @recep_bp.route('/compounder_queue',methods = ['GET','POST'])
 def compounderQueue():
-    if request.method == "POST":
-        search_text = request.form['search_text']
-        if request.form['filter'] == "username":
-            u = compounder_queue.query.filter(func.lower(compounder_queue.username).contains(search_text.lower(),autoescape = True))
-
-        elif request.form['filter'] == "name":
-            u = compounder_queue.query.filter(func.lower(compounder_queue.name).contains(search_text.lower(),autoescape = True))
-
-        elif request.form['filter'] == "none":        
-            u = compounder_queue.query.all()
-    else:
-        u = compounder_queue.query.all()    
+    u = compounder_queue.query.all()    
     return render_template('Reception/compounder_queue.html',list = u)
 
 @recep_bp.route('/doctor_queue',methods = ['GET','POST'])
@@ -182,7 +166,10 @@ def remove_all_compounder_queue():
 @recep_bp.route('/doctor_enquiry')
 def doctor_enquiry():
     u = Doctor.query.all()
-    return render_template('/Reception/doctor_enquiry.html',list = u)
+    images = []
+    for i in u:
+         images.append(base64.b64encode(i.File).decode('ascii'))
+    return render_template('/Reception/doctor_enquiry.html',list = u,images = images)
 
 @recep_bp.route('/doctor_queue/<treat_id>')
 def remove_doctor_queue(treat_id):
@@ -207,3 +194,55 @@ def remove_all_doctor_queue():
         db.session.rollback()
         flash("Try again !")
     return redirect(url_for('recep.doctorQueue'))
+
+@recep_bp.route('/receptionist/view_profile')
+def view_profile():
+    username = current_user.username
+    u = user_role.query.filter_by(username = username,role="reception").first()
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('Reception/view_profile.html',user = u,image = image)    
+
+@recep_bp.route('/receptionist/update_profile',methods = ['GET','POST'])
+def update_profile():
+    if request.method == "POST":
+        file = request.files['profile_photo']
+
+        u = user_role.query.filter_by(role="reception").first()
+
+        if file and file.filename != "":
+            u.File = file.read()
+
+        
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.work_timings = request.form['work_timings']
+        
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = user_role.query.filter_by(role="reception").first()
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('Reception/update_profile.html',user = u,image = image) 
+
+@recep_bp.route('/receptionist/change_password',methods = ['GET','POST'])
+def change_password():
+    if request.method == "POST":
+        old_password = request.form['old_pass']  
+        if check_password_hash(current_user.password_hash, old_password) == False:
+            message = "Wrong Password!"
+            return render_template('Reception/change_password.html',message = message) 
+        
+        new_password = request.form['new_pass']
+        current_user.set_password(new_password)
+        try:
+            db.session.commit()
+            flash("Password changed!")
+        except:
+            db.session.rollback()
+            flash("Try again!")    
+    return render_template('Reception/change_password.html')     
