@@ -1,0 +1,152 @@
+{% extends 'Compounder/home.html' %}
+{% block title %}  {% endblock %}
+
+
+{% block heading %}
+
+{% endblock %}
+
+{% block content %}
+<style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+
+<div class="container">
+
+<div class="card text-center">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link " href="{{url_for('comp.view_profile')}}">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="{{url_for('comp.update_profile')}}">Update Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link " href="{{url_for('comp.change_password')}}">Change Password</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title"></h5>
+      <p class="card-text">
+          <form action = "{{url_for('comp.update_profile')}}" method = "post" enctype="multipart/form-data">
+        <div class="row">
+            <!-- Grid column -->
+            <div class="col-md-3 offset-md-1 mx-3 my-3">
+        
+              <!-- Featured image -->
+              
+              <div id="profile-container" class="view overlay">
+                <image id="profileImage" src="data:;base64,{{ image }}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';" />
+             </div>
+             <input id="imageUpload" type="file" 
+                    name="profile_photo" value ="data:;base64,{{ image }}" accept=".jpg, .jpeg, .png" placeholder="Photo" capture>
+             
+            </div>
+            <!-- Grid column -->
+        
+            <!-- Grid column -->
+            <div class="col-md-8 text-md-left ml-5 mt-3">
+            {% for message in get_flashed_messages() %}
+            <div class="alert alert-info" role="alert">{{ message }}</div>
+            {% endfor %}                        
+                    <div class="form-row">
+                        <div class="col-md-4 mb-3">
+                          <label for="name">Full name</label>
+                          <input class = "form-control" name = "name" value = "{{user.name}}" >
+                        </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="col-md-8 mb-3">
+                        <label for="address">Address</label>
+                        <input class = "form-control" name = "address" value = "{{user.address}}" >  
+                      </div>
+                      
+                      <div class="col-md-4 mb-3">
+                        <label for="phonenumber">Contact number</label>
+                        <input class = "form-control" name = "contact_number" value = "{{user.contact_number}}" >      
+                      </div>
+                    </div>
+                  <hr>
+                      <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                              <label for="age">Age</label>
+                              <input type = "number"class = "form-control" name = "age" value = "{{user.age}}" >         
+                            </div>
+                            <div class="col-md-4 mb-3">
+                              <label for="genderr">Gender</label>
+                              <select class="browser-default custom-select mb-4" name="gender">
+                                    <option value="{{user.gender}}" selected>{{user.gender}}</option>
+                                    <option value= "F" >F</option>
+                                    <option value= "M" >M</option>
+                                    <option value= "Other" >Other</option>
+                              </select>       
+                            </div>
+                      </div>
+
+                  <div class="form-row">
+                    <div class="col-md-6 mb-3">
+                      <label for="work_timings">Work Timings </label>
+                      <input class = "form-control" name = "work_timings" value = "{{user.work_timings}}" >
+                    </div>
+                </div>
+                <div class="form-row">
+                      <button class="btn btn-info btn-block my-4" type="submit">Update</button>                     
+                      <div class="form-row">
+                    </form>
+      
+            </div>
+            <!-- Grid column -->
+      
+        
+          </div>
+          <!-- Grid row -->
+          
+        
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+$("#profileImage").click(function(e) {
+    $("#imageUpload").click();
+});
+
+function fasterPreview( uploader ) {
+    if ( uploader.files && uploader.files[0] ){
+          $('#profileImage').attr('src', 
+             window.URL.createObjectURL(uploader.files[0]) );
+    }
+}
+
+$("#imageUpload").change(function(){
+    fasterPreview( this );
+});
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+{% endblock %}
