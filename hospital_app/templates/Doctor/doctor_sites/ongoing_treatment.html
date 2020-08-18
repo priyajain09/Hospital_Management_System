@@ -109,10 +109,11 @@
 
 
 {% block scripts %}
+{{super()}}
 <script type="text/javascript" src="../../../static/js_doctor/bootstrap-multiselect.js"></script>
 
 <script>
-    {{super()}}
+
     $(function() {  
      $('#multiselect1').multiselect({
                 enableFiltering: true,

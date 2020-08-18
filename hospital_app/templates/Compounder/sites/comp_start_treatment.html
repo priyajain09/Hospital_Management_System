@@ -1,4 +1,10 @@
 {% extends 'Compounder/home.html' %}
+
+{% block links %}
+{{super()}}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+{% endblock %}
+
 {% block heading %}
 <h3 >
   <strong>Start Treatment</strong><br>
@@ -18,7 +24,6 @@
                 <!-- Title -->
                 <h4 class="card-title"><b>Treatment Id: </b>{{ treatment.treat_id }}</h4>
                 <!-- Text -->
-                <p class="card-text">
                 <b>Started on :  </b>{{ treatment.time_stamp }}<br>
                 <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
                 <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
@@ -30,7 +35,7 @@
                     <b>Allergies:  </b>{{ treatment.allergies}}<br>
                     <b>Chronic Diseases:  </b>{{ treatment.chronic}}<br>
                 {% endif %}
-                </p>
+                
                 </div>
             </div>
         </div>
@@ -58,19 +63,31 @@
                                             <label for="Dia">  <small class="text-muted">Diastolic (mm Hg) </small></label><input type="number" name="Dia"  value="80">
                                         </div>
                                     </p>
-                                    <hr>
-                                    <p class="card-text">
+                                    <br>
                                         <div class="form-group">
-                                            <label for="allergies">Allergies <small class="text-muted"> (space separated) </small></label>
-                                            <input type="textarea" name="allergies" >
+                                            <label class="control-label col-md-3 col-sm-3 col-xs-3" for="chronic">Chronic</label>
+                                            <div class="col-md-8 col-sm-8 col-xs-8">
+                                                <div class="field_wrapper1">
+                                                    <div>
+                                                        <input type="text" name="chronic[]" id="chronic" placeholder="Enter Chronic">
+                                                        <a href="javascript:void(0);" class="add_button1" title="Add field"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </p>
-                                    <p class="card-text">
-                                        <div class="form-group">
-                                            <label for="chronic">Chronic <small class="text-muted"> (space separated) </small></label>
-                                            <input type="textarea" name="chronic" >
+                                        <br>
+                                    <div class="form-group">
+                                        <label class="control-label col-md-3 col-sm-3 col-xs-3" for="allergies">Allergies</label>
+                                        <div class="col-md-8 col-sm-8 col-xs-8">
+                                            <div class="field_wrapper2">
+                                                <div>
+                                                    <input type="text" name="allergies[]" id="allergies" placeholder="Enter Allergy">
+                                                    <a href="javascript:void(0);" class="add_button2" title="Add field"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </p>
+                                    </div>
+                                    <br>
                                 </div>
                             </div>
                             <br>
@@ -80,7 +97,7 @@
                                     <select class="browser-default custom-select mb-4" name="doctor" required="required">
                                         <option value="" selected>userid</option>
                                         {% for row in doctor_list %}
-                                            <option value= {{row.username}} >{{row.username}}</option>
+                                            <option value= {{row.username}} >{{row.username}} - {{row.name}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
@@ -103,6 +120,56 @@
 
 {% block scripts %}
 {{super()}}
+<script type="text/javascript">
+    $(document).ready(function(){
+        var maxField = 10; //Input fields increment limitation
+        var addButton = $('.add_button1'); //Add button selector
+        var wrapper = $('.field_wrapper1'); //Input field wrapper
+        var fieldHTML = '<div class="pt-2"><input type="text" name="chronic[]"  id="reports" placeholder="Enter chronic"/><a href="javascript:void(0);" class="remove_button1"> <i class="fa fa-minus-circle" aria-hidden="true"></i></a></div>'; //New input field html 
+        var x = 1; //Initial field counter is 1
+        
+        //Once add button is clicked
+        $(addButton).click(function(){
+            //Check maximum number of input fields
+            if(x < maxField){ 
+                x++; //Increment field counter
+                $(wrapper).append(fieldHTML); //Add field html
+            }
+        });
+        
+        //Once remove button is clicked
+        $(wrapper).on('click', '.remove_button1', function(e){
+            e.preventDefault();
+            $(this).parent('div').remove(); //Remove field html
+            x--; //Decrement field counter
+        });
+    });
+    </script>
 
+<script type="text/javascript">
+    $(document).ready(function(){
+        var maxField = 10; //Input fields increment limitation
+        var addButton = $('.add_button2'); //Add button selector
+        var wrapper = $('.field_wrapper2'); //Input field wrapper
+        var fieldHTML = '<div class="pt-2"><input type="text" name="allergies[]"  id="allergies" placeholder="Enter allergy"/><a href="javascript:void(0);" class="remove_button2"> <i class="fa fa-minus-circle" aria-hidden="true"></i></a></div>'; //New input field html 
+        var x = 1; //Initial field counter is 1
+        
+        //Once add button is clicked
+        $(addButton).click(function(){
+            //Check maximum number of input fields
+            if(x < maxField){ 
+                x++; //Increment field counter
+                $(wrapper).append(fieldHTML); //Add field html
+            }
+        });
+        
+        //Once remove button is clicked
+        $(wrapper).on('click', '.remove_button2', function(e){
+            e.preventDefault();
+            $(this).parent('div').remove(); //Remove field html
+            x--; //Decrement field counter
+        });
+    });
+    </script>
 {% endblock %}
 

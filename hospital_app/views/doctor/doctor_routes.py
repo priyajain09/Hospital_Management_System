@@ -4,10 +4,12 @@ from hospital_app.models import User,Doctor , patient_queue
 from hospital_app import db
 import json
 from flask_login import current_user
-from hospital_app.forms import update_doctor_form
+from hospital_app.forms import update_doctor_form , change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
 from collections import defaultdict
+from io import BytesIO
+import base64
 
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
@@ -20,29 +22,71 @@ def current_treatment_list():
     doc_treatment = mongo.db.Treatment.find( { 'doctorid' : current_user.username }).sort([("time_stamp", -1)])
     return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
 
-@doctor_routes_bp.route('/treatment_info/<treat_id>/refer', methods=['GET', 'POST'])
-def refer_info(treat_id):
+@doctor_routes_bp.route('/doc-refer/<treat_id>', methods=['GET', 'POST'])
+def refer(treat_id):
     if request.method == 'POST':    
         Referto = request.form['Referto']
         print(Referto)
         mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'Referto':Referto , 'treat_closed_on': datetime.now()}})
         doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) }) 
         mongo.db.Past_Treatments.insert(doc_treatment)
-        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })       
-    return redirect(url_for('doctor_routes.home_page'))
+        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })      
+    return redirect(url_for("doctor_routes.doc_queue"))
 
 @doctor_routes_bp.route('/doctor/view_profile',methods = ['GET','POST'])
 def view_profile():
     doctor = current_user.doctor
-    return render_template('Doctor/doctor_sites/view_profile.html',doctor = doctor)
+    image = base64.b64encode(doctor.File).decode('ascii')
+    return render_template('Doctor/doctor_sites/view_profile.html',user = doctor,image = image)
 
 @doctor_routes_bp.route('/doctor/update_profile',methods = ['GET','POST'])
 def update_profile():
-    form = update_doctor_form(obj = current_user.doctor)
+    if request.method == "POST":
+        file = request.files['profile_photo']
+
+        u = current_user.doctor
+
+        if file and file.filename != "":
+            u.File = file.read()
+
+        
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.blood_group = request.form['blood_group']
+        u.gender_doctor = request.form['gender_doctor']
+        u.qualification = request.form['qualification']
+        u.experience = request.form['experience']
+        u.specialization = request.form['specialization']
+        u.consultant_fee = request.form['consultant_fee']
+        u.visiting_hours = request.form['visiting_hours']
+
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = current_user.doctor
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('Doctor/doctor_sites/update_profile.html',user = current_user.doctor,image = image)
+
+@doctor_routes_bp.route('/doctor/change_password',methods = ['GET','POST'])
+def change_password():
+    form = change_password_form()
     if form.validate_on_submit():
-        form.populate_obj(current_user.doctor)
-        db.session.commit()
-    return render_template('Doctor/doctor_sites/update_profile.html',form = form)
+        
+        current_user.set_password(form.password.data)
+        try:
+            db.session.commit()
+            flash("Updated successfully")
+        except:
+            db.session.rollback()
+            flash("Try Again")
+
+    return render_template('Doctor/doctor_sites/change_password.html',form = form)
+
 
 @doctor_routes_bp.route('/doc-queue')
 def doc_queue():
@@ -130,8 +174,9 @@ def prescription_two(treat_id, pres_id):
 
         note = request.form["note"]
         next_visit_date = request.form["next_visit_date"]
-        reports = request.form['reports']
-        reports = reports.split()
+        reports = request.form.getlist('reports[]')
+        print(reports)
+
         mongo.db.Treatment.update(
         { "treat_id": int(treat_id), "prescription.pres_id": int(pres_id)},
                 {"$push": 
@@ -156,7 +201,7 @@ def prescription_two(treat_id, pres_id):
                     }
                 }
         )
-    return redirect(url_for('doctor_routes.doc_queue'))
+    return render_template('Doctor/doctor_sites/refer.html', treat_id = treat_id)
 
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
 def prescription_history(treat_id):
