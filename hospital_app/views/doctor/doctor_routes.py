@@ -22,6 +22,11 @@ def current_treatment_list():
     doc_treatment = mongo.db.Treatment.find( { 'doctorid' : current_user.username }).sort([("time_stamp", -1)])
     return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
 
+@doctor_routes_bp.route('/doc-closed_treatment_list', methods=['GET', 'POST'])
+def closed_treatment_list():
+    doc_treatment = mongo.db.Past_Treatments.find( { 'doctorid' : current_user.username }).sort([("treat_closed_on", -1)])
+    return render_template('Doctor/doctor_sites/closed_treatment_list.html',treatment=doc_treatment)
+
 @doctor_routes_bp.route('/doc-refer/<treat_id>', methods=['GET', 'POST'])
 def refer(treat_id):
     if request.method == 'POST':    
@@ -206,5 +211,9 @@ def prescription_two(treat_id, pres_id):
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
-
-    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'], treatment = treatment)    
+    if treatment == None :
+        treatment = mongo.db.Past_Treatments.find_one({'treat_id' : int(treat_id) })
+    if treatment == None :
+        return "This Treatment does not exist"
+    prescriptions = reversed(treatment['prescription'])
+    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = prescriptions, treatment = treatment)    
