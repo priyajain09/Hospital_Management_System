@@ -22,16 +22,16 @@ def current_treatment_list():
     doc_treatment = mongo.db.Treatment.find( { 'doctorid' : current_user.username }).sort([("time_stamp", -1)])
     return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
 
-@doctor_routes_bp.route('/treatment_info/<treat_id>/refer', methods=['GET', 'POST'])
-def refer_info(treat_id):
+@doctor_routes_bp.route('/doc-refer/<treat_id>', methods=['GET', 'POST'])
+def refer(treat_id):
     if request.method == 'POST':    
         Referto = request.form['Referto']
         print(Referto)
         mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'Referto':Referto , 'treat_closed_on': datetime.now()}})
         doc_treatment = mongo.db.Treatment.find_one({ "treat_id": int(treat_id) }) 
         mongo.db.Past_Treatments.insert(doc_treatment)
-        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })       
-    return redirect(url_for('doctor_routes.home_page'))
+        mongo.db.Treatment.remove({ "treat_id": int(treat_id) })      
+    return redirect(url_for("doctor_routes.doc_queue"))
 
 @doctor_routes_bp.route('/doctor/view_profile',methods = ['GET','POST'])
 def view_profile():
@@ -176,7 +176,7 @@ def prescription_two(treat_id, pres_id):
         next_visit_date = request.form["next_visit_date"]
         reports = request.form.getlist('reports[]')
         print(reports)
-        reports.pop()
+
         mongo.db.Treatment.update(
         { "treat_id": int(treat_id), "prescription.pres_id": int(pres_id)},
                 {"$push": 
@@ -201,7 +201,7 @@ def prescription_two(treat_id, pres_id):
                     }
                 }
         )
-    return redirect(url_for('doctor_routes.doc_queue'))
+    return render_template('Doctor/doctor_sites/refer.html', treat_id = treat_id)
 
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
 def prescription_history(treat_id):
