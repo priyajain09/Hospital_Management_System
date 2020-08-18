@@ -1,53 +1,22 @@
 {% extends 'Reception/base.html' %}
-{% block heading %}
-Patient Enquiry
-{% endblock %}
+
 
 {% block content %}
 
 {% for message in get_flashed_messages() %}
   <div class="alert alert-info" role="alert">{{ message }}</div>
 {% endfor %}
-<form class="needs-validation" method = "post" action = "{{url_for('recep.patient_enquiry')}}"novalidate>
-    <div class = "form-row">
-        <div class="col-md-3 mb-3">
-            <label for="filter">Select filter</label>
-            <select class="browser-default custom-select" name = "filter">
-                <option value="none" selected>None</option>
-                <option value="username">Username</option>
-                <option value="email">Email</option>
-                <option value="name">Name</option>
-                
-              </select>
-            
-        </div>
-        <div class = "col-md-3 mb-3">
-            <label for ="search_text">Search text</label>
-            <input type="text" class="form-control" id="search_text" placeholder="Type here" name = "search_text">
-        </div>
-        
-    </div>
-    <div class="form-row">
-        <div class="col-md-3 mb-5">
-            <button class="btn btn-primary btn-sm" type="submit">Search</button><br><br>
-        </div>
-    </div>
-    
-</form>       
 
 <!-- Card -->
 <div class="card">
-
-
-  
     <!-- Card content -->
     <div class="card-body">
   
       <!-- Title -->
       <h4 class="card-title"><a>Patient List</a></h4>
       <!-- Text -->
-      <p class="card-text"><table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"
-        width="100%">
+      <p class="card-text">
+        <table id="dt-filter-select" class="table" cellspacing="0" width="100%">
         <thead>
           <tr>
             <th class="th-sm">S.no
@@ -73,7 +42,7 @@ Patient Enquiry
                  <td>{{row[1].name}}</td>
                  <td>{{row[0].username}}</td>
                  <td>{{row[0].email}}</td>
-                 <td ><a href="{{url_for('admin.user_details',username = row[0].username, email = row[0].email)}}" >Click here</a> </td>
+                 <td ><a href="{{url_for('recep.user_details',username = row[0].username, email = row[0].email)}}" >Click here</a> </td>
                  <td><a  data-toggle="modal" data-target="#modalConfirmDelete{{row[1].username}}"  >Click here</button></td>
                  <td ><a href = "{{url_for('recep.add_to_queue',name = row[1].name, username = row[0].username)}}">Click here</a> </td>   
              </tr>
@@ -106,6 +75,18 @@ Patient Enquiry
 
           {% endfor %}   
         </tbody>
+        <tfoot>
+          <tr>
+            <th>S.no
+            </th>
+            <th>Full name
+            </th>
+            <th>Username
+            </th>
+            <th>Email
+            </th>
+          </tr>
+        </tfoot>
         
       </table></p>
   
@@ -122,14 +103,31 @@ Patient Enquiry
 {% endblock %}
 
 {% block add_script %}
-
 <script>
-    $(document).ready(function () {
-$('#dtDynamicVerticalScrollExample').DataTable({
-"scrollY": "50vh",
-"scrollCollapse": true,
-});
-$('.dataTables_length').addClass('bs-select');
+$(document).ready(function () {
+  $('#dt-filter-select').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change', function () {
+                  var val = $.fn.dataTable.util.escapeRegex(
+                      $(this).val()
+                  );
+
+                  column
+                      .search( val ? '^'+val+'$' : '', true, false )
+                      .draw();
+              } );
+
+          column.data().unique().sort().each( function ( d, j ) {
+              select.append( '<option value="'+d+'">'+d+'</option>' )
+          } );
+      } );
+  }
+  });
 });
 </script>
 {% endblock %}

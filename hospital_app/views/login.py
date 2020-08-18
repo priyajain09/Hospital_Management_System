@@ -61,6 +61,11 @@ def login():
         if current_user.role == "reception":
             return redirect(url_for('recep.home_page'))  
 
+        if current_user.role == "compounder":
+            return redirect(url_for('comp.home'))    
+        if current_user.role == "assistant":
+            return redirect(url_for("assistant.home_page"))    
+
     return render_template('Authentication/authentication/login.html', title = "Sign In", form = form)            
 
 

@@ -231,6 +231,7 @@
   <script type="text/javascript" src="../static/js/mdb.min.js"></script>
 
   <script type="text/javascript" src="../static/js/addons/datatables2.min.js"></script>
+  
   {% endblock %}
   
   <!-- Your custom scripts (optional) -->
@@ -263,6 +264,33 @@
     });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+      $('#dt-filter-select').dataTable({
+    
+        initComplete: function () {
+          this.api().columns().every( function () {
+              var column = this;
+              var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+                  .appendTo( $(column.footer()).empty() )
+                  .on( 'change', function () {
+                      var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                      );
+    
+                      column
+                          .search( val ? '^'+val+'$' : '', true, false )
+                          .draw();
+                  } );
+    
+              column.data().unique().sort().each( function ( d, j ) {
+                  select.append( '<option value="'+d+'">'+d+'</option>' )
+              } );
+          } );
+      }
+      });
+    });
+    </script>
   {% block add_script %}
   {% endblock %}
  
