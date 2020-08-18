@@ -29,6 +29,8 @@ def login():
             return redirect(url_for('receptionist.home_page'))  
         if current_user.role == "chief_doctor":
             return redirect(url_for('cmo.home_page'))
+        if current_user.role == "compounder":
+            return redirect(url_for('comp.home'))            
     form = LoginForm()
 
     if form.validate_on_submit():
