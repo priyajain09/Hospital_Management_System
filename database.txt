@@ -6,7 +6,7 @@ db.session.add(u)
 db.session.commit()
 
 /*************
-Fake data Docotor
+Demo data Docotor
 ************/
 
 u = User(username = 'Da', email='Da@gmail.com', role='doctor')
@@ -40,3 +40,22 @@ db.session.commit()
 u = Doctor(id = 3, username = 'Dc', name = 'Dr. Dc', gender_doctor = 'Male' , age = '45', contact_number = '12121234', qualification = 'Something qualified', experience = '5 years', specialization = 'General Physician')
 db.session.add(u)
 db.session.commit()
+
+/*************
+Demo data Medicine, Disease, Symptom (Postgres)
+************/
+
+INSERT INTO medicine
+(name)
+VALUES
+('Combiflame'), ('Paracetamol'), ('Crocin'), ('Volini'), ('Move'),('Liver-52'),('Patanjali Coronil');
+
+INSERT INTO symptom 
+(name)
+VALUES
+('Cold'), ('Fever'), ('Rashes'), ('Vomiting'), ('Sweating'),('Nose Bleeding'),('Nausia');
+
+INSERT INTO disease
+(name)
+VALUES
+('Diabetes Type 1'), ('Diabetes Type 2'), ('Viral Fever'), ('Bacterial Fever');

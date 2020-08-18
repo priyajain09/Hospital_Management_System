@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue
+from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -21,6 +21,11 @@ def home_page():
 def current_treatment_list():
     doc_treatment = mongo.db.Treatment.find( { 'doctorid' : current_user.username }).sort([("time_stamp", -1)])
     return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
+
+@doctor_routes_bp.route('/doc-closed_treatment_list', methods=['GET', 'POST'])
+def closed_treatment_list():
+    doc_treatment = mongo.db.Past_Treatments.find( { 'doctorid' : current_user.username }).sort([("treat_closed_on", -1)])
+    return render_template('Doctor/doctor_sites/closed_treatment_list.html',treatment=doc_treatment)
 
 @doctor_routes_bp.route('/doc-refer/<treat_id>', methods=['GET', 'POST'])
 def refer(treat_id):
@@ -97,8 +102,10 @@ def doc_queue():
 def visit_patient(treat_id):
     mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'status': "doctor" }})
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
-
-    return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment)
+    medicine_list = Medicine.query.all()
+    disease_list = Disease.query.all()
+    symptom_list = Symptom.query.all()
+    return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment, medicine_list = medicine_list, symptom_list = symptom_list, disease_list = disease_list)
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>',methods = ['GET','POST'])
 def prescription(treat_id):
@@ -206,5 +213,9 @@ def prescription_two(treat_id, pres_id):
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
-
-    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = treatment['prescription'], treatment = treatment)    
+    if treatment == None :
+        treatment = mongo.db.Past_Treatments.find_one({'treat_id' : int(treat_id) })
+    if treatment == None :
+        return "This Treatment does not exist"
+    prescriptions = reversed(treatment['prescription'])
+    return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = prescriptions, treatment = treatment)    
