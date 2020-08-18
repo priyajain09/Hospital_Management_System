@@ -1,0 +1,167 @@
+{% extends 'User/home.html' %}
+{% block links %}
+<!-- Custom styles for this template -->
+<link href="../../../static/css1/doctor/sidebar.css" rel="stylesheet">
+<!-- Bootstrap core CSS -->
+<link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+<!-- Material Design Bootstrap -->
+<link rel="stylesheet" href="../../../static/css/mdb.min.css">
+<!-- Your custom styles (optional) -->
+<link rel="stylesheet" href="../../../static/css/style.css">
+<!-- MDBootstrap Datatables  -->
+  <link href="../../../static/css/addons/datatables2.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<div class="card ">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="">Details</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{url_for('user.documents',treat_id = treatment.treat_id)}}">Documents</a>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <p class="card-text">
+ 
+
+<!-- Heading -->
+<div class="card  wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body ">
+    <h6>
+        <dl class="row">
+            <div class="col">
+        
+            <dt >Treatment ID</dt>
+            <dd >{{ treatment.treat_id }}</dd>
+          
+            <dt >Started on </dt>
+            <dd >{{ treatment.time_stamp }}</dd>
+   
+        </div>
+        <div class="col">
+        
+            <dt >Patient User ID</dt>
+            <dd >{{ treatment.patient_userid }}</dd>
+            <dt >Patient Name</dt>
+            <dd >{{ treatment.patient_name}}</dd>
+            <dt >Doctor ID </dt>
+            <dd >{{ treatment.doctorid}}</dd>
+            <dt >Doctor Name </dt>
+            <dd >{{ treatment.doctor_name}}</dd>
+   
+        </div>
+        <div class="col">
+        
+            <dt >Age</dt>
+            <dd >{{ treatment.age}}</dd>
+            <dt >Blood Group </dt>
+            <dd >{{ treatment.blood_group}}</dd>
+            <dt >Gender </dt>
+            <dd >{{ treatment.gender}}</dd>
+   
+        </div>
+        <div class="col">
+            <dt >Allergies</dt>
+            <dd >{%for allergy in treatment.allergies%}{{allergy}},{% endfor %}</dd>
+            <dt >Chronic Diseases </dt>
+            <dd >{% for chron in treatment.chronic%}{{chron}},{% endfor %}</dd>
+   
+        </div>
+        
+          </dl>
+    </div>
+    </h6>
+
+    <a href="" class="black-text d-flex flex-row-reverse p-2">
+        <h5 class="waves-effect waves-light">
+            <a href = "{{url_for('user.close_treatment',remarks = 'Successful',treat_id = treatment.treat_id)}}">Successful</a>
+            <a href = "{{url_for('user.close_treatment',remarks = 'Unsuccessful',treat_id = treatment.treat_id)}}">Unsuccessful</a>
+            <a href = "{{url_for('user.close_treatment',remarks = 'Cannot say',treat_id = treatment.treat_id)}}">Can't say</a>
+        </h5>
+    </a>
+  </div>
+</div>
+
+
+<div class="container">
+    <input class="form-control" id="listSearch" type="text" placeholder="Type something to search list items">
+    <br>
+    <ul class="list-group" id="myList">
+       {% for pres in treatment.prescription %} 
+      <li class="list-group-item">
+        <b>Prescription ID : </b>      {{pres.pres_id}}<br>
+        <b>Dated : </b>    {{pres.timestamp}}<br>
+        <b>Tests : </b>{{pres.blood_pressure}}  {{pres.temperature}} <br> 
+        <b>Symptoms : </b>{% for sym in pres.symptoms %} {{sym}},  {% endfor %}<br>
+            <table  class="table">
+                
+                    <thead>
+                        <tr>
+                        <th> Medicine </th>
+                        <th> Morning Dosage </th>
+                        <th> Afternoon Dosage </th>
+                        <th> Night Dosage </th>
+                        <th> Quantity </th>
+                        <th> Empty/Filled Stomach</th>
+                        </tr>
+                    </thead>
+                <tbody>
+                    {% for dos in pres.dosage %}
+                    <tr>
+                        <td> {{dos.medicine}}  </td>  
+                        <td> {{dos.morning_dosage}}  </td>  
+                        <td> {{dos.noon_dosage}}  </td>  
+                        <td> {{dos.night_dosage}}  </td>  
+                        <td> {{dos.quantity}}  </td>  
+                        <td> {{dos.Dose}}  </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table><br>
+            {% for nt in pres.note %}
+                {{nt}}<br>
+            {% endfor %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+  </div>
+</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block add_script %}
+{{super()}}
+<script>
+
+$(document).ready(function(){
+  $("#listSearch").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myList li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
+{% endblock %}

@@ -12,6 +12,7 @@ from werkzeug.datastructures import CombinedMultiDict
 from flask import send_file,Markup
 from io import BytesIO
 import base64
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
@@ -27,11 +28,6 @@ def allowed_file(filename):
 @user_bp.route('/user/home_page')
 def home_page():
     return render_template('User/home.html')
-
-@user_bp.route('/user/current_treatments')
-def current_treatments():
-    treatment = mongo.db.Treatment.find({"patient_userid":current_user.username})
-    return render_template('User/user_sites/current_treatments.html',treatment=treatment)
 
 @user_bp.route('/user/treatment/<int:treat_id>/prescriptions/')
 def prescriptions(treat_id):
@@ -76,25 +72,28 @@ def update_profile():
     image = base64.b64encode(u.File).decode('ascii')         
     return render_template('User/user_sites/update_profile.html',user = current_user.patient,image = image)
 
-@user_bp.route('/view_document/<Id>')
+@user_bp.route('/view_photo/<Id>')
 def view_photo(Id):
     u = Patient.query.get(Id)
     return send_file(BytesIO(u.File),attachment_filename = "flask.png")
 
 @user_bp.route('/change_password',methods = ['GET','POST'])
 def change_password():
-    form = change_password_form()
-    if form.validate_on_submit():
+    if request.method == "POST":
+        old_password = request.form['old_pass']  
+        if check_password_hash(current_user.password_hash, old_password) == False:
+            message = "Wrong Password!"
+            return render_template('User/user_sites/change_password.html',message = message) 
         
-        current_user.set_password(form.password.data)
+        new_password = request.form['new_pass']
+        current_user.set_password(new_password)
         try:
             db.session.commit()
-            flash("Updated successfully")
+            flash("Password changed!")
         except:
             db.session.rollback()
-            flash("Try Again")
-
-    return render_template('User/user_sites/change_password.html',form = form)
+            flash("Try again!")    
+    return render_template('User/user_sites/change_password.html')
 
 
 
@@ -138,27 +137,37 @@ def view_document(Id):
 
 # /***********************************************************************************/
 
-@user_bp.route('/user/close_treatment/<int:treat_id>')
-def close_treatment(treat_id):
+@user_bp.route('/user/close_treatment/<remarks>/<int:treat_id>')
+def close_treatment(remarks,treat_id):
     mongo.db.Treatment.aggregate([{'$match':{"treat_id":treat_id}},{'$out':"Past_Treatments"}])
     mongo.db.Treatment.delete_one({"treat_id":treat_id})
-    mongo.db.Past_Treatments.update_one({"treat_id":treat_id},{'$currentDate':{"treat_closed_on":{ '$type':"date"}}})
-    return redirect(url_for('user.current_treatments'))
+    mongo.db.Past_Treatments.update_one({"treat_id":treat_id},{'$set':{"remarks":remarks},'$currentDate':{"closed_on":{ '$type':"date"}}},'false','true')
+    return redirect(url_for('user.active_treatments'))
 
 @user_bp.route('/user/past_treatments')
 def past_treatments():
     treatment = mongo.db.Past_Treatments.find({"patient_userid":current_user.username})
-    return render_template('User/user_sites/past_treatments.html',treatment=treatment)
+    return render_template('User/user_sites/closed_treatments.html',treatments=treatment)
 
 @user_bp.route('/user/closed_treatment/<int:treat_id>/prescriptions')
 def deleted_prescriptions(treat_id):
     treatment = mongo.db.Past_Treatments.find_one({"treat_id":treat_id})
     return render_template('User/user_sites/deleted_prescriptions.html',prescriptions=treatment["prescription"],treat_id=treat_id)
 
+@user_bp.route('/user/active_treatments')
+def active_treatments():
+    treatments = mongo.db.Treatment.find({"patient_userid":current_user.username})
+    if treatments.count() == 0:
+        flash("There are no ongoing treatments")
+    return render_template('User/user_sites/active_treatments.html',treatments = treatments)
 
+@user_bp.route('/user/active_treatment/<int:treat_id>')
+def active_treatment(treat_id):
+    treatment = mongo.db.Treatment.find_one({"treat_id":treat_id})
+    return render_template('User/user_sites/active_treatment.html',treatment = treatment)
 
-
-
-
-
+@user_bp.route('/user/all_documents/<treat_id>')
+def documents(treat_id):
+    documents = upload_medical_records.query.filter_by(treat_id = treat_id).all()
+    return render_template('User/user_sites/documents.html',documents = documents,treat_id = treat_id)
     
