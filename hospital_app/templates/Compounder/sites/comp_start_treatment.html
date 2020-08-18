@@ -97,7 +97,7 @@
                                     <select class="browser-default custom-select mb-4" name="doctor" required="required">
                                         <option value="" selected>userid</option>
                                         {% for row in doctor_list %}
-                                            <option value= {{row.username}} >{{row.username}}</option>
+                                            <option value= {{row.username}} >{{row.username}} - {{row.name}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
