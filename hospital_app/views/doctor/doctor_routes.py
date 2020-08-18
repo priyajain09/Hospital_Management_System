@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue
+from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -102,8 +102,10 @@ def doc_queue():
 def visit_patient(treat_id):
     mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'status': "doctor" }})
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
-
-    return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment)
+    medicine_list = Medicine.query.all()
+    disease_list = Disease.query.all()
+    symptom_list = Symptom.query.all()
+    return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment, medicine_list = medicine_list, symptom_list = symptom_list, disease_list = disease_list)
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>',methods = ['GET','POST'])
 def prescription(treat_id):

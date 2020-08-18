@@ -60,34 +60,27 @@
                                 <div class="col">
                                     <label for="multiselect1">Symptoms</label><br>
                                     <select id="multiselect1" multiple="multiple" name="multiselect1">
-                                        <option value="Sweating">Sweating</option>
-                                        <option value="Weekness">Weekness</option>
-                                        <option value="Abdominal Pain">Abdominal Pain</option>
-                                        <option value="Soar Throat">Soar Throat</option>
-                                        <option value="Rashes">Rashes</option>
-                                        <option value="Vomiting">Vomiting</option>
+                                        {% for row in symptom_list %}
+                                            <option value= {{row.name}} >{{row.name}}</option>
+                                        {% endfor %}
                                     </select>
                                     <hr>
                                 </div>
                                 <div class="col">
                                     <label for="multiselect2">Disease</label><br>
                                     <select id="multiselect2" multiple="multiple" name="multiselect2">
-                                        <option value="Common cold">Common cold</option>
-                                        <option value="Viral fever">Viral fever</option>
-                                        <option value="Bacterial fever">Bacterial fever</option>
-                                        <option value="Diabetes type 1">Diabetes type 1</option>
-                                        <option value="Diabetes type 2">Diabetes type 2</option>
-                                        
+                                        {% for row in disease_list %}
+                                            <option value= {{row.name}} >{{row.name}}</option>
+                                        {% endfor %}
                                     </select>
                                     <hr>
                                 </div>
                                 <div class="col">
                                     <label for="multiselect3">Medicines</label><br>
                                     <select id="multiselect3" multiple="multiple" name="multiselect3">
-                                        <option value="Combiflame">Combiflame</option>
-                                        <option value="Paracetamol">Paracetamol</option>
-                                        <option value="ORS">ORS</option>
-                                        <option value="Lever - 52">Lever - 52</option>
+                                        {% for row in medicine_list %}
+                                            <option value= {{row.name}} >{{row.name}}</option>
+                                        {% endfor %}
                                     </select>
                                     <hr>
                                 </div>

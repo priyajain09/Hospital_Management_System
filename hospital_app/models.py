@@ -255,4 +255,12 @@ class past_user_role(db.Model):
     role = db.Column(db.String(20),nullable = False)
     File = db.Column(db.LargeBinary,nullable = True, default = None)
 
+class Medicine(db.Model):
+    name = db.Column(db.String(200),nullable = False, primary_key=True )
+
+class Disease(db.Model):
+    name = db.Column(db.String(200),nullable = False,primary_key=True )
+
+class Symptom(db.Model):
+    name = db.Column(db.String(200),nullable = False,primary_key=True)
 
