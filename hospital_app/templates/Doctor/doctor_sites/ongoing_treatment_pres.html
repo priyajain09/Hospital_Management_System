@@ -2,20 +2,17 @@
 
 {% block links %}
 {{super()}}
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
  {% endblock %}
 {% block heading %}
 {% endblock %}
-
-
 {% block content %}
+
 <div class="container">
     <div class="card winter-neva-gradient">
 
         <!--Card content-->
         <div class="card-body justify-content-between">
-          <h5>
           <div class="row">
             <div class="col">
                 <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
@@ -42,7 +39,6 @@
               <a class="btn btn-outline-black btn-sm" href = "#" target="_blank" > Test Reports </a>
           </div>
           </div>
-          </h5>
         </div>
       </div>
     <br>
@@ -52,62 +48,53 @@
                 <div class="card-body">
                     <!-- Title -->
                     <h4 class="card-title">Fill Prescription Form</h4>
+                    <hr>
                         <!-- Form -->
                         <p><b>Symtoms:</b> {%for s in sym%} {{s}}, {%endfor%}</p>
                         <p><b>Disease:</b> {%for d in dis%} {{d}}, {%endfor%}</p>
                         <hr>
                         <form method=POST action="{{ url_for('doctor_routes.prescription_two', treat_id = treatment.treat_id , pres_id = pres_id ) }}">
                             <div class = "row">
-                                <div class="col-12">
-                            <table  style="font-size:20px;">
+                            <div class="col-12">
+                            <table  >
                                 <thead>
                                     <tr>
-                                        <th style="font-size:15px;"><b> Medicine</b> </th>
-                                        <th style="font-size:15px;"><b>  Moring Dosage</b></th>
-                                        <th style="font-size:15px;"> <b>Afternoon Dosage</b></th>
-                                        <th style="font-size:15px;"><b> Night Dosage</b></th>
-                                        <th style="font-size:15px;"><b> Quantity</b></th>
+                                        <th ><b> Medicine</b> </th>
+                                        <th ><b>  Moring Dosage</b></th>
+                                        <th > <b>Afternoon Dosage</b></th>
+                                        <th ><b> Night Dosage</b></th>
+                                        <th ><b> Quantity</b></th>
                                         <th> </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for m in med %}
                                     <tr>
-                                        <td style="font-size:15px;">{{m}} </td>
-                                        <td style="font-size:10px;"><input type="number" name="{{m}}_morndos" min="0" step="1" value="0" required="required"></td>
-                                        <td style="font-size:10px;"><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0" required="required"></td>
-                                        <td style="font-size:10px;"><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0" required="required"></td>
-                                        <td style="font-size:10px;"><input type="number" name="{{m}}_quantity" min="0" step="1" value="0" required="required"></td>
-                                        <td style="font-size:10px;"><select name="Dosage" required="required">
-                                            <option style="font-size:10px;" value="" selected>dosage</option>
-                                            <option  style="font-size:10px;" value="Empty stomach">Empty stomach</option>
-                                            <option style="font-size:10px;" value="After having some food">After having some food</option>                                            
-                                            <option style="font-size:10px;" value="Either way">Either way</option>
+                                        <td>{{m}} </td>
+                                        <td><input type="number" name="{{m}}_morndos" min="0" step="1" value="0" required="required"></td>
+                                        <td ><input type="number" name="{{m}}_aftndos" min="0" step="1" value="0" required="required"></td>
+                                        <td ><input type="number" name="{{m}}_nightdos" min="0" step="1" value="0" required="required"></td>
+                                        <td ><input type="number" name="{{m}}_quantity" min="0" step="1" value="0" required="required"></td>
+                                        <td ><select name="Dosage" required="required">
+                                            <option value="" selected>dosage</option>
+                                            <option value="Empty stomach">Empty stomach</option>
+                                            <option value="After having some food">After having some food</option>                                            
+                                            <option value="Either way">Either way</option>
                                         </select></td>
                                     </tr>
                                     {% endfor %}
                                 </tbody>
                                 </table>
+                            </div>
+                            </div>
                                 <hr>
-                                <div class = "row">
+                            <div class = "row">
                                     <div class="col-4">
-                                        <div class="form-group">
-                                            <label class="control-label col-md-3 col-sm-3 col-xs-3" for="reports">Reports</label>
-                                            <div class="col-md-8 col-sm-8 col-xs-8">
-                                                <div class="input-group control-group after-add-more2">
-                                                    <input type="text" name="reports[]" id="reports" class="form-control" placeholder="Enter Report">
-                                                    <div class="input-group-btn"> 
-                                                        <button class="btn btn-success add-more2" type="button"><i class="glyphicon glyphicon-plus"></i></button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="copy2 hide">
-                                            <div class="control-group input-group" style="margin-top:10px">
-                                                <input type="text" name="reports[]" class="form-control" placeholder="Enter Report">
-                                                <div class="input-group-btn"> 
-                                                    <button class="btn btn-danger remove2" type="button"><i class="glyphicon glyphicon-remove"></i></button>
-                                                </div>
+                                        <label for="reports">Reports</label>
+                                        <div class="field_wrapper">
+                                            <div>
+                                                <input type="text" name="reports[]" id="reports" placeholder="Enter Report">
+                                                <a href="javascript:void(0);" class="add_button" title="Add field" style="color:#008000;" ><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
                                             </div>
                                         </div>
 
@@ -124,12 +111,15 @@
                                         <textarea class="form-control rounded-0" id="note" rows="3" name="note"></textarea>
                                         </div>
                                     </div>
-                                </div>   
-                                </div>
+                            </div>   
+                            <hr>
 
                             <br>
-                            <button type="submit" class="btn btn-primary">Appointment Done</button> 
-                            </div>
+                            
+                            <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary btn-rounded mb-4" >Appointment Done</button>  
+                             </div>
+                           
                         </form>
                         <!--form--->
             <br>
@@ -144,18 +134,30 @@
 
 {% block scripts %}
 {{super()}}
-<script>
-
-
-    $(document).ready(function() {
-      $(".add-more2").click(function(){
-          var html = $(".copy2").html();
-          $(".after-add-more2").after(html);
-      });
-      $("body").on("click",".remove2",function(){ 
-          $(this).parents(".control-group").remove();
-      });
-    });       
+<script type="text/javascript">
+    $(document).ready(function(){
+        var maxField = 10; //Input fields increment limitation
+        var addButton = $('.add_button'); //Add button selector
+        var wrapper = $('.field_wrapper'); //Input field wrapper
+        var fieldHTML = '<div class="pt-2"><input type="text" name="reports[]"  id="reports" placeholder="Enter Report"/><a href="javascript:void(0);" class="remove_button" style="color:#FF0000;"> <i class="fa fa-minus-circle" aria-hidden="true"></i></a></div>'; //New input field html 
+        var x = 1; //Initial field counter is 1
+        
+        //Once add button is clicked
+        $(addButton).click(function(){
+            //Check maximum number of input fields
+            if(x < maxField){ 
+                x++; //Increment field counter
+                $(wrapper).append(fieldHTML); //Add field html
+            }
+        });
+        
+        //Once remove button is clicked
+        $(wrapper).on('click', '.remove_button', function(e){
+            e.preventDefault();
+            $(this).parent('div').remove(); //Remove field html
+            x--; //Decrement field counter
+        });
+    });
     </script>
 {% endblock %}
 

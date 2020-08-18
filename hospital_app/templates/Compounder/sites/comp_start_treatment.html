@@ -2,8 +2,7 @@
 
 {% block links %}
 {{super()}}
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 {% endblock %}
 
 {% block heading %}
@@ -68,19 +67,11 @@
                                         <div class="form-group">
                                             <label class="control-label col-md-3 col-sm-3 col-xs-3" for="chronic">Chronic</label>
                                             <div class="col-md-8 col-sm-8 col-xs-8">
-                                                <div class="input-group control-group after-add-more1">
-                                                    <input type="text" name="chronic[]" id="chronic" class="form-control" placeholder="Enter chronic disease">
-                                                    <div class="input-group-btn"> 
-                                                        <button class="btn btn-success add-more1" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                                <div class="field_wrapper1">
+                                                    <div>
+                                                        <input type="text" name="chronic[]" id="chronic" placeholder="Enter Chronic">
+                                                        <a href="javascript:void(0);" class="add_button1" title="Add field"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="copy1 hide">
-                                            <div class="control-group input-group" style="margin-top:10px">
-                                                <input type="text" name="chronic[]" class="form-control" placeholder="Enter chronic disease">
-                                                <div class="input-group-btn"> 
-                                                    <button class="btn btn-danger remove1" type="button"><i class="glyphicon glyphicon-remove"></i></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -88,19 +79,11 @@
                                     <div class="form-group">
                                         <label class="control-label col-md-3 col-sm-3 col-xs-3" for="allergies">Allergies</label>
                                         <div class="col-md-8 col-sm-8 col-xs-8">
-                                            <div class="input-group control-group after-add-more2">
-                                                <input type="text" name="allergies[]" id="allergies" class="form-control" placeholder="Enter Allergy">
-                                                <div class="input-group-btn"> 
-                                                    <button class="btn btn-success add-more2" type="button"><i class="glyphicon glyphicon-plus"></i></button>
+                                            <div class="field_wrapper2">
+                                                <div>
+                                                    <input type="text" name="allergies[]" id="allergies" placeholder="Enter Allergy">
+                                                    <a href="javascript:void(0);" class="add_button2" title="Add field"><i class="fa fa-plus-circle" aria-hidden="true"></i></a>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="copy2 hide">
-                                        <div class="control-group input-group" style="margin-top:10px">
-                                            <input type="text" name="allergies[]" class="form-control" placeholder="Enter Allergy">
-                                            <div class="input-group-btn"> 
-                                                <button class="btn btn-danger remove2" type="button"><i class="glyphicon glyphicon-remove"></i></button>
                                             </div>
                                         </div>
                                     </div>
@@ -137,26 +120,56 @@
 
 {% block scripts %}
 {{super()}}
-<script>
-$(document).ready(function() {
-      $(".add-more1").click(function(){
-          var html = $(".copy1").html();
-          $(".after-add-more1").after(html);
-      });
-      $("body").on("click",".remove1",function(){ 
-          $(this).parents(".control-group").remove();
-      });
+<script type="text/javascript">
+    $(document).ready(function(){
+        var maxField = 10; //Input fields increment limitation
+        var addButton = $('.add_button1'); //Add button selector
+        var wrapper = $('.field_wrapper1'); //Input field wrapper
+        var fieldHTML = '<div class="pt-2"><input type="text" name="chronic[]"  id="reports" placeholder="Enter chronic"/><a href="javascript:void(0);" class="remove_button1"> <i class="fa fa-minus-circle" aria-hidden="true"></i></a></div>'; //New input field html 
+        var x = 1; //Initial field counter is 1
+        
+        //Once add button is clicked
+        $(addButton).click(function(){
+            //Check maximum number of input fields
+            if(x < maxField){ 
+                x++; //Increment field counter
+                $(wrapper).append(fieldHTML); //Add field html
+            }
+        });
+        
+        //Once remove button is clicked
+        $(wrapper).on('click', '.remove_button1', function(e){
+            e.preventDefault();
+            $(this).parent('div').remove(); //Remove field html
+            x--; //Decrement field counter
+        });
     });
+    </script>
 
-    $(document).ready(function() {
-      $(".add-more2").click(function(){
-          var html = $(".copy2").html();
-          $(".after-add-more2").after(html);
-      });
-      $("body").on("click",".remove2",function(){ 
-          $(this).parents(".control-group").remove();
-      });
-    });   
-</script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        var maxField = 10; //Input fields increment limitation
+        var addButton = $('.add_button2'); //Add button selector
+        var wrapper = $('.field_wrapper2'); //Input field wrapper
+        var fieldHTML = '<div class="pt-2"><input type="text" name="allergies[]"  id="allergies" placeholder="Enter allergy"/><a href="javascript:void(0);" class="remove_button2"> <i class="fa fa-minus-circle" aria-hidden="true"></i></a></div>'; //New input field html 
+        var x = 1; //Initial field counter is 1
+        
+        //Once add button is clicked
+        $(addButton).click(function(){
+            //Check maximum number of input fields
+            if(x < maxField){ 
+                x++; //Increment field counter
+                $(wrapper).append(fieldHTML); //Add field html
+            }
+        });
+        
+        //Once remove button is clicked
+        $(wrapper).on('click', '.remove_button2', function(e){
+            e.preventDefault();
+            $(this).parent('div').remove(); //Remove field html
+            x--; //Decrement field counter
+        });
+    });
+    </script>
 {% endblock %}
 
