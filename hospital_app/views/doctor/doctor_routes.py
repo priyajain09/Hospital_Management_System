@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
+from hospital_app.models import User,Doctor,Patient , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -273,3 +273,11 @@ def past_assistant():
     if len(u) == 0:
         flash("No past assistants")
     return render_template('Doctor/doctor_sites/past_assistants.html',users = u,username = current_user.username,images = images)
+
+
+@doctor_routes_bp.route('/doctor/patients')
+def patients():
+    p = Patient.query.all()
+    return render_template('Doctor/doctor_sites/patient.html', p = p )
+
+
