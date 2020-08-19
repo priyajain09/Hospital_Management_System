@@ -1,0 +1,52 @@
+{% extends 'User/home.html' %}
+
+{% block content %}
+<div class="card mb-4 wow fadeIn winter-neva-gradient">
+
+    <!--Card content-->
+    <div class="card-body d-sm-flex justify-content-between">
+  
+      <h4 class="mb-2 mb-sm-0 pt-1">
+        Ongoing Treatments
+      </h4>
+    </div>
+  </div>
+
+  
+{% for message in get_flashed_messages() %}
+<div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
+
+{% for row in treatments %}
+<div class="card bg-light mb-3" >
+    <div class="card-body">
+      <p class="card-text">
+        <dl class="row">
+        
+            <dt class="col-sm-3">Treatment ID</dt>
+            <dd class="col-sm-9">{{row.treat_id}}</dd>
+          
+            <dt class="col-sm-3">Doctor </dt>
+            <dd class="col-sm-9">{{row.doctor_name}}</dd>
+            <dt class="col-sm-3">Doctor username</dt>
+            <dd class="col-sm-9">{{row.doctorid}}</dd>
+            <dt class="col-sm-3">Diseases</dt>
+            <dd class="col-sm-9">
+                {% for dis in row.disease %}
+                   {{dis}},
+                  {% endfor %}  
+            </dd>
+            <dt class="col-sm-3">Total Prescriptions</dt>
+            <dd class="col-sm-9">{{row.total_prescriptions}}</dd>
+            <dt class="col-sm-3">Started on</dt>
+            <dd class="col-sm-9">{{row.time_stamp}}</dd>
+
+          </dl>
+      </p>
+      <a href="{{url_for('user.active_treatment',treat_id = row.treat_id)}}" class="black-text d-flex flex-row-reverse p-2">
+        <h5 class="waves-effect waves-light">More Details<i class="fas fa-angle-double-right ml-2"></i></h5>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+{% endblock %}  
