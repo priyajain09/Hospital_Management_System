@@ -1,13 +1,15 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue
+from hospital_app.models import User,Doctor , patient_queue, user_role
 from hospital_app import db
 import json
 from flask_login import current_user
-from hospital_app.forms import update_doctor_form
+from hospital_app.forms import update_doctor_form , change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
 from collections import defaultdict
+from io import BytesIO
+import base64
 
 cmo_bp = Blueprint('cmo',__name__)
 
@@ -69,3 +71,52 @@ def prescription_history(treat_id):
         return "This Treatment does not exist"
     prescriptions = reversed(treatment['prescription'])
     return render_template('CMO/sites/prescription.html', prescriptions = prescriptions, treatment = treatment)
+
+@cmo_bp.route('/cmo-view_profile',methods = ['GET','POST'])
+def view_profile():
+    cmo = user_role.query.filter_by(role = "chief_doctor").first()
+    print(cmo)
+    image = base64.b64encode(cmo.File).decode('ascii')
+    return render_template('CMO/sites/view_profile.html',user = cmo,image = image)
+
+@cmo_bp.route('/cmo-update_profile',methods = ['GET','POST'])
+def update_profile():
+    if request.method == "POST":
+        file = request.files['profile_photo']
+
+        u = user_role.query.filter_by(role = "chief_doctor").first()
+
+        if file and file.filename != "":
+            u.File = file.read()
+
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.gender = request.form['gender']
+        u.work_timings = request.form['work_timings']
+
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = user_role.query.filter_by(role = "chief_doctor").first()
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('CMO/sites/update_profile.html',user = u,image = image)
+
+@cmo_bp.route('/cmo-change_password',methods = ['GET','POST'])
+def change_password():
+    form = change_password_form()
+    if form.validate_on_submit():
+        
+        current_user.set_password(form.password.data)
+        try:
+            db.session.commit()
+            flash("Updated successfully")
+        except:
+            db.session.rollback()
+            flash("Try Again")
+
+    return render_template('CMO/sites/change_password.html',form = form)

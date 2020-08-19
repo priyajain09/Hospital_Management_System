@@ -1,14 +1,16 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor, Patient, patient_queue,compounder_queue
+from hospital_app.models import User,Doctor, Patient, patient_queue,compounder_queue , user_role
 from hospital_app import db
 import json
 from flask_login import current_user
-from hospital_app.forms import update_doctor_form
+from hospital_app.forms import update_doctor_form,change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
 from collections import defaultdict
 from operator import itemgetter 
+from io import BytesIO
+import base64
   
 comp_bp = Blueprint('comp',__name__)
 
@@ -120,3 +122,52 @@ def comp_continue_treatment(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })
     doctor_list = Doctor.query.all()
     return render_template('Compounder/sites/comp_start_treatment.html', treatment = treatment, doctor_list = doctor_list)
+
+@comp_bp.route('/comp-view_profile',methods = ['GET','POST'])
+def view_profile():
+    compounder = user_role.query.filter_by(role = "compounder").first()
+    print(compounder)
+    image = base64.b64encode(compounder.File).decode('ascii')
+    return render_template('Compounder/sites/view_profile.html',user = compounder,image = image)
+
+@comp_bp.route('/comp-update_profile',methods = ['GET','POST'])
+def update_profile():
+    if request.method == "POST":
+        file = request.files['profile_photo']
+
+        u = user_role.query.filter_by(role = "compounder").first()
+
+        if file and file.filename != "":
+            u.File = file.read()
+
+        u.name = request.form['name']
+        u.age = request.form['age']
+        u.address = request.form['address']
+        u.contact_number = request.form['contact_number']
+        u.gender = request.form['gender']
+        u.work_timings = request.form['work_timings']
+
+        try:
+            db.session.commit()
+            flash("Updated successfully!")
+        except:
+            db.session.rollback()
+            flash("Try Again!")    
+    u = user_role.query.filter_by(role = "compounder").first()
+    image = base64.b64encode(u.File).decode('ascii')         
+    return render_template('Compounder/sites/update_profile.html',user = u,image = image)
+
+@comp_bp.route('/comp-change_password',methods = ['GET','POST'])
+def change_password():
+    form = change_password_form()
+    if form.validate_on_submit():
+        
+        current_user.set_password(form.password.data)
+        try:
+            db.session.commit()
+            flash("Updated successfully")
+        except:
+            db.session.rollback()
+            flash("Try Again")
+
+    return render_template('Compounder/sites/change_password.html',form = form)

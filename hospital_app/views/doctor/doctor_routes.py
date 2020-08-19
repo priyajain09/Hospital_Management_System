@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom
+from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -10,6 +10,9 @@ from datetime import date, datetime, timedelta
 from collections import defaultdict
 from io import BytesIO
 import base64
+from flask import send_file,Markup
+
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
@@ -219,3 +222,54 @@ def prescription_history(treat_id):
         return "This Treatment does not exist"
     prescriptions = reversed(treatment['prescription'])
     return render_template('Doctor/doctor_sites/prescription_history.html', prescriptions = prescriptions, treatment = treatment)    
+
+# /*********************************************************************************************/
+
+@doctor_routes_bp.route('/treatment-reports/<treat_id>')
+def treatment_reports(treat_id):
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
+    report = upload_medical_records.query.filter_by(type_doc = 'Report', treat_id = treat_id).all()  
+    
+    return render_template('Doctor/doctor_sites/treatment_reports.html', report = report, treatment = treatment)      
+
+@doctor_routes_bp.route('/doc-download/<Id>')
+def download(Id):
+    u = upload_medical_records.query.get(Id)
+    return send_file(BytesIO(u.File),attachment_filename = u.filename, as_attachment = True)
+
+@doctor_routes_bp.route('/doc-view_document/<Id>')
+def view_document(Id):
+    u = upload_medical_records.query.get(Id)
+    return send_file(BytesIO(u.File),attachment_filename = u.filename)
+
+@doctor_routes_bp.route('/doc-patient-documents/<role>',methods=['GET','POST'])
+def patient_document(role):
+
+    pres = upload_medical_records.query.filter_by(type_doc = role).all()  
+    if role == "Report":
+        return render_template('Doctor/doctor_sites/patient_docs_report.html',pres = pres)
+    return render_template('Doctor/doctor_sites/patient_docs_pres.html',pres = pres)
+
+
+# /*********************************************************************************************/
+
+
+@doctor_routes_bp.route('/doctor/current_assistant')
+def current_assistant():
+    u = user_role.query.filter_by(role = "assistant",doctor_username = current_user.username ).first()
+    if u is not None:
+        image = base64.b64encode(u.File).decode('ascii')
+        return render_template('Doctor/doctor_sites/current_assistants.html',row = u,username = current_user.username,image = image)
+    else:
+        flash("Assistant is not assigned")
+        return render_template('Doctor/doctor_sites/current_assistants.html',row = u,username = current_user.username)
+
+@doctor_routes_bp.route('/doctor/past_assistants')
+def past_assistant():
+    u = past_user_role.query.filter_by(role = "assistant", doctor_username = current_user.username).all()
+    images = []
+    for i in u:
+        images.append(base64.b64encode(i.File).decode('ascii'))
+    if len(u) == 0:
+        flash("No past assistants")
+    return render_template('Doctor/doctor_sites/past_assistants.html',users = u,username = current_user.username,images = images)
