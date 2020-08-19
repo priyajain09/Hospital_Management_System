@@ -1,0 +1,28 @@
+{% extends 'CMO/home.html' %}
+
+
+{% block links %}
+{{super()}}
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block heading %}
+Specializations
+{% endblock %}
+
+
+{% block content %}
+<ul class = "list-group">
+    {% for spez in q %}
+    <li class = "list-group-item">{{spez}}</li>
+    {% endfor %}
+</ul>
+
+<br>
+<br>
+{% endblock %}
+

@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue, user_role
+from hospital_app.models import User,Doctor , user_role, past_user_role,patient_queue, user_role, specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users,temporary_role_users
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -120,3 +120,102 @@ def change_password():
             flash("Try Again")
 
     return render_template('CMO/sites/change_password.html',form = form)
+
+# *********************************************************************************
+##### View Deleted Hosptial staff and there details
+
+# View Users and Doctors
+# here users are used to denote patients
+@cmo_bp.route('/cmo-doctor_list',methods = ['GET','POST'])
+def doctor_list():
+    q = db.session.query(User,Doctor).join(Doctor).all()
+    return render_template('CMO/sites/list_of_doctors.html',q=q)
+
+@cmo_bp.route('/cmo-user_list',methods = ['GET','POST'])
+def user_list():
+    users = db.session.query(User,Patient).join(Patient).filter(User.role == "user")
+    return render_template('CMO/sites/list_of_users.html',list=users)
+
+@cmo_bp.route('/cmo-users/<username>/<email>')
+def user_details(username,email):
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('CMO/sites/user_details.html',user=q,email = email,image = image)
+
+@cmo_bp.route('/cmo-doctor_details/<username>')
+def doctor_details(username):
+    q = Doctor.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('CMO/sites/doctor_details.html',row=q,image = image)
+
+
+@cmo_bp.route('/cmo-deleted_users',methods=['GET','POST'])
+def deleted_users(): 
+    u = deleted_patients.query.all()
+    return render_template('CMO/sites/deleted_users.html',users = u)
+
+@cmo_bp.route('/cmo-patient_details/<username>')
+def deleted_user_details(username):
+    u = deleted_patients.query.get(username)
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('CMO/sites/deleted_user_details.html',user = u,image = image)
+
+@cmo_bp.route('/cmo-deleted_doctor_details/<username>')
+def deleted_doctor_details(username):
+    u = deleted_doctors.query.get(username)
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('CMO/sites/deleted_doctor_details.html',row = u,image = image)
+
+@cmo_bp.route('/cmo-deleted_doctors',methods=['GET','POST'])
+def deleted_doctors_func():
+    u = deleted_doctors.query.all()
+    return render_template('CMO/sites/deleted_doctors.html',doctors = u)
+
+# View assisstant
+
+@cmo_bp.route('/cmo-current_assistant/<username>')
+def current_assistant(username):
+    u = user_role.query.filter_by(role = "assistant",doctor_username = username).first()
+    if u is not None:
+        image = base64.b64encode(u.File).decode('ascii')
+        return render_template('CMO/sites/current_assistants.html',row = u,username = username,image = image)
+    else:
+        flash("Assistant is not assigned")
+        return render_template('CMO/sites/current_assistants.html',row = u,username = username)
+
+@cmo_bp.route('/cmo-past_assistants/<username>')
+def past_assistant(username):
+    u = past_user_role.query.filter_by(role = "assistant", doctor_username = username).all()
+    images = []
+    for i in u:
+        images.append(base64.b64encode(i.File).decode('ascii'))
+    if len(u) == 0:
+        flash("No past assistants")
+    return render_template('CMO/sites/past_assistants.html',users = u,username = username,images = images)
+
+# View role users , compunder, receptionist
+
+@cmo_bp.route('/cmo-role_user/<role>')
+def role_user(role):
+     u = user_role.query.filter_by(role = role).first()
+     if u:
+        image = base64.b64encode(u.File).decode('ascii')
+        past_role_users = past_user_role.query.filter_by(role = role).all()
+        return render_template('CMO/sites/role_user_page.html',row = u, past_users = past_role_users,role = role,image = image)
+     past_role_users = past_user_role.query.filter_by(role = role).all()
+     return render_template('CMO/sites/role_user_page.html',row = u, past_users = past_role_users,role = role)    
+
+@cmo_bp.route('/cmo-deleted_role_user_details/<id>')
+def deleted_role_user_details(id):
+    u = past_user_role.query.get(id)
+    image = base64.b64encode(u.File).decode('ascii')
+    return render_template('CMO/sites/deleted_role_user.html',row = u,image = image)
+
+######################################################
+####### View Departments 
+
+@cmo_bp.route('/cmo-departments', methods = ['GET','POST'])
+def departments():
+    q = specialization.query.all()    
+    return render_template('CMO/sites/departments.html', q=q)
+

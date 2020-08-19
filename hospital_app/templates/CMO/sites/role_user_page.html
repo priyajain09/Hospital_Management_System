@@ -1,0 +1,189 @@
+{% extends 'CMO/home.html' %}
+
+{% block links %}
+{{super()}}
+  <style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %}
+{% if row is not none %}
+<div class="jumbotron text-center hoverable p-4">
+
+{% for message in get_flashed_messages() %}
+<div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
+
+    <!-- Grid row -->
+    <div class="row">
+  
+      <!-- Grid column -->
+      <div class="col-md-4 offset-md-1 mx-3 my-3">
+  
+        <!-- Featured image -->
+        <div id="profile-container" class="view overlay">
+          <img class='backup_picture' src="data:;base64,{{ image}}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
+          <a>
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div>
+  
+      </div>
+      <!-- Grid column -->
+  
+      <!-- Grid column -->
+      <div class="col-md-7 text-md-left ml-3 mt-3">
+  
+        <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
+          {% if role == "reception" %}
+            <small class="text-muted">Receptionist</small>
+          {% elif role=="compounder" %}
+          <small class="text-muted">Compounder</small>
+          {% else %}
+          <small class="text-muted">Chief Medical Officer</small>
+          {% endif %}
+        </h4>
+        
+        <dl class="row">
+
+      
+          <dt class="col-sm-3">Birthdate</dt>
+          <dd class="col-sm-9">{{row.birthdate}}</dd>
+        
+          <dt class="col-sm-3">Age </dt>
+          <dd class="col-sm-9">{{row.age}}</dd>
+          <dt class="col-sm-3">Gender </dt>
+          <dd class="col-sm-9">{{row.gender}}</dd>
+  
+          <dt class="col-sm-3">Contact number </dt>
+          <dd class="col-sm-9">{{row.contact_number}}</dd>
+  
+          <dt class="col-sm-3">Address</dt>
+          <dd class="col-sm-9">{{row.address}}</dd>
+          <dt class="col-sm-3">Work details</dt>
+          <dd class="col-sm-9">{{row.work_timings}}</dd>
+          <dt class="col-sm-3">Request posted at </dt>
+          <dd class="col-sm-9">{{row.timestamp}}</dd>
+        
+          
+        </dl>
+      </div>
+      <!-- Grid column -->
+
+  
+    </div>
+    <!-- Grid row -->
+  
+  </div>
+  {% else %}
+  <div class="alert alert-primary" role="alert">
+    No person is currently assigned for this position
+  </div>
+  {% endif %}
+  <div class="card ">
+    <div class="card-header">
+      History
+    </div>
+    <div class="card-body">
+  <table id="dt-filter-select" class="table" cellspacing="0" width="100%">
+    <thead>
+      <tr>
+        <th class="th-sm">Name
+        </th>
+        <th class="th-sm">Username
+        </th>
+        <th class="th-sm">Date of joining
+        </th>
+        <th class="th-sm">Date of resignation
+        </th>
+        <th class="th-sm">More Details
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in past_users %}
+      <tr>
+        <td>{{user.name}}</td>
+        <td>{{user.username}}</td>
+        <td>{{user.date_of_joining}}</td>
+        <td>{{user.end_date}}</td>
+        <td><a href="{{url_for('cmo.deleted_role_user_details',id = user.id)}}">Click here</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th>Name
+        </th>
+        <th>Username
+        </th>
+        <th>Date of joining
+        </th>
+        <th >Date of resignation
+        </th>
+        <th>More Details
+        </th>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+  </div>
+  
+  {% endblock %}
+  
+  {% block add_script %}
+  
+  <script>
+    $(document).ready(function () {
+    $('#dt-filter-select').dataTable({
+  
+      initComplete: function () {
+        this.api().columns().every( function () {
+            var column = this;
+            var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+                .appendTo( $(column.footer()).empty() )
+                .on( 'change', function () {
+                    var val = $.fn.dataTable.util.escapeRegex(
+                        $(this).val()
+                    );
+  
+                    column
+                        .search( val ? '^'+val+'$' : '', true, false )
+                        .draw();
+                } );
+  
+            column.data().unique().sort().each( function ( d, j ) {
+                select.append( '<option value="'+d+'">'+d+'</option>' )
+            } );
+        } );
+    }
+    });
+  });
+  </script>
+{% endblock %}
