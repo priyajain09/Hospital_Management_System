@@ -27,7 +27,7 @@ def allowed_file(filename):
 
 @user_bp.route('/user/home_page')
 def home_page():
-    return render_template('User/home.html')
+    return redirect(url_for('user.doctor'))
 
 @user_bp.route('/user/treatment/<int:treat_id>/prescriptions/')
 def prescriptions(treat_id):
@@ -36,8 +36,18 @@ def prescriptions(treat_id):
 
 @user_bp.route('/user/doctor',methods = ['GET','POST'])
 def doctor():
-    d = Doctor.query.all()
-    return render_template('User/user_sites/doctors.html',doctors=d)
+    form = search_doctor_form()
+    if form.validate_on_submit():
+        d = Doctor.query.filter_by(specialization = str(form.specialization.data)).all()
+    else:
+        d = Doctor.query.all()
+    if len(d) == 0:
+        flash("No doctors")    
+    images = []
+    for u in d:
+        images.append(base64.b64encode(u.File).decode('ascii'))
+
+    return render_template('User/user_sites/doctors.html',doctors=d,images = images,form = form)
         
 @user_bp.route('/user/view_profile',methods = ['GET','POST'])
 def view_profile():

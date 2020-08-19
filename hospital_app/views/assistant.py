@@ -1,4 +1,4 @@
-from hospital_app.models import User,Doctor, Patient, is_user_deleted, patient_queue,compounder_queue
+from hospital_app.models import User,Doctor, Patient, is_user_deleted, patient_queue,compounder_queue,user_role
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from flask_login import current_user, login_required
 from hospital_app import user_collection
@@ -10,21 +10,9 @@ assistant_bp = Blueprint('assistant', __name__)
 
 @assistant_bp.route('/assistant/patient_queue')
 def home_page():
-    if request.method == "POST":
-        search_text = request.form['search_text']
-        if request.form['filter'] == "username":
-            u = patient_queue.query.filter(func.lower(patient_queue.username).contains(search_text.lower(),autoescape = True))
-
-        elif request.form['filter'] == "name":
-            u = patient_queue.query.filter(func.lower(patient_queue.name).contains(search_text.lower(),autoescape = True))
-
-        elif request.form['filter'] == "none":        
-            u = patient_queue.query.all()
-
-        elif request.form['filter'] == "doctor_name":        
-            u = patient_queue.query.filter(func.lower(patient_queue.doctor).contains(search_text.lower(),autoescape = True))   
-    else:
-        u = patient_queue.query.all()    
+    username = current_user.username
+    x = user_role.query.filter_by(username = username, role = "assistant").first()
+    u = patient_queue.query.filter_by(doctor_username = x.doctor_username).all()    
     return render_template('Assistant/patient_queue.html',list = u)
 
 
@@ -51,3 +39,9 @@ def remove_all_doctor_queue():
         db.session.rollback()
         flash("Try again !")
     return redirect(url_for('assistant.home_page'))    
+
+@assistant_bp.route('/assistant/user_details/<username>')
+def user_details(username):
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Reception/user_details.html',user=q,image = image)

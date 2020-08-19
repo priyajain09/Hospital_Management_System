@@ -1,12 +1,44 @@
 {% extends 'Reception/base.html' %}
 
 {% block heading %}
-<h1 class="display-5">Doctors</h1>
+<div class="card text-center mb-4 wow fadeIn winter-neva-gradient">
+
+  <!--Card content-->
+  <div class="card-body d-sm-flex justify-content-between">
+
+    <h4 class="mb-2 mb-sm-0 pt-1 ">
+      Doctors
+    </h4>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}
 <!-- News jumbotron -->
 {% for row in list %}
+<style>
+  #imageUpload
+{
+  display: none;
+}
+
+#profileImage
+{
+  cursor: pointer;
+}
+
+#profile-container {
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+
+}
+
+#profile-container img {
+  width: 300px;
+  height: 300px;
+}
+</style>
 <br>
 <div class="jumbotron text-center hoverable p-4">
 
