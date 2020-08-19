@@ -281,3 +281,34 @@ def patients():
     return render_template('Doctor/doctor_sites/patient.html', p = p )
 
 
+@doctor_routes_bp.route('/patient_all_treatment/<patient_userid>', methods=['GET', 'POST'])
+def patient_treatment(patient_userid):
+
+    doc_treatment = mongo.db['Past_Treatments'].aggregate( 
+    [
+        # this code is used to take the union of past_treatments table and treatment table
+        { '$limit': 1 },
+        { '$project': { '_id': '$$REMOVE' } },
+
+        { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+        { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'treatment' } },
+
+        { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$treatment"] } } },
+
+        { '$unwind': '$union' },
+        { '$replaceRoot': { 'newRoot': '$union' } },
+        {
+            '$match' :  {'$and': [{'treat_id': {'$ne': 0}}, {'patient_userid' : patient_userid}]} 
+        },
+  
+        # upto here
+        # sorted in the descending order of count
+        {
+            '$sort' : { 'time_stamp': -1 }
+        }
+    ]
+    )
+    patient_info = mongo.db.Treatment.find_one({ "patient_userid": patient_userid }) 
+    print(type(doc_treatment))
+    print(doc_treatment)
+    return render_template('Doctor/doctor_sites/patient_treatment.html',treatment=doc_treatment, patient_info = patient_info)

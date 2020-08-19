@@ -10,9 +10,12 @@
 
 <div class="container">
     <div class="card winter-neva-gradient">
-
         <!--Card content-->
-        <div class="card-body justify-content-between">
+        <div class="card-body">
+            <div class="d-flex justify-content-between">
+                <h4 class="card-title">Treatment Info</h4><hr>
+                <small><a href="{{url_for('doctor_routes.patient_treatment', patient_userid = treatment.patient_userid)}}" target="_blank"> View all Treatments of {{ treatment.patient_userid }} </a></small>
+            </div>
           <div class="row">
             <div class="col">
                 <b>Treatment Id: </b>{{ treatment.treat_id }}<br>

@@ -1,0 +1,152 @@
+{% extends 'Doctor/home.html' %}
+
+  {% block links %}
+  {{super()}}
+
+{% endblock %}
+
+{% block heading %}
+
+{% endblock %}
+
+{% block content %}
+<div class="container">
+        <!-- Heading -->
+        <div class="card mb-4 wow fadeIn winter-neva-gradient">
+            <!--Card content-->
+            <div class="card-body">
+                  <h4 class="card-title">Patient Info</h4><hr>
+             
+              <div class="row">
+                <div class="col">
+                  <b>Patient User ID :  </b>{{ patient_info.patient_userid }}<br>
+                  <b>Patient Name:  </b>{{ patient_info.patient_name}}<br>
+              </div>
+                <div class="col">
+                    <b>Age:  </b>{{ patient_info.age}}<br>
+                    <b>Blood Group:  </b>{{ patient_info.blood_group}}<br>
+                    <b>Gender:  </b>{{ patient_info.gender}}<br>
+                </div>
+                <div class="col">
+                  <b>Allergies:  </b>{%for allergy in patient_info.allergies%}{{allergy}}{% endfor %}<br>
+                  <b>Chronic Diseases:  </b>{% for chron in patient_info.chronic%}{{chron}}{% endfor %}
+              </div>
+              <div class="col">
+                  <br>
+                  <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                    View All Documents</a>
+              </div>
+              </div>
+              
+            </div>
+          </div>
+          
+
+</div>
+</div>
+
+
+<div class="container">
+<div class="card mb-4 wow fadeIn cloudy-knoxville-gradient">
+
+  <!--Card content-->
+  <div class="card-body ">
+    <div class="table-responsive">
+    <table id="dt-filter-search" class="table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+              <th class="th-sm">Treatment ID</th>
+              <th class="th-sm">Start Date</th>
+              <th class="th-sm">Doctor User ID</th>
+                <th class="th-sm">Doctor Name</th>
+                <th class="th-sm">Disease Name</th>
+                <th class="th-sm">Symptoms</th>
+                <th class="th-sm">Medicines</th>
+                <th class="th-sm">View</th> 
+            </tr>
+        </thead>
+        <tbody>
+          {% for roww in treatment %}
+          {% set symList = [] %} 
+          {% set medList = [] %}
+          
+          {% for pres in roww.prescription %}
+            {% for sym in pres.symptoms %}
+              {% set symList = symList.append(sym) %}
+            {% endfor %}
+            {% for med in pres.medicines %}
+            {% set medList = medList.append(med) %}
+            {% endfor %}
+          {% endfor %}  
+            <tr>
+              <td>{{roww.treat_id}}</td>
+              <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
+              <td>{{roww.doctorid}}</td>
+                <td>{{roww.doctor_name}}</td>
+                <td> 
+                  {% for dis in roww.disease %}
+                   {{dis}}
+                  {% endfor %}  
+                </td>
+                <td>
+                  {% for x in symList|unique %}
+                    {{x}}                 
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for x in medList|unique %}
+                    {{x}}                 
+                  {% endfor %}</td>
+                <td>
+                  <a href = "{{url_for('doctor_routes.prescription_history',treat_id = roww.treat_id)}}" target="_blank">
+                  View 
+                  </a>  
+                  </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+            <tr>
+              <th>Treatment ID</th>
+              <th>Started On</th>        
+              <th>Doctor User ID</th>
+              <th>Doctor Name</th>
+              <th>Disease Name</th> 
+              <th>Symptoms</th>
+              <th>Medicines</th>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{super()}}
+<script>
+$(document).ready(function () {
+  $('#dt-filter-search').dataTable({
+
+    initComplete: function () {
+      this.api().columns().every( function () {
+          var column = this;
+          var search = $(`<input class="form-control form-control-sm" type="text" placeholder="Search">`)
+              .appendTo( $(column.footer()).empty() )
+              .on( 'change input', function () {
+                  var val = $(this).val()
+
+                  column
+                      .search( val ? val : '', true, false )
+                      .draw();
+              } );
+
+      } );
+  }
+  });
+});
+</script>
+
+{% endblock %}
