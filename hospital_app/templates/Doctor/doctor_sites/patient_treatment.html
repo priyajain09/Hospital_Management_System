@@ -1,29 +1,51 @@
 {% extends 'Doctor/home.html' %}
 
-    {% block links %}
-        {{super()}}
-    {% endblock %}
+  {% block links %}
+  {{super()}}
+
+{% endblock %}
 
 {% block heading %}
 
-<div class="container">
-<!-- Heading -->
-<div class="card mb-4 wow fadeIn winter-neva-gradient">
-
-  <!--Card content-->
-  <div class="card-body d-sm-flex justify-content-between">
-
-    <h4 class="mb-2 mb-sm-0 pt-1">
-      Closed Treatments
-    </h4>
-  </div>
-
-
-</div>
-</div>
 {% endblock %}
 
 {% block content %}
+<div class="container">
+        <!-- Heading -->
+        <div class="card mb-4 wow fadeIn winter-neva-gradient">
+            <!--Card content-->
+            <div class="card-body">
+                  <h4 class="card-title">Patient Info</h4><hr>
+             
+              <div class="row">
+                <div class="col">
+                  <b>Patient User ID :  </b>{{ patient_info.patient_userid }}<br>
+                  <b>Patient Name:  </b>{{ patient_info.patient_name}}<br>
+              </div>
+                <div class="col">
+                    <b>Age:  </b>{{ patient_info.age}}<br>
+                    <b>Blood Group:  </b>{{ patient_info.blood_group}}<br>
+                    <b>Gender:  </b>{{ patient_info.gender}}<br>
+                </div>
+                <div class="col">
+                  <b>Allergies:  </b>{%for allergy in patient_info.allergies%}{{allergy}}{% endfor %}<br>
+                  <b>Chronic Diseases:  </b>{% for chron in patient_info.chronic%}{{chron}}{% endfor %}
+              </div>
+              <div class="col">
+                  <br>
+                  <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                    View All Documents</a>
+              </div>
+              </div>
+              
+            </div>
+          </div>
+          
+
+</div>
+</div>
+
+
 <div class="container">
 <div class="card mb-4 wow fadeIn cloudy-knoxville-gradient">
 
@@ -35,10 +57,8 @@
             <tr>
               <th class="th-sm">Treatment ID</th>
               <th class="th-sm">Start Date</th>
-              <th class="th-sm">Closing Date</th>
-              <th class="th-sm">Closing Note</th>
-              <th class="th-sm">Patient User ID</th>
-                <th class="th-sm">Patient Name</th>
+              <th class="th-sm">Doctor User ID</th>
+                <th class="th-sm">Doctor Name</th>
                 <th class="th-sm">Disease Name</th>
                 <th class="th-sm">Symptoms</th>
                 <th class="th-sm">Medicines</th>
@@ -61,15 +81,8 @@
             <tr>
               <td>{{roww.treat_id}}</td>
               <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
-              <td>{{roww.treat_closed_on.day}}-{{roww.treat_closed_on.month}}-{{roww.treat_closed_on.year}}</td>
-              <td>  {% if roww.Referto == '' %} 
-                        Closed by Patient
-                    {% else %}
-                        Referred to {{roww.Referto}}
-                    {% endif %}
-              </td>
-              <td><a class="text-primary" href="{{url_for('doctor_routes.user_details', username = roww.patient_userid)}}" > {{roww.patient_userid}}</a></td>
-                <td><a class="text-primary" href="{{url_for('doctor_routes.user_details', username = roww.patient_userid)}}" >{{roww.patient_name}}</a></td>
+              <td>{{roww.doctorid}}</td>
+                <td>{{roww.doctor_name}}</td>
                 <td> 
                   {% for dis in roww.disease %}
                    {{dis}}
@@ -96,11 +109,9 @@
         <tfoot>
             <tr>
               <th>Treatment ID</th>
-              <th>Started On</th>     
-              <th>Closing Date</th>
-              <th>Closing Note</th>   
-              <th>Patient User ID</th>
-              <th>Patient Name</th>
+              <th>Started On</th>        
+              <th>Doctor User ID</th>
+              <th>Doctor Name</th>
               <th>Disease Name</th> 
               <th>Symptoms</th>
               <th>Medicines</th>

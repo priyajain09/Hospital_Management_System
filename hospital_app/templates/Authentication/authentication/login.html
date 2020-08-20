@@ -20,12 +20,6 @@
             
                 <div class="d-flex justify-content-around">
                     <div>
-                        <!-- Remember me -->
-                        <div class="custom-control custom-checkbox">
-                            {{ form.remember_me() }} {{ form.remember_me.label }}
-                        </div>
-                    </div>
-                    <div>
                         <!-- Forgot password -->
                         <a href="{{ url_for('login.reset_password_request') }}">Forgot password?</a>
                     </div>

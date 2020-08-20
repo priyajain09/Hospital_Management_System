@@ -16,7 +16,8 @@ comp_bp = Blueprint('comp',__name__)
 
 @comp_bp.route('/comp/')
 def home():
-    return render_template('Compounder/home.html')
+    u = compounder_queue.query.all()    
+    return render_template('Compounder/sites/comp_queue.html', list = u)
 
 @comp_bp.route('/queue/')
 def queue():
@@ -171,3 +172,9 @@ def change_password():
             flash("Try Again")
 
     return render_template('Compounder/sites/change_password.html',form = form)
+
+@comp_bp.route('/comp-patientdetails/<username>')
+def user_details(username):
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Compounder/sites/user_details.html',x=q, image = image)

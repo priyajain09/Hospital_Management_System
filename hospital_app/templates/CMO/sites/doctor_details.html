@@ -1,0 +1,123 @@
+{% extends 'CMO/home.html' %}
+
+
+{% block links %}
+{{super()}}
+  <style>
+    #imageUpload
+{
+    display: none;
+}
+
+#profileImage
+{
+    cursor: pointer;
+}
+
+#profile-container {
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
+  
+}
+
+#profile-container img {
+    width: 300px;
+    height: 300px;
+}
+</style>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+
+{% block content %}
+<br>
+<div class="card text-center">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="">Doctor Details</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " href="{{url_for('cmo.current_assistant',username = row.username)}}" >Current Assistant</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{url_for('cmo.past_assistant',username = row.username)}}">Past Assistants</a>
+      </li>
+    </ul>
+  </div>
+  {% for message in get_flashed_messages() %}
+      <div class="alert alert-info" role="alert">{{ message }}</div>
+  {% endfor %}
+
+<div class="jumbotron text-center hoverable p-4">
+
+    <!-- Grid row -->
+    <div class="row">
+  
+      <!-- Grid column -->
+      <div class="col-md-4 offset-md-1 mx-3 my-3">
+  
+        <!-- Featured image -->
+        <div id="profile-container" class="view overlay">
+          <img class='backup_picture' src="data:;base64,{{ image }}" alt="Image not found" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
+          <a>
+            <div class="mask rgba-white-slight"></div>
+          </a>
+        </div>
+  
+      </div>
+      <!-- Grid column -->
+  
+      <!-- Grid column -->
+      <div class="col-md-7 text-md-left ml-3 mt-3">
+  
+        <h4 class="h4 mb-4">{{row.name}} ({{row.username}})<br>
+            <small class="text-muted">{{row.specialization}}</small>
+        </h4>
+        <dl class="row">
+        
+          <dt class="col-sm-3">Experience</dt>
+          <dd class="col-sm-9">{{row.experience}}</dd>
+        
+          <dt class="col-sm-3">Qualification </dt>
+          <dd class="col-sm-9">{{row.qualification}}</dd>
+          <dt class="col-sm-3">Gender </dt>
+          <dd class="col-sm-9">{{row.gender_doctor}}</dd>
+          <dt class="col-sm-3">Age </dt>
+          <dd class="col-sm-9">{{row.age}}</dd>
+          <dt class="col-sm-3">Contact number </dt>
+          <dd class="col-sm-9">{{row.contact_number}}</dd>
+          <dt class="col-sm-3">Address </dt>
+          <dd class="col-sm-9">{{row.address}}</dd>
+          <dt class="col-sm-3"> Blood Group</dt>
+          <dd class="col-sm-9">{{row.blood_group}}</dd>
+         
+          <dt class="col-sm-3">Visiting Hours </dt>
+          <dd class="col-sm-9">{{row.visiting_hours}}</dd>
+          <dt class="col-sm-3">Consultant Fee </dt>
+          <dd class="col-sm-9">{{row.consultant_fee}}</dd>
+
+      
+          <dt class="col-sm-3">Date of joining </dt>
+          <dd class="col-sm-9">{{row.date_of_joining}}</dd>
+          <dt class="col-sm-3">Status</dt>
+          <dd class="col-sm-9">{{row.status}}</dd>
+    
+        </dl>
+
+        </p>
+      </div>
+      <!-- Grid column -->
+
+  
+    </div>
+    <!-- Grid row -->
+  
+  </div>
+  <!-- News jumbotron -->
+  </div>
+{% endblock %}

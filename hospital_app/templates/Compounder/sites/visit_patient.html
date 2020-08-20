@@ -39,7 +39,7 @@
 
 
   
-  <div>
+  <div class="container">
 
 <table id="dtBasicExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
   <thead>
@@ -64,12 +64,12 @@
    {% for treat in treatments %}
        <tr>
            <td>{{treat.treat_id}}</td>
-           <td><a href="#" >{{treat.patient_userid}}</a></td>
-           <td>{{treat.patient_name}}</td>
+           <td><a class="text-primary" href="{{url_for('comp.user_details', username = treat.patient_userid)}}" >{{treat.patient_userid}}</a></td>
+           <td><a class="text-primary" href="{{url_for('comp.user_details', username = treat.patient_userid)}}" >{{treat.patient_name}}</a></td>
            <td>{{treat.doctorid}}</td>
            <td>{{treat.time_stamp}}</td>
            <td>{{treat.disease_name}}</td>
-           <td><a href="{{url_for('comp.comp_continue_treatment' , treat_id = treat.treat_id)}}" > click here </a> </td>
+           <td><a class="text-primary" href="{{url_for('comp.comp_continue_treatment' , treat_id = treat.treat_id)}}" > click here </a> </td>
         </tr>
     {% endfor %}   
   </tbody>

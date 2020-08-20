@@ -12,17 +12,19 @@
 <div class="container">
         <!-- Heading -->
 <div class="card mb-4 wow fadeIn winter-neva-gradient">
-
   <!--Card content-->
-  <div class="card-body d-sm-flex justify-content-between">
-    <h6>
+  <div class="card-body">
+    <div class="d-flex justify-content-between">
+        <h4 class="card-title">Treatment Info</h4><hr>
+        <small><a href="{{url_for('doctor_routes.patient_treatment', patient_userid = treatment.patient_userid)}}" target="_blank"> View all Treatments of {{ treatment.patient_userid }} </a></small>
+    </div>
     <div class="row">
       <div class="col">
           <b>Treatment Id: </b>{{ treatment.treat_id }}<br>
           <b>Started on :  </b>{{ treatment.time_stamp }}<br>
       </div>
       <div class="col">
-        <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+        <b>Patient User ID :  </b> <a class="text-danger" href="{{url_for('doctor_routes.user_details', username = treatment.patient_userid)}}" target="_blank" >{{ treatment.patient_userid }}</a><br>
         <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
         <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
         <b>Doctor Name:  </b>{{ treatment.doctor_name}}
@@ -42,7 +44,7 @@
         <a class="btn btn-outline-black btn-sm" href = "{{url_for('doctor_routes.treatment_reports',treat_id = treatment.treat_id)}}" target="_blank" > Test Reports </a>
     </div>
     </div>
-    </h6>
+    
   </div>
 </div>
 

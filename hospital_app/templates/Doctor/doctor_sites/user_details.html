@@ -1,0 +1,43 @@
+{% extends 'Doctor/home.html' %}
+
+{% block links %}
+{{super()}}
+ {% endblock %}
+{% block heading %}
+{% endblock %}
+{% block content %}
+
+<div class="container">
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 col-lg-4">
+                        <img src="https://mdbootstrap.com/img/Photos/Others/men.jpg" class="img-fluid">
+                    </div>
+                    
+                    <div class = "col-6">
+                                <h4 ><strong>{{x.name}}</strong></h4>
+                                <h6 class="text-muted"><strong>{{x.username}}</strong></h6>
+                                <!-- Text -->
+                                <p ><b>Age </b> : {{x.age}}<br>
+                                    <b>Blood Group </b> :{{x.blood_group}}<br>
+                                    <b>Gender </b> :{{x.gender_user}}<br>
+                                    <b>Birth Date </b> :{{x.birthdate}}<br>
+                                    <b>Address </b> :{{x.address}}<br>
+                                    <b>Contact No. </b> :{{x.contact_number}}<br>
+                                </p>
+                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                                    View All Documents
+                                </a>
+                                <a class="btn btn-outline-black btn-sm" href="{{url_for('doctor_routes.patient_treatment', patient_userid = x.username)}}">
+                                     View all Treatments
+                                </a>
+                    </div>
+                
+                </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+{{super()}}
+{% endblock %}
+

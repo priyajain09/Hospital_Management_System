@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect,url_for, request, flash
 from hospital_app import mongo
-from hospital_app.models import User,Doctor , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
+from hospital_app.models import User,Doctor,Patient , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
 from hospital_app import db
 import json
 from flask_login import current_user
@@ -18,7 +18,8 @@ doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
 @doctor_routes_bp.route('/doctor')
 def home_page():      
-    return render_template('Doctor/home.html')
+    u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
+    return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
 
 @doctor_routes_bp.route('/current_treatment_list', methods=['GET', 'POST'])
 def current_treatment_list():
@@ -273,3 +274,47 @@ def past_assistant():
     if len(u) == 0:
         flash("No past assistants")
     return render_template('Doctor/doctor_sites/past_assistants.html',users = u,username = current_user.username,images = images)
+
+
+@doctor_routes_bp.route('/doctor/patients')
+def patients():
+    p = Patient.query.all()
+    return render_template('Doctor/doctor_sites/patient.html', p = p )
+
+@doctor_routes_bp.route('/doc-patientdetails/<username>')
+def user_details(username):
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Doctor/doctor_sites/user_details.html',x=q, image = image)
+
+@doctor_routes_bp.route('/patient_all_treatment/<patient_userid>', methods=['GET', 'POST'])
+def patient_treatment(patient_userid):
+
+    doc_treatment = mongo.db['Past_Treatments'].aggregate( 
+    [
+        # this code is used to take the union of past_treatments table and treatment table
+        { '$limit': 1 },
+        { '$project': { '_id': '$$REMOVE' } },
+
+        { '$lookup': { 'from': 'Past_Treatments','localField':'null','foreignField':'null', 'as': 'Past_Treatment' } },
+        { '$lookup': { 'from': 'Treatment', 'localField':'null','foreignField':'null', 'as': 'treatment' } },
+
+        { '$project': { 'union': { '$concatArrays': ["$Past_Treatment", "$treatment"] } } },
+
+        { '$unwind': '$union' },
+        { '$replaceRoot': { 'newRoot': '$union' } },
+        {
+            '$match' :  {'$and': [{'treat_id': {'$ne': 0}}, {'patient_userid' : patient_userid}]} 
+        },
+  
+        # upto here
+        # sorted in the descending order of count
+        {
+            '$sort' : { 'time_stamp': -1 }
+        }
+    ]
+    )
+    patient_info = mongo.db.Treatment.find_one({ "patient_userid": patient_userid }) 
+    print(type(doc_treatment))
+    print(doc_treatment)
+    return render_template('Doctor/doctor_sites/patient_treatment.html',treatment=doc_treatment, patient_info = patient_info)
