@@ -42,10 +42,10 @@
         <a class="nav-link active" href="">Doctor Details</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link " href="{{url_for('admin.current_assistant',username = row.username)}}" >Current Assistant</a>
+        <a class="nav-link " href="{{url_for('cmo.current_assistant',username = row.username)}}" >Current Assistant</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{url_for('admin.past_assistant',username = row.username)}}">Past Assistants</a>
+        <a class="nav-link" href="{{url_for('cmo.past_assistant',username = row.username)}}">Past Assistants</a>
       </li>
     </ul>
   </div>

@@ -5,10 +5,10 @@
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs">
       <li class="nav-item">
-        <a class="nav-link " href="{{url_for('admin.user_list')}}">Current Patients</a>
+        <a class="nav-link " href="{{url_for('cmo.user_list')}}">Current Patients</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="{{url_for('admin.deleted_users')}}" >Past Patients</a>
+        <a class="nav-link active" href="" >Past Patients</a>
       </li>
     </ul>
   </div>
@@ -65,7 +65,7 @@
 {% endblock %}
 
 {% block scripts %}
-
+{{super()}}
 <script>
   $(document).ready(function () {
   $('#dt-filter-select').dataTable({
