@@ -18,7 +18,8 @@ doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
 @doctor_routes_bp.route('/doctor')
 def home_page():      
-    return render_template('Doctor/home.html')
+    u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
+    return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
 
 @doctor_routes_bp.route('/current_treatment_list', methods=['GET', 'POST'])
 def current_treatment_list():
@@ -280,6 +281,11 @@ def patients():
     p = Patient.query.all()
     return render_template('Doctor/doctor_sites/patient.html', p = p )
 
+@doctor_routes_bp.route('/doc-patientdetails/<username>')
+def user_details(username):
+    q = Patient.query.filter_by(username = username).first()
+    image = base64.b64encode(q.File).decode('ascii')
+    return render_template('Doctor/doctor_sites/user_details.html',x=q, image = image)
 
 @doctor_routes_bp.route('/patient_all_treatment/<patient_userid>', methods=['GET', 'POST'])
 def patient_treatment(patient_userid):

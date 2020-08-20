@@ -24,7 +24,7 @@
           <b>Started on :  </b>{{ treatment.time_stamp }}<br>
       </div>
       <div class="col">
-        <b>Patient User ID :  </b>{{ treatment.patient_userid }}<br>
+        <b>Patient User ID :  </b> <a class="text-danger" href="{{url_for('doctor_routes.user_details', username = treatment.patient_userid)}}" target="_blank" >{{ treatment.patient_userid }}</a><br>
         <b>Patient Name:  </b>{{ treatment.patient_name}}<br>
         <b>Doctor ID:  </b>{{ treatment.doctorid}}<br>
         <b>Doctor Name:  </b>{{ treatment.doctor_name}}

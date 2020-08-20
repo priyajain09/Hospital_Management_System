@@ -68,8 +68,8 @@
                         Referred to {{roww.Referto}}
                     {% endif %}
               </td>
-              <td>{{roww.patient_userid}}</td>
-                <td>{{roww.patient_name}}</td>
+              <td><a class="text-primary" href="{{url_for('doctor_routes.user_details', username = roww.patient_userid)}}" > {{roww.patient_userid}}</a></td>
+                <td><a class="text-primary" href="{{url_for('doctor_routes.user_details', username = roww.patient_userid)}}" >{{roww.patient_name}}</a></td>
                 <td> 
                   {% for dis in roww.disease %}
                    {{dis}}

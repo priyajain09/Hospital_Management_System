@@ -5,7 +5,8 @@ from hospital_app import user_collection
 from flask import request
 from sqlalchemy import func
 from hospital_app import db
-
+from io import BytesIO
+import base64
 assistant_bp = Blueprint('assistant', __name__)
 
 @assistant_bp.route('/assistant/patient_queue')
