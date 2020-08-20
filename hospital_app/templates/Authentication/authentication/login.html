@@ -8,8 +8,8 @@
 
 {% block authentication %}
 {% for message in get_flashed_messages() %}
-            <div class="flash">{{ message }}</div>
-            {% endfor %}
+  <div class="alert alert-info" role="alert">{{ message }}</div>
+{% endfor %}
             <form class="text-center border border-light p-5" action="{{url_for('login.login')}}" method="post">
                 {{ form.hidden_tag() }}
                 <p class="h2 mb-4">Sign in</p>
