@@ -1,5 +1,17 @@
 {% extends 'Assistant/base.html' %}
 
+{% block links %}
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="../../static/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="../../static/css/mdb.min.css">
+  <!-- Your custom styles (optional) -->
+  <link rel="stylesheet" href="../../static/css/style.css">
+  <!-- MDBootstrap Datatables  -->
+    <link href="../../static/css/addons/datatables2.min.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css" />
+{% endblock %}
 
 {% block content %}
   <style>
@@ -58,7 +70,7 @@
           
         </div>
 
-  <div class = "form-row">
+ 
     <div class="col-md-5 mb-3">
         <label for="validationCustomUsername">Unique ID</label>
         <div class="input-group">
@@ -68,7 +80,7 @@
           <input class = "form-control" value = "{{user.username}}" readonly>
         </div>
       </div>
-    </div>  
+   
     
       
     </div>

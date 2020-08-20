@@ -73,15 +73,19 @@ def add_to_queue(name, username):
                 return redirect(url_for('recep.patient_enquiry'))
             
             treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })    
+            doctor_username = form.doctor_username.data
+            doctor = Doctor.query.filter_by(username = doctor_username).first()
+            if doctor is None:
+                flash("Invalid doctor username! ")
+                return redirect(url_for('admin.add_to_queue',name = name, username = username))
             #existing treatment
             if treatment['total_prescriptions'] != 0:
                 mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 }})
                 mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now()} } })
             else:
                 flash("No existing treatment with this treatment ID!")
-                return redirect(url_for('recep.patient_enquiry'))
-            doctor_username = form.doctor_username.data
-            doctor = Doctor.query.filter_by(username = doctor_username).first()
+                return redirect(url_for('admin.add_to_queue',name = name, username = username))
+            
             doctor_name = doctor.name
             patient = patient_queue(name = name, username = username, treat_id = treat_id, doctor = doctor_name,
             doctor_username = doctor_username)

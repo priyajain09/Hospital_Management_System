@@ -80,14 +80,12 @@
               <th class="th-sm">Treatment ID</th>
               <th class="th-sm">Doctor User ID</th>
               <th class="th-sm">Doctor Name</th>
-              <th class="th-sm">Patient User ID</th>
-                <th class="th-sm">Patient Name</th>
                 <th class="th-sm">Disease Name</th>
                 <th class="th-sm">Symptoms</th>
                 <th class="th-sm">Medicines</th>
                 <th class="th-sm">Start Date</th>
                 <th class="th-sm">End Date</th>
-                <th class="th-sm">Remarks</th>
+                <!-- <th class="th-sm">Remarks</th> -->
                 <th class="th-sm">View</th> 
             </tr>
         </thead>
@@ -109,8 +107,6 @@
               
               <td>{{roww.doctorid}}</td>
               <td>{{roww.doctor_name}}</td>
-              <td>{{roww.patient_userid}}</td>
-                <td>{{roww.patient_name}}</td>
                 <td> 
                   {% for dis in roww.disease %}
                    {{dis}},
@@ -126,13 +122,11 @@
                     {{x}},                 
                   {% endfor %}</td>
                 <td>
-                  <a href = "{{url_for('cmo.prescription_history',treat_id = roww.treat_id)}}">
-                  View 
-                  </a>  
+                  {{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}
                   </td>
-                  <td>{{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}</td>   
                   <td>{{roww.closed_on.day}}-{{roww.closed_on.month}}-{{roww.closed_on.year}}</td>   
-                  <td>{{row.remarks}}</td>   
+                  <td><a href="{{url_for('user.closed_treatment',treat_id = roww.treat_id)}}">View</a></td>   
+                  
             </tr>
             {% endfor %}
 
@@ -142,14 +136,13 @@
               <th>Treatment ID</th>
               <th>Doctor User Id</th> 
               <th>Doctor Name</th>
-              <th>Patient User ID</th>
-              <th>Patient Name</th>
               <th>Disease Name</th> 
               <th>Symptoms</th>
               <th>Medicines</th>
               <th>Started On</th> 
               <th>Closed On</th> 
-              <th>Remarks</th> 
+              <th>View</th> 
+              <!-- <th>Remarks</th>  -->
             </tr>
         </tfoot>
     </table>

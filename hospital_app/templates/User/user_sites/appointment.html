@@ -1,0 +1,16 @@
+{% extends 'User/home.html' %}
+
+{% block content %}
+<div class="card bg-light mb-3" style="max-width: 50rem;">
+    <div class="card-header">Appointment</div>
+    <div class="card-body">
+      <h5 class="card-title">{{message}}</h5>
+      <p class="card-text">
+          {% if position != 0 %}
+          Position in the queue : {{position}}
+          {% endif %}
+          </p>
+    </div>
+  </div>
+
+{% endblock %}

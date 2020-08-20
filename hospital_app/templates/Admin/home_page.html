@@ -1,4 +1,4 @@
-{% extends 'index.html' %}
+{% extends 'index_cmo.html' %}
 
     {% block sidebar %}
     <div class="bg-light border-right" id="sidebar-wrapper">
@@ -16,6 +16,8 @@
     </div>
     {% endblock %}
     
+{% block home %}
+{% endblock %}
 
 {% block footer %}
 <!-- Footer -->
@@ -29,5 +31,9 @@
 
 </footer>
 <!-- Footer -->
+{% endblock %}
+
+{% block dropdown %}
+<a class="dropdown-item" href="{{url_for('admin.change_password')}}">Change password</a>
 {% endblock %}
 

@@ -6,7 +6,7 @@ import json
 from flask_login import current_user, login_required
 from hospital_app import user_collection
 from hospital_app.forms import search_doctor_form,update_user_form,change_password_form
-from hospital_app.models import Doctor,upload_medical_records,Patient
+from hospital_app.models import Doctor,upload_medical_records,Patient,compounder_queue,patient_queue
 from flask import request
 from werkzeug.datastructures import CombinedMultiDict
 from flask import send_file,Markup
@@ -147,11 +147,11 @@ def view_document(Id):
 
 # /***********************************************************************************/
 
-@user_bp.route('/user/close_treatment/<remarks>/<int:treat_id>')
-def close_treatment(remarks,treat_id):
+@user_bp.route('/user/close_treatment/<int:treat_id>')
+def close_treatment(treat_id):
     mongo.db.Treatment.aggregate([{'$match':{"treat_id":treat_id}},{'$out':"Past_Treatments"}])
     mongo.db.Treatment.delete_one({"treat_id":treat_id})
-    mongo.db.Past_Treatments.update_one({"treat_id":treat_id},{'$set':{"remarks":remarks},'$currentDate':{"closed_on":{ '$type':"date"}}},'false','true')
+    mongo.db.Past_Treatments.update_one({"treat_id":treat_id},{'$currentDate':{"closed_on":{ '$type':"date"}}})
     return redirect(url_for('user.active_treatments'))
 
 @user_bp.route('/user/past_treatments')
@@ -180,4 +180,45 @@ def active_treatment(treat_id):
 def documents(treat_id):
     documents = upload_medical_records.query.filter_by(treat_id = treat_id).all()
     return render_template('User/user_sites/documents.html',documents = documents,treat_id = treat_id)
-    
+
+@user_bp.route('/user/past_documents/<treat_id>')
+def past_documents(treat_id):
+    documents = upload_medical_records.query.filter_by(treat_id = treat_id).all()
+    return render_template('User/user_sites/past_documents.html',documents = documents,treat_id = treat_id)
+
+@user_bp.route('/user/closed_treatment/<int:treat_id>')
+def closed_treatment(treat_id):
+    treatment = mongo.db.Past_Treatments.find_one({"treat_id":treat_id})
+    return render_template('User/user_sites/closed_treatment.html',treatment = treatment)    
+
+@user_bp.route('/appointment')
+def appointment():
+    num = 0
+    val =0 
+    username = current_user.username
+    u = compounder_queue.query.get(username)
+    if u is not None:
+        message = "Currently in the compounder queue"
+        a = compounder_queue.query.all()
+        for i in a:
+            val = val +1
+            if i.username == username:
+                num = val 
+                break
+
+    else:
+        val =0
+        u = patient_queue.query.filter_by(username = username).first()
+        if u is not None:
+            message = "Currently in the "+u.doctor+" queue"
+            a = patient_queue.query.all()
+            for i in a:
+                val = val +1
+                if i.username == username:
+                    num = val
+                    break
+        else:
+            message = "No appointment"
+        
+        return render_template('User/user_sites/appointment.html',message = message,position = num)
+
