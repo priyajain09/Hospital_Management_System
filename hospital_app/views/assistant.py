@@ -45,4 +45,4 @@ def remove_all_doctor_queue():
 def user_details(username):
     q = Patient.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')
-    return render_template('Reception/user_details.html',user=q,image = image)
+    return render_template('Assistant/user_details.html',user=q,image = image)

@@ -33,7 +33,7 @@
           <a class="nav-link active" href="">Details</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{{url_for('user.documents',treat_id = treatment.treat_id)}}">Documents</a>
+          <a class="nav-link" href="{{url_for('user.past_documents',treat_id = treatment.treat_id)}}">Documents</a>
         </li>
       </ul>
     </div>
@@ -55,6 +55,8 @@
           
             <dt >Started on </dt>
             <dd >{{ treatment.time_stamp }}</dd>
+            <dt >Closed on </dt>
+            <dd >{{ treatment.closed_on }}</dd>
    
         </div>
         <div class="col">
@@ -89,13 +91,7 @@
    
         </div>
           </dl>
-          <div class="row">
-            <button type = "button">
-            <a href="{{url_for('user.close_treatment',treat_id = treatment.treat_id )}}" class="black-text d-flex flex-row-reverse p-2">
-              <h5 class="waves-effect waves-light">Close Treatment</h5>
-            </a>
-          </button>
-          </div>
+          
     </div>
     </h6>
 <!-- 

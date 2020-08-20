@@ -20,6 +20,34 @@
   <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
   <!-- MDB core JavaScript -->
   <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $('#dt-filter-select').dataTable({
+    
+        initComplete: function () {
+          this.api().columns().every( function () {
+              var column = this;
+              var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+                  .appendTo( $(column.footer()).empty() )
+                  .on( 'change', function () {
+                      var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                      );
+    
+                      column
+                          .search( val ? '^'+val+'$' : '', true, false )
+                          .draw();
+                  } );
+    
+              column.data().unique().sort().each( function ( d, j ) {
+                  select.append( '<option value="'+d+'">'+d+'</option>' )
+              } );
+          } );
+      }
+      });
+    });
+    </script>
+ 
 {% endblock %}
 
 {% block heading %}
@@ -46,40 +74,59 @@ Ongoing Treatments
           <button class="btn btn-primary btn-sm " type="submit">Add to queue</button>
 </form> 
 
+<div class="card mb-4 wow fadeIn cloudy-knoxville-gradient">
 
-<p>
-    Name : {{name}}<br>
-    Username : {{username}}
-</p>
-<br>
-<br>
-<div class="list-group">
-    {% for row in treatments %}
-    <a onclick = myFunc({{row.treat_id}}) class="list-group-item list-group-item-action flex-column align-items-start ">
-      <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-2 h5">{{row.disease_name}}</h5>
-        <small>{{row.timestamp}}</small>
-      </div>
-      <p class="mb-2">
-        <b>Treatment ID</b> : {{row.treat_id}}<br>
-        Doctors Involved: 
-        {% for doctor in row.alldoctors %}
-        {{doctor}}, 
-        {% endfor %}<br>
-        Total prescriptions: {{row.total_prescriptions}}<br>
-        </p>
-      
-    </a>
-    {% endfor %}
-  </div>
-  <!-- Button trigger modal -->
-
-<script>
-  function myFunc(treat_id){
-    document.getElementById("treatId").value = treat_id;
-  }
+  <!--Card content-->
+  <div class="card-body ">
+    <div class="table-responsive">
+    <table id="dt-filter-search" class="table" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+              <th class="th-sm">Treatment ID</th>
+              <th class="th-sm">Doctor User ID</th>
+              <th class="th-sm">Doctor Name</th>
+                <th class="th-sm">Disease Name</th>
+                <th class="th-sm">Start Date</th>
+                <!-- <th class="th-sm">Remarks</th> -->
+            </tr>
+        </thead>
+        <tbody>
+          {% for roww in treatments %}
  
-</script>
+            <tr>
+              <td>{{roww.treat_id}}</td>
+              
+              <td>{{roww.doctorid}}</td>
+              <td>{{roww.doctor_name}}</td>
+                <td> 
+                  {% for dis in roww.disease %}
+                   {{dis}}  
+                  {% endfor %}  
+                </td>
+              <td>
+                  {{roww.time_stamp.day}}-{{roww.time_stamp.month}}-{{roww.time_stamp.year}}
+                  </td>  
+                  
+            </tr>
+            {% endfor %}
+
+        </tbody>
+        <tfoot>
+            <tr>
+              <th>Treatment ID</th>
+              <th>Doctor User Id</th> 
+              <th>Doctor Name</th>
+              <th>Disease Name</th> 
+              <th>Started On</th> 
+  
+              <!-- <th>Remarks</th>  -->
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+</div>
+</div>
+
   
 {% endblock %}
 

@@ -9,6 +9,7 @@ from hospital_app.email import send_request_accepted_mail, send_request_rejected
 import datetime
 from flask_login import current_user, login_required
 import base64
+from werkzeug.security import generate_password_hash, check_password_hash
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -16,7 +17,25 @@ admin_bp = Blueprint('admin', __name__)
 @admin_bp.route('/admin/home_page')
 @login_required
 def home_page():
-    return render_template('Admin/home_page.html')
+    return render_template('Admin/registration_request.html')
+
+@admin_bp.route('/admin/change_password',methods = ['GET','POST'])
+def change_password():
+    if request.method == "POST":
+        old_password = request.form['old_pass']  
+        if check_password_hash(current_user.password_hash, old_password) == False:
+            message = "Wrong Password!"
+            return render_template('User/user_sites/change_password.html',message = message) 
+        
+        new_password = request.form['new_pass']
+        current_user.set_password(new_password)
+        try:
+            db.session.commit()
+            flash("Password changed!")
+        except:
+            db.session.rollback()
+            flash("Try again!")    
+    return render_template('Admin/admin_sites/change_password.html')    
 
 @admin_bp.route('/admin/doctor_list',methods = ['GET','POST'])
 @login_required
