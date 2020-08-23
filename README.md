@@ -26,5 +26,5 @@ VALUES
 INSERT INTO disease
 (name)
 VALUES
-('Diabetes'), ('Viral-Fever'), ('Bacterial-Fever'),('Asthenia'), ('Asthma'), ('Astigmatism')('Astrocytoma');
+('Diabetes'), ('Viral-Fever'), ('Bacterial-Fever'),('Asthenia'), ('Asthma'), ('Astigmatism'),('Astrocytoma');
 
