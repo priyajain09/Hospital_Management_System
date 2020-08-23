@@ -3,7 +3,7 @@ from hospital_app import mongo
 from hospital_app.models import User,Doctor , user_role, past_user_role,patient_queue, user_role, specialization, Patient, deleted_doctors,deleted_patients,is_user_deleted, temporary_users,temporary_role_users
 from hospital_app import db
 import json
-from flask_login import current_user
+from flask_login import current_user, login_required
 from hospital_app.forms import update_doctor_form , change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
@@ -14,20 +14,24 @@ import base64
 cmo_bp = Blueprint('cmo',__name__)
 
 @cmo_bp.route('/cmo')
+@login_required
 def home_page():      
     return render_template('CMO/home.html')
 
 @cmo_bp.route('/cmo_acitve_treatment', methods=['GET', 'POST'])
+@login_required
 def active_treatment():
     doc_treatment = mongo.db.Treatment.find({ 'treat_id': { '$ne': 0 } }).sort([("time_stamp", -1)])
     return render_template('CMO/sites/treatment.html',treatment=doc_treatment, Status = 'Active')
 
 @cmo_bp.route('/cmo_closed_treatment', methods=['GET', 'POST'])
+@login_required
 def closed_treatment():
     doc_treatment = mongo.db.Past_Treatments.find().sort([("time_stamp", -1)])
     return render_template('CMO/sites/treatment.html',treatment=doc_treatment, Status = 'Closed')
 
 @cmo_bp.route('/cmo_all_treatment', methods=['GET', 'POST'])
+@login_required
 def all_treatment():
 
     doc_treatment = mongo.db['Past_Treatments'].aggregate( 
@@ -63,6 +67,7 @@ def all_treatment():
     return render_template('CMO/sites/treatment.html',treatment=doc_treatment, Status = 'All')
 
 @cmo_bp.route('/cmo-prescription-history/<treat_id>')
+@login_required
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
     if treatment == None :
@@ -73,6 +78,7 @@ def prescription_history(treat_id):
     return render_template('CMO/sites/prescription.html', prescriptions = prescriptions, treatment = treatment)
 
 @cmo_bp.route('/cmo-view_profile',methods = ['GET','POST'])
+@login_required
 def view_profile():
     cmo = user_role.query.filter_by(role = "chief_doctor").first()
     print(cmo)
@@ -80,6 +86,7 @@ def view_profile():
     return render_template('CMO/sites/view_profile.html',user = cmo,image = image)
 
 @cmo_bp.route('/cmo-update_profile',methods = ['GET','POST'])
+@login_required
 def update_profile():
     if request.method == "POST":
         file = request.files['profile_photo']
@@ -107,6 +114,7 @@ def update_profile():
     return render_template('CMO/sites/update_profile.html',user = u,image = image)
 
 @cmo_bp.route('/cmo-change_password',methods = ['GET','POST'])
+@login_required
 def change_password():
     form = change_password_form()
     if form.validate_on_submit():
@@ -127,22 +135,26 @@ def change_password():
 # View Users and Doctors
 # here users are used to denote patients
 @cmo_bp.route('/cmo-doctor_list',methods = ['GET','POST'])
+@login_required
 def doctor_list():
     q = db.session.query(User,Doctor).join(Doctor).all()
     return render_template('CMO/sites/list_of_doctors.html',q=q)
 
 @cmo_bp.route('/cmo-user_list',methods = ['GET','POST'])
+@login_required
 def user_list():
     users = db.session.query(User,Patient).join(Patient).filter(User.role == "user")
     return render_template('CMO/sites/list_of_users.html',list=users)
 
 @cmo_bp.route('/cmo-users/<username>/<email>')
+@login_required
 def user_details(username,email):
     q = Patient.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')
     return render_template('CMO/sites/user_details.html',user=q,email = email,image = image)
 
 @cmo_bp.route('/cmo-doctor_details/<username>')
+@login_required
 def doctor_details(username):
     q = Doctor.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')
@@ -150,23 +162,27 @@ def doctor_details(username):
 
 
 @cmo_bp.route('/cmo-deleted_users',methods=['GET','POST'])
+@login_required
 def deleted_users(): 
     u = deleted_patients.query.all()
     return render_template('CMO/sites/deleted_users.html',users = u)
 
 @cmo_bp.route('/cmo-patient_details/<username>')
+@login_required
 def deleted_user_details(username):
     u = deleted_patients.query.get(username)
     image = base64.b64encode(u.File).decode('ascii')
     return render_template('CMO/sites/deleted_user_details.html',user = u,image = image)
 
 @cmo_bp.route('/cmo-deleted_doctor_details/<username>')
+@login_required
 def deleted_doctor_details(username):
     u = deleted_doctors.query.get(username)
     image = base64.b64encode(u.File).decode('ascii')
     return render_template('CMO/sites/deleted_doctor_details.html',row = u,image = image)
 
 @cmo_bp.route('/cmo-deleted_doctors',methods=['GET','POST'])
+@login_required
 def deleted_doctors_func():
     u = deleted_doctors.query.all()
     return render_template('CMO/sites/deleted_doctors.html',doctors = u)
@@ -174,6 +190,7 @@ def deleted_doctors_func():
 # View assisstant
 
 @cmo_bp.route('/cmo-current_assistant/<username>')
+@login_required
 def current_assistant(username):
     u = user_role.query.filter_by(role = "assistant",doctor_username = username).first()
     if u is not None:
@@ -184,6 +201,7 @@ def current_assistant(username):
         return render_template('CMO/sites/current_assistants.html',row = u,username = username)
 
 @cmo_bp.route('/cmo-past_assistants/<username>')
+@login_required
 def past_assistant(username):
     u = past_user_role.query.filter_by(role = "assistant", doctor_username = username).all()
     images = []
@@ -196,6 +214,7 @@ def past_assistant(username):
 # View role users , compunder, receptionist
 
 @cmo_bp.route('/cmo-role_user/<role>')
+@login_required
 def role_user(role):
      u = user_role.query.filter_by(role = role).first()
      if u:
@@ -206,6 +225,7 @@ def role_user(role):
      return render_template('CMO/sites/role_user_page.html',row = u, past_users = past_role_users,role = role)    
 
 @cmo_bp.route('/cmo-deleted_role_user_details/<id>')
+@login_required
 def deleted_role_user_details(id):
     u = past_user_role.query.get(id)
     image = base64.b64encode(u.File).decode('ascii')
@@ -215,6 +235,7 @@ def deleted_role_user_details(id):
 ####### View Departments 
 
 @cmo_bp.route('/cmo-departments', methods = ['GET','POST'])
+@login_required
 def departments():
     q = specialization.query.all()    
     return render_template('CMO/sites/departments.html', q=q)
