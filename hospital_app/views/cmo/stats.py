@@ -89,7 +89,7 @@ def disease_stats(year):
         # using project im taking only the two columns and that are : disease name and year.
 
         {
-            '$project': {'disease_name':1,'year':{'$year':"$time_stamp"} }
+            '$project': {'disease':1,'year':{'$year':"$time_stamp"} }
         },
 
         # putting a condition on year.
@@ -97,10 +97,13 @@ def disease_stats(year):
             '$match' : { 'year':d }
         },
 
+        {
+            '$unwind' : "$disease" 
+        },
         # grouped using disease name and counted the treatments having the same disease name
         {
             '$group' : {
-                         '_id' : "$disease_name" ,
+                         '_id' : "$disease" ,
                         'count': { '$sum': 1 }
                         }
         },
