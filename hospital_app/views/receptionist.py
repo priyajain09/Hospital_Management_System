@@ -86,6 +86,14 @@ def add_to_queue(name, username):
             if treatment['total_prescriptions'] != 0:
                 mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 }})
                 mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now()} } })
+                mongo.db.Treatment.update(
+                    { "treat_id": int(treat_id) },
+                    { "$set": 
+                        {
+                            "pres_status" : "not filled"
+                        }
+                    }
+                )    
             else:
                 flash("No existing treatment with this treatment ID!")
                 return redirect(url_for('admin.add_to_queue',name = name, username = username))

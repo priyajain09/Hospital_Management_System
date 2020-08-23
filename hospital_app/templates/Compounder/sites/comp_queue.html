@@ -33,7 +33,7 @@
            <td><a class="text-primary" href="{{url_for('comp.user_details', username = row.username)}}" > {{row.username}}</a></td>
            <td>{{row.timestamp}}</td>
            <td><a class="text-primary" href="{{url_for('comp.visit_patient',username = row.username)}}" >Visit</a> </td>
-           <td ><a class="text-primary" href="{{url_for('recep.remove_compounder_queue',username = row.username)}}" >Click here</a> </td>
+           <td ><a class="text-primary" href="{{url_for('comp.remove_compounder_queue',username = row.username)}}" >Click here</a> </td>
        </tr>
        
 </div>

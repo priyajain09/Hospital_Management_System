@@ -3,7 +3,7 @@ from hospital_app import mongo
 from hospital_app.models import User,Doctor,Patient , patient_queue, Medicine, Disease, Symptom, user_role, past_user_role, upload_medical_records
 from hospital_app import db
 import json
-from flask_login import current_user
+from flask_login import current_user, login_required
 from hospital_app.forms import update_doctor_form , change_password_form
 from hospital_app.models import Doctor
 from datetime import date, datetime, timedelta
@@ -17,21 +17,25 @@ ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 doctor_routes_bp = Blueprint('doctor_routes',__name__)
 
 @doctor_routes_bp.route('/doctor')
+@login_required
 def home_page():      
     u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
     return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
 
 @doctor_routes_bp.route('/current_treatment_list', methods=['GET', 'POST'])
+@login_required
 def current_treatment_list():
     doc_treatment = mongo.db.Treatment.find( { 'doctorid' : current_user.username }).sort([("time_stamp", -1)])
     return render_template('Doctor/doctor_sites/current_treatment_list.html',treatment=doc_treatment)
 
 @doctor_routes_bp.route('/doc-closed_treatment_list', methods=['GET', 'POST'])
+@login_required
 def closed_treatment_list():
     doc_treatment = mongo.db.Past_Treatments.find( { 'doctorid' : current_user.username }).sort([("treat_closed_on", -1)])
     return render_template('Doctor/doctor_sites/closed_treatment_list.html',treatment=doc_treatment)
 
 @doctor_routes_bp.route('/doc-refer/<treat_id>', methods=['GET', 'POST'])
+@login_required
 def refer(treat_id):
     if request.method == 'POST':    
         Referto = request.form['Referto']
@@ -43,12 +47,14 @@ def refer(treat_id):
     return redirect(url_for("doctor_routes.doc_queue"))
 
 @doctor_routes_bp.route('/doctor/view_profile',methods = ['GET','POST'])
+@login_required
 def view_profile():
     doctor = current_user.doctor
     image = base64.b64encode(doctor.File).decode('ascii')
     return render_template('Doctor/doctor_sites/view_profile.html',user = doctor,image = image)
 
 @doctor_routes_bp.route('/doctor/update_profile',methods = ['GET','POST'])
+@login_required
 def update_profile():
     if request.method == "POST":
         file = request.files['profile_photo']
@@ -82,6 +88,7 @@ def update_profile():
     return render_template('Doctor/doctor_sites/update_profile.html',user = current_user.doctor,image = image)
 
 @doctor_routes_bp.route('/doctor/change_password',methods = ['GET','POST'])
+@login_required
 def change_password():
     form = change_password_form()
     if form.validate_on_submit():
@@ -98,23 +105,52 @@ def change_password():
 
 
 @doctor_routes_bp.route('/doc-queue')
+@login_required
 def doc_queue():
     u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
     return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
 
 @doctor_routes_bp.route('/doc-visit_patient/<treat_id>')
+@login_required
 def visit_patient(treat_id):
     mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'status': "doctor" }})
-    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id), "pres_status" : "not filled" }) 
+        # check if prescription is already filled
+    if treatment == None:
+        treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "filling" })
+        if treatment != None:
+            prescriptions = treatment['prescription']
+            pres_id = treatment['total_prescriptions'] 
+            pres = prescriptions[int(pres_id) -1]
+            print(type(pres['medicines']))
+            return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = treatment['disease'], med = pres['medicines'], sym = pres['symptoms'], pres_id = treatment['total_prescriptions'])
+        u = patient_queue.query.filter_by(doctor_username = current_user.username).all()      
+        flash("You have visited this patient")  
+        return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
+ 
     medicine_list = Medicine.query.all()
     disease_list = Disease.query.all()
     symptom_list = Symptom.query.all()
     return render_template('Doctor/doctor_sites/ongoing_treatment.html', treatment = treatment, medicine_list = medicine_list, symptom_list = symptom_list, disease_list = disease_list)
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>',methods = ['GET','POST'])
+@login_required
 def prescription(treat_id):
     print("init")
-    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "not filled" })
+
+    # check if prescription is already filled
+    if treatment == None:
+        treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "filling" })
+        if treatment != None:
+            prescriptions = treatment['prescription']
+            pres_id = treatment['total_prescriptions'] 
+            pres = prescriptions[int(pres_id) -1]
+            print(type(pres['medicines']))
+            return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = treatment['disease'], med = pres['medicines'], sym = pres['symptoms'], pres_id = treatment['total_prescriptions'])
+        u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
+        return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
+
     if request.method == 'POST':    
         multiselect1 = request.form.getlist('multiselect1')
         print(multiselect1)
@@ -149,10 +185,19 @@ def prescription(treat_id):
             }
         )
         print("pushed")
+    mongo.db.Treatment.update(
+    { "treat_id": int(treat_id) },
+        { "$set": 
+            {
+                    "pres_status" : "filling"
+            }
+        }
+    )    
 
     return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = multiselect2, med = multiselect3, sym = multiselect1, pres_id = treatment['total_prescriptions'])
     
 @doctor_routes_bp.route('/doc-prescription/<treat_id>/<pres_id>',methods = ['GET','POST'])
+@login_required
 def prescription_two(treat_id, pres_id):
     print("init")
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
@@ -212,9 +257,18 @@ def prescription_two(treat_id, pres_id):
                     }
                 }
         )
+    mongo.db.Treatment.update(
+    { "treat_id": int(treat_id) },
+        { "$set": 
+            {
+                    "pres_status" : "filled"
+            }
+        }
+    )    
     return render_template('Doctor/doctor_sites/refer.html', treat_id = treat_id)
 
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
+@login_required
 def prescription_history(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
     if treatment == None :
@@ -227,6 +281,7 @@ def prescription_history(treat_id):
 # /*********************************************************************************************/
 
 @doctor_routes_bp.route('/treatment-reports/<treat_id>')
+@login_required
 def treatment_reports(treat_id):
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) }) 
     report = upload_medical_records.query.filter_by(type_doc = 'Report', treat_id = treat_id).all()  
@@ -234,16 +289,19 @@ def treatment_reports(treat_id):
     return render_template('Doctor/doctor_sites/treatment_reports.html', report = report, treatment = treatment)      
 
 @doctor_routes_bp.route('/doc-download/<Id>')
+@login_required
 def download(Id):
     u = upload_medical_records.query.get(Id)
     return send_file(BytesIO(u.File),attachment_filename = u.filename, as_attachment = True)
 
 @doctor_routes_bp.route('/doc-view_document/<Id>')
+@login_required
 def view_document(Id):
     u = upload_medical_records.query.get(Id)
     return send_file(BytesIO(u.File),attachment_filename = u.filename)
 
 @doctor_routes_bp.route('/doc-patient-documents/<role>',methods=['GET','POST'])
+@login_required
 def patient_document(role):
 
     pres = upload_medical_records.query.filter_by(type_doc = role).all()  
@@ -256,6 +314,7 @@ def patient_document(role):
 
 
 @doctor_routes_bp.route('/doctor/current_assistant')
+@login_required
 def current_assistant():
     u = user_role.query.filter_by(role = "assistant",doctor_username = current_user.username ).first()
     if u is not None:
@@ -266,6 +325,7 @@ def current_assistant():
         return render_template('Doctor/doctor_sites/current_assistants.html',row = u,username = current_user.username)
 
 @doctor_routes_bp.route('/doctor/past_assistants')
+@login_required
 def past_assistant():
     u = past_user_role.query.filter_by(role = "assistant", doctor_username = current_user.username).all()
     images = []
@@ -277,17 +337,24 @@ def past_assistant():
 
 
 @doctor_routes_bp.route('/doctor/patients')
+@login_required
 def patients():
     p = Patient.query.all()
-    return render_template('Doctor/doctor_sites/patient.html', p = p )
+    images = []
+    for u in p:
+        images.append(base64.b64encode(u.File).decode('ascii'))
+
+    return render_template('Doctor/doctor_sites/patient.html', p = p , images = images)
 
 @doctor_routes_bp.route('/doc-patientdetails/<username>')
+@login_required
 def user_details(username):
     q = Patient.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')
     return render_template('Doctor/doctor_sites/user_details.html',x=q, image = image)
 
 @doctor_routes_bp.route('/patient_all_treatment/<patient_userid>', methods=['GET', 'POST'])
+@login_required
 def patient_treatment(patient_userid):
 
     doc_treatment = mongo.db['Past_Treatments'].aggregate( 
