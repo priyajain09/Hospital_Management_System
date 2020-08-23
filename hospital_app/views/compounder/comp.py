@@ -20,7 +20,7 @@ def home():
     u = compounder_queue.query.all()    
     return render_template('Compounder/sites/comp_queue.html', list = u)
 
-@comp_bp.route('/queue/')
+@comp_bp.route('/comp-queue/')
 @login_required
 def queue():
     u = compounder_queue.query.all()    
@@ -125,7 +125,7 @@ def add_prescription(treat_id):
 @comp_bp.route('/comp_continue_treatment/<treat_id>')
 @login_required
 def comp_continue_treatment(treat_id):
-    mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'status' : "compounder"}})
+    mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'status' : "compounder", "pres_status" : "not filled"}})
     treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })
     doctor_list = Doctor.query.all()
     return render_template('Compounder/sites/comp_start_treatment.html', treatment = treatment, doctor_list = doctor_list)
@@ -189,7 +189,7 @@ def user_details(username):
     image = base64.b64encode(q.File).decode('ascii')
     return render_template('Compounder/sites/user_details.html',x=q, image = image)
 
-@comp_bp.route('/compounder_queue/<username>')
+@comp_bp.route('/comp-compounder_queue/<username>')
 @login_required
 def remove_compounder_queue(username):
     try:
