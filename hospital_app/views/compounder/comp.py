@@ -50,7 +50,7 @@ def comp_new_start_treatment(username):
         mongo.db.Treatment.update(query_total_treat,{"$set":{'total_treatments':bson_int64_treat_id}})
             
         #insert new treatment data
-        mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'status' : "compounder", 'doctorid': '',  'doctor_name': '','patient_userid' : username, 'patient_name' : user.name, 'gender' : user.gender_user, 'age' : user.age , 'blood_group' : user.blood_group,'disease' : [], 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'allergies': [], 'chronic':[], 'prescription' : []})
+        mongo.db.Treatment.insert({'treat_id' : bson_int64_treat_id, 'status' : "compounder", "pres_status" : "not filled", 'doctorid': '',  'doctor_name': '','patient_userid' : username, 'patient_name' : user.name, 'gender' : user.gender_user, 'age' : user.age , 'blood_group' : user.blood_group,'disease' : [], 'Referto' : "",'total_prescriptions' : 0,'time_stamp': datetime.now(), 'allergies': [], 'chronic':[], 'prescription' : []})
         treatment = mongo.db.Treatment.find_one({'treat_id' : bson_int64_treat_id })
         return render_template('Compounder/sites/comp_start_treatment.html', treatment = treatment , doctor_list = doctor_list)
     else :
@@ -75,7 +75,7 @@ def add_prescription(treat_id):
         doctor = Doctor.query.filter_by(username = doctorid).first()
         #new treatment
         if treatment['total_prescriptions'] == 0:
-            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': 1 , 'doctorid': doctorid , 'doctor_name': doctor.name,'status' : "assistant"}})
+            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': 1 , 'doctorid': doctorid , 'doctor_name': doctor.name,'status' : "assistant", "pres_status" : "not filled"}})
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : 1, 'timestamp' : datetime.now(), 'blood_pressure' : Sys+'/'+Dia+'mm Hg' , 'temperature' : temperature + " F" } } })
 
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'allergies' : { '$each': allergies }}})
@@ -83,7 +83,7 @@ def add_prescription(treat_id):
 
         #existing treatment
         if treatment['total_prescriptions'] != 0:
-            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 , 'status' : "assistant"}})
+            mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{'total_prescriptions': treatment['total_prescriptions'] + 1 , 'status' : "assistant", "pres_status" : "not filled"}})
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{"prescription" :{ 'pres_id' : treatment['total_prescriptions'] + 1, 'timestamp' : datetime.now(), 'blood_pressure' : Sys+'/'+Dia+' mm Hg' , 'temperature' : temperature + " F"} } })
 
             mongo.db.Treatment.update({ "treat_id": int(treat_id) },{'$push':{ 'allergies' : { '$each': allergies }}})
@@ -178,3 +178,16 @@ def user_details(username):
     q = Patient.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')
     return render_template('Compounder/sites/user_details.html',x=q, image = image)
+
+@comp_bp.route('/compounder_queue/<username>')
+def remove_compounder_queue(username):
+    try:
+        u = compounder_queue.query.get(username)
+        db.session.delete(u)
+        db.session.commit()
+        flash("Removed successfully!")
+    except:
+        db.session.rollback()
+        flash("Try again!")    
+    return redirect(url_for('comp.home'))
+

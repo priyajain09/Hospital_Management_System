@@ -105,7 +105,19 @@ def doc_queue():
 @doctor_routes_bp.route('/doc-visit_patient/<treat_id>')
 def visit_patient(treat_id):
     mongo.db.Treatment.update({ "treat_id": int(treat_id) },{"$set":{ 'status': "doctor" }})
-    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id), "pres_status" : "not filled" }) 
+        # check if prescription is already filled
+    if treatment == None:
+        treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "filling" })
+        if treatment != None:
+            prescriptions = treatment['prescription']
+            pres_id = treatment['total_prescriptions'] 
+            pres = prescriptions[int(pres_id) -1]
+            print(type(pres['medicines']))
+            return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = treatment['disease'], med = pres['medicines'], sym = pres['symptoms'], pres_id = treatment['total_prescriptions'])
+        u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
+        return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
+ 
     medicine_list = Medicine.query.all()
     disease_list = Disease.query.all()
     symptom_list = Symptom.query.all()
@@ -114,7 +126,20 @@ def visit_patient(treat_id):
 @doctor_routes_bp.route('/doc-prescription/<treat_id>',methods = ['GET','POST'])
 def prescription(treat_id):
     print("init")
-    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) })  
+    treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "not filled" })
+
+    # check if prescription is already filled
+    if treatment == None:
+        treatment = mongo.db.Treatment.find_one({'treat_id' : int(treat_id) , "pres_status" : "filling" })
+        if treatment != None:
+            prescriptions = treatment['prescription']
+            pres_id = treatment['total_prescriptions'] 
+            pres = prescriptions[int(pres_id) -1]
+            print(type(pres['medicines']))
+            return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = treatment['disease'], med = pres['medicines'], sym = pres['symptoms'], pres_id = treatment['total_prescriptions'])
+        u = patient_queue.query.filter_by(doctor_username = current_user.username).all()       
+        return render_template('Doctor/doctor_sites/doctor_queue.html', list = u)
+
     if request.method == 'POST':    
         multiselect1 = request.form.getlist('multiselect1')
         print(multiselect1)
@@ -149,6 +174,14 @@ def prescription(treat_id):
             }
         )
         print("pushed")
+    mongo.db.Treatment.update(
+    { "treat_id": int(treat_id) },
+        { "$set": 
+            {
+                    "pres_status" : "filling"
+            }
+        }
+    )    
 
     return render_template('Doctor/doctor_sites/ongoing_treatment_pres.html', treatment = treatment ,dis = multiselect2, med = multiselect3, sym = multiselect1, pres_id = treatment['total_prescriptions'])
     
@@ -212,6 +245,14 @@ def prescription_two(treat_id, pres_id):
                     }
                 }
         )
+    mongo.db.Treatment.update(
+    { "treat_id": int(treat_id) },
+        { "$set": 
+            {
+                    "pres_status" : "filled"
+            }
+        }
+    )    
     return render_template('Doctor/doctor_sites/refer.html', treat_id = treat_id)
 
 @doctor_routes_bp.route('/prescription-history/<treat_id>')
