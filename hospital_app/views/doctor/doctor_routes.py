@@ -382,6 +382,8 @@ def patient_treatment(patient_userid):
     ]
     )
     patient_info = mongo.db.Treatment.find_one({ "patient_userid": patient_userid }) 
+    if patient_info == None:
+        patient_info = mongo.db.Past_Treatments.find_one({ "patient_userid": patient_userid })
     print(type(doc_treatment))
     print(doc_treatment)
     return render_template('Doctor/doctor_sites/patient_treatment.html',treatment=doc_treatment, patient_info = patient_info)
