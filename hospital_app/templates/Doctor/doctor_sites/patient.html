@@ -16,7 +16,7 @@
             
                 <div class="row">
                     <div class="col-sm-6 col-md-6 col-lg-4">
-                        <img src="https://mdbootstrap.com/img/Photos/Others/men.jpg" class="img-fluid">
+                        <img src="data:;base64,{{ images[loop.index-1]}}" onerror="this.onerror=null;this.src='../../../static/img/user.png';"  class="img-fluid" >
                     </div>
                     
                     <div class = "col-6">
@@ -30,6 +30,12 @@
                                     <b>Address </b> :{{x.address}}<br>
                                     <b>Contact No. </b> :{{x.contact_number}}<br>
                                 </p>
+                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                                  View All Documents
+                              </a>
+                              <a class="btn btn-outline-black btn-sm" href="{{url_for('doctor_routes.patient_treatment', patient_userid = x.username)}}">
+                                   View all Treatments
+                              </a>
                     </div>
                 
             </div>

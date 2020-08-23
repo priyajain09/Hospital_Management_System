@@ -320,7 +320,11 @@ def past_assistant():
 @doctor_routes_bp.route('/doctor/patients')
 def patients():
     p = Patient.query.all()
-    return render_template('Doctor/doctor_sites/patient.html', p = p )
+    images = []
+    for u in p:
+        images.append(base64.b64encode(u.File).decode('ascii'))
+
+    return render_template('Doctor/doctor_sites/patient.html', p = p , images = images)
 
 @doctor_routes_bp.route('/doc-patientdetails/<username>')
 def user_details(username):
