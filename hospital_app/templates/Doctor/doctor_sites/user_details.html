@@ -2,6 +2,14 @@
 
 {% block links %}
 {{super()}}
+  <!-- Custom styles for this template -->
+  <link href="../../../static/css1/doctor/sidebar.css" rel="stylesheet">
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="../../../static/css/mdb.min.css">
+  <!-- Your custom styles (optional) -->
+  <link rel="stylesheet" href="../../../static/css/style.css">
  {% endblock %}
 {% block heading %}
 {% endblock %}
@@ -24,7 +32,7 @@
                                     <b>Address </b> :{{x.address}}<br>
                                     <b>Contact No. </b> :{{x.contact_number}}<br>
                                 </p>
-                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report', patient_userid = x.username)}}">
                                     View All Documents
                                 </a>
                                 <a class="btn btn-outline-black btn-sm" href="{{url_for('doctor_routes.patient_treatment', patient_userid = x.username)}}">
@@ -39,5 +47,15 @@
 
 {% block scripts %}
 {{super()}}
+  <!-- jQuery -->
+  <script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
 {% endblock %}
 

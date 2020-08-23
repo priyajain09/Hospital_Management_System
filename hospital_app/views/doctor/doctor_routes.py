@@ -300,14 +300,14 @@ def view_document(Id):
     u = upload_medical_records.query.get(Id)
     return send_file(BytesIO(u.File),attachment_filename = u.filename)
 
-@doctor_routes_bp.route('/doc-patient-documents/<role>',methods=['GET','POST'])
+@doctor_routes_bp.route('/doc-patient-documents/<role>/<patient_userid>',methods=['GET','POST'])
 @login_required
-def patient_document(role):
+def patient_document(role, patient_userid):
 
-    pres = upload_medical_records.query.filter_by(type_doc = role).all()  
+    pres = upload_medical_records.query.filter_by(type_doc = role, username = patient_userid).all()  
     if role == "Report":
-        return render_template('Doctor/doctor_sites/patient_docs_report.html',pres = pres)
-    return render_template('Doctor/doctor_sites/patient_docs_pres.html',pres = pres)
+        return render_template('Doctor/doctor_sites/patient_docs_report.html',pres = pres, patient_userid = patient_userid)
+    return render_template('Doctor/doctor_sites/patient_docs_pres.html',pres = pres, patient_userid = patient_userid)
 
 
 # /*********************************************************************************************/

@@ -3,7 +3,25 @@
 {% block title %}  {% endblock %}
 
 {% block links %}
+  <!-- jQuery -->
+  <script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
 {{super()}}
+  <!-- Custom styles for this template -->
+  <link href="../../../static/css1/doctor/sidebar.css" rel="stylesheet">
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="../../../static/css/bootstrap.min.css">
+  <!-- Material Design Bootstrap -->
+  <link rel="stylesheet" href="../../../static/css/mdb.min.css">
+  <!-- Your custom styles (optional) -->
+  <link rel="stylesheet" href="../../../static/css/style.css">
 {% endblock %}
 
 {% block heading %}
@@ -29,7 +47,7 @@
         <div class="card-header">
           <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-              <a class="nav-link " href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">Reports</a>
+              <a class="nav-link " href="{{url_for('doctor_routes.patient_document',role = 'Report', patient_userid = patient_userid)}}">Reports</a>
             </li>
             <li class="nav-item">
               <a class="nav-link active" href="#">Prescriptions</a>
@@ -81,6 +99,16 @@
 
 {% block scripts %}
 {{super()}}
+  <!-- jQuery -->
+  <script type="text/javascript" src="../../../static/js/jquery.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="../../../static/js/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="../../../static/js/mdb.min.js"></script>
+  <!-- MDBootstrap Datatables  -->
+<script type="text/javascript" src="../../../static/js/addons/datatables2.min.js"></script>
 <script>
   $(document).ready(function () {
   $('#dt-filter-select').dataTable({

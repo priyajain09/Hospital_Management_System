@@ -30,7 +30,7 @@
                                     <b>Address </b> :{{x.address}}<br>
                                     <b>Contact No. </b> :{{x.contact_number}}<br>
                                 </p>
-                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report')}}">
+                                <a class="btn btn-outline-black btn-sm"  href="{{url_for('doctor_routes.patient_document',role = 'Report', patient_userid = x.username)}}">
                                   View All Documents
                               </a>
                               <a class="btn btn-outline-black btn-sm" href="{{url_for('doctor_routes.patient_treatment', patient_userid = x.username)}}">
