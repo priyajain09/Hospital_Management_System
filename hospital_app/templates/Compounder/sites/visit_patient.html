@@ -68,9 +68,8 @@
            <td><a class="text-primary" href="{{url_for('comp.user_details', username = treat.patient_userid)}}" >{{treat.patient_name}}</a></td>
            <td>{{treat.doctorid}}</td>
            <td>{{treat.time_stamp}}</td>
-           {% for dis in treat.disease %}
-           <td>{{dis}}, </td>
-           {% endfor %}
+           <td>{% for dis in treat.disease %}{{dis}}, {% endfor %}</td>
+           
            <td><a class="text-primary" href="{{url_for('comp.comp_continue_treatment' , treat_id = treat.treat_id)}}" > click here </a> </td>
         </tr>
     {% endfor %}   
