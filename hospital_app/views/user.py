@@ -119,7 +119,7 @@ def change_password():
 def upload_document(role):
     if request.method == "POST":
         file = request.files['in_file']
-        u = upload_medical_records(treat_id = int(request.form['treat_id']),type_doc=str(request.form['type_doc']),date=request.form['date'],File=file.read(),
+        u = upload_medical_records(treat_id = int(request.form['treat_id']),type_doc = str(request.form['type_doc']),date=request.form['date'],File=file.read(),
         name = request.form['filename'],filename = file.filename,username = current_user.username)
         db.session.add(u)
         try:
