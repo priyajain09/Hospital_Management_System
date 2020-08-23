@@ -1,6 +1,7 @@
 /**********
 Initialise MongoDB Database:
 **********/
+
 use Hospital_Treatment_Data
 
 db.Treatment.insert({'treat_id' : 0, 'Description' : "Total number of treatments started" 'total_treatments' : 0})
