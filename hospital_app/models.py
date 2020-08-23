@@ -141,6 +141,7 @@ class is_user_deleted(db.Model):
 
 class upload_medical_records(db.Model):
     id = db.Column(db.Integer,primary_key=True)
+    username = db.Column(db.String,nullable = False)
     treat_id = db.Column(db.Integer,nullable=False)
     type_doc = db.Column(Enum('Invoice','Prescription','Report',name="type_enum", create_type=False),nullable = False)
     date = db.Column(db.Date,nullable = False)

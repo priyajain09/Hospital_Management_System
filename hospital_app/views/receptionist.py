@@ -21,6 +21,7 @@ def get_random_alphanumeric_string(length):
     return  result_str
 
 @recep_bp.route('/patient_registration', methods = ['GET','POST'])
+@login_required
 def home_page():
     form = patient_registration_form()
     
@@ -47,12 +48,14 @@ def home_page():
     return render_template('Reception/patient_registration.html',form = form)
 
 @recep_bp.route('/patient_enquiry', methods = ['GET','POST'])
+@login_required
 def patient_enquiry():
     u = db.session.query(User, Patient).join(Patient).all()        
     return render_template("Reception/patient_enquiry.html",list = u)
 
 @recep_bp.route('/reception/user_details/<username>',defaults={'email':None})
 @recep_bp.route('/reception/user_details/<username>/<email>')
+@login_required
 def user_details(username,email):
     if email is None:
         u = User.query.get(username)
@@ -62,6 +65,7 @@ def user_details(username,email):
     return render_template('Reception/user_details.html',user=q,email = email,image = image)
 
 @recep_bp.route('/reception/add_to_queue/<name>/<username>',methods = ['GET','POST'])
+@login_required
 def add_to_queue(name, username):
     form = queue_form()
     if form.validate_on_submit():
@@ -104,6 +108,7 @@ def add_to_queue(name, username):
 
 
 @recep_bp.route('/<name>/<username>')
+@login_required
 def add_to_compounder_queue(name,username):
     try:
         user = compounder_queue.query.get(username)
@@ -120,11 +125,13 @@ def add_to_compounder_queue(name,username):
     return redirect(url_for('recep.patient_enquiry'))
 
 @recep_bp.route('/compounder_queue',methods = ['GET','POST'])
+@login_required
 def compounderQueue():
     u = compounder_queue.query.all()    
     return render_template('Reception/compounder_queue.html',list = u)
 
 @recep_bp.route('/doctor_queue',methods = ['GET','POST'])
+@login_required
 def doctorQueue():
     if request.method == "POST":
         search_text = request.form['search_text']
@@ -144,6 +151,7 @@ def doctorQueue():
     return render_template('Reception/patient_queue.html',list = u)
 
 @recep_bp.route('/compounder_queue/<username>')
+@login_required
 def remove_compounder_queue(username):
     try:
         u = compounder_queue.query.get(username)
@@ -157,6 +165,7 @@ def remove_compounder_queue(username):
 
 
 @recep_bp.route('/compounder_queue/remove_all')
+@login_required
 def remove_all_compounder_queue():
     try:
         u = compounder_queue.query.delete()
@@ -168,6 +177,7 @@ def remove_all_compounder_queue():
     return redirect(url_for('recep.compounderQueue'))
         
 @recep_bp.route('/doctor_enquiry')
+@login_required
 def doctor_enquiry():
     u = Doctor.query.all()
     images = []
@@ -176,6 +186,7 @@ def doctor_enquiry():
     return render_template('/Reception/doctor_enquiry.html',list = u,images = images)
 
 @recep_bp.route('/doctor_queue/<treat_id>')
+@login_required
 def remove_doctor_queue(treat_id):
     try:
         u = patient_queue.query.get(treat_id)
@@ -189,6 +200,7 @@ def remove_doctor_queue(treat_id):
 
 
 @recep_bp.route('/doctor_queue/remove_all')
+@login_required
 def remove_all_doctor_queue():
     try:
         u = patient_queue.query.delete()
@@ -200,6 +212,7 @@ def remove_all_doctor_queue():
     return redirect(url_for('recep.doctorQueue'))
 
 @recep_bp.route('/receptionist/view_profile')
+@login_required
 def view_profile():
     username = current_user.username
     u = user_role.query.filter_by(username = username,role="reception").first()
@@ -207,6 +220,7 @@ def view_profile():
     return render_template('Reception/view_profile.html',user = u,image = image)    
 
 @recep_bp.route('/receptionist/update_profile',methods = ['GET','POST'])
+@login_required
 def update_profile():
     if request.method == "POST":
         file = request.files['profile_photo']
@@ -234,6 +248,7 @@ def update_profile():
     return render_template('Reception/update_profile.html',user = u,image = image) 
 
 @recep_bp.route('/receptionist/change_password',methods = ['GET','POST'])
+@login_required
 def change_password():
     if request.method == "POST":
         old_password = request.form['old_pass']  

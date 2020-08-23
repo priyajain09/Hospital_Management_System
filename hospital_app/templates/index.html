@@ -23,6 +23,7 @@
 
   <link href="../static/css1/simple-sidebar.css" rel="stylesheet">
  
+  </style>
   <style>
     #imageUpload
 {
@@ -45,7 +46,6 @@
     width: 300px;
     height: 300px;
 }
-
 </style>
   {% endblock %}
 </head>
@@ -134,10 +134,83 @@
     <footer>
       {% block footer %}
       <!-- Footer -->
-<footer class="page-footer font-small blue ">
+<footer class="page-footer font-small blue pt-4 mt-4">
+
+  <!-- Footer Links -->
+  <div class="container-fluid text-center text-md-left">
+
+    <!-- Grid row -->
+    <div class="row">
+
+      <!-- Grid column -->
+      <div class="col-md-6 mt-md-0 mt-3">
+
+        <!-- Content -->
+        <h5 class="text-uppercase">Hospital Management System</h5>
+        <p></p>
+
+      </div>
+      <!-- Grid column -->
+
+      <hr class="clearfix w-100 d-md-none pb-3">
+
+      <!-- Grid column -->
+      <div class="col-md-3 mb-md-0 mb-3">
+
+          <!-- Links -->
+          <h5 class="text-uppercase">Links</h5>
+
+          <ul class="list-unstyled">
+            <li>
+              <a href="#!">Link 1</a>
+            </li>
+            <li>
+              <a href="#!">Link 2</a>
+            </li>
+            <li>
+              <a href="#!">Link 3</a>
+            </li>
+            <li>
+              <a href="#!">Link 4</a>
+            </li>
+          </ul>
+
+        </div>
+        <!-- Grid column -->
+
+        <!-- Grid column -->
+        <div class="col-md-3 mb-md-0 mb-3">
+
+          <!-- Links -->
+          <h5 class="text-uppercase">Links</h5>
+
+          <ul class="list-unstyled">
+            <li>
+              <a href="#!">Link 1</a>
+            </li>
+            <li>
+              <a href="#!">Link 2</a>
+            </li>
+            <li>
+              <a href="#!">Link 3</a>
+            </li>
+            <li>
+              <a href="#!">Link 4</a>
+            </li>
+          </ul>
+
+        </div>
+        <!-- Grid column -->
+
+    </div>
+    <!-- Grid row -->
+
+  </div>
+  <!-- Footer Links -->
+
   <!-- Copyright -->
-  <div class="footer-copyright text-center py-3 ">© 2020 Copyright:
-    <a href=""> HMS</a>
+  <div class="footer-copyright text-center py-3">© 2020 Copyright:
+    <a href="https://mdbootstrap.com/education/bootstrap/"> </a>
   </div>
   <!-- Copyright -->
 
@@ -158,8 +231,6 @@
   <script type="text/javascript" src="../static/js/mdb.min.js"></script>
 
   <script type="text/javascript" src="../static/js/addons/datatables2.min.js"></script>
-
-  
   
   {% endblock %}
   
@@ -193,8 +264,36 @@
     });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-   
+    <script>
+      $(document).ready(function () {
+      $('#dt-filter-select').dataTable({
+    
+        initComplete: function () {
+          this.api().columns().every( function () {
+              var column = this;
+              var select = $('<select  class="browser-default custom-select form-control-sm"><option value="" selected>Search</option></select>')
+                  .appendTo( $(column.footer()).empty() )
+                  .on( 'change', function () {
+                      var val = $.fn.dataTable.util.escapeRegex(
+                          $(this).val()
+                      );
+    
+                      column
+                          .search( val ? '^'+val+'$' : '', true, false )
+                          .draw();
+                  } );
+    
+              column.data().unique().sort().each( function ( d, j ) {
+                  select.append( '<option value="'+d+'">'+d+'</option>' )
+              } );
+          } );
+      }
+      });
+    });
+    </script>
   {% block add_script %}
   {% endblock %}
+ 
+
 </body>
 </html>

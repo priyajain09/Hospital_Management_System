@@ -10,6 +10,7 @@ import base64
 assistant_bp = Blueprint('assistant', __name__)
 
 @assistant_bp.route('/assistant/patient_queue')
+@login_required
 def home_page():
     username = current_user.username
     x = user_role.query.filter_by(username = username, role = "assistant").first()
@@ -18,6 +19,7 @@ def home_page():
 
 
 @assistant_bp.route('/assistant/doctor_queue/<treat_id>')
+@login_required
 def remove_doctor_queue(treat_id):
     try:
         u = patient_queue.query.get(treat_id)
@@ -31,6 +33,7 @@ def remove_doctor_queue(treat_id):
 
 
 @assistant_bp.route('/assistant/doctor_queue/remove_all')
+@login_required
 def remove_all_doctor_queue():
     try:
         u = patient_queue.query.delete()
@@ -42,6 +45,7 @@ def remove_all_doctor_queue():
     return redirect(url_for('assistant.home_page'))    
 
 @assistant_bp.route('/assistant/user_details/<username>')
+@login_required
 def user_details(username):
     q = Patient.query.filter_by(username = username).first()
     image = base64.b64encode(q.File).decode('ascii')

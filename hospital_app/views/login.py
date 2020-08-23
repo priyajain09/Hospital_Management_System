@@ -115,18 +115,3 @@ def reset_password(token):
         return redirect(url_for('login.login'))
     return render_template('Authentication/reset_password.html', form=form)
 
-
-# @login.user_loader
-# def load_user(username):
-#     """Check if user is logged-in on every page load."""
-#     if username is not None:
-#         return User.query.filter_by(username = username).first()
-#     return None
-    
-
-
-# @login.unauthorized_handler
-# def unauthorized():
-#     """Redirect unauthorized users to Login page."""
-#     flash('You must be logged in to view that page.')
-#     return redirect(url_for('login_bp.login'))    
