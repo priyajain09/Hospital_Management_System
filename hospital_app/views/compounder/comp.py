@@ -20,7 +20,7 @@ def home():
     u = compounder_queue.query.all()    
     return render_template('Compounder/sites/comp_queue.html', list = u)
 
-@comp_bp.route('/queue/')
+@comp_bp.route('/comp-queue/')
 @login_required
 def queue():
     u = compounder_queue.query.all()    
@@ -189,7 +189,7 @@ def user_details(username):
     image = base64.b64encode(q.File).decode('ascii')
     return render_template('Compounder/sites/user_details.html',x=q, image = image)
 
-@comp_bp.route('/compounder_queue/<username>')
+@comp_bp.route('/comp-compounder_queue/<username>')
 @login_required
 def remove_compounder_queue(username):
     try:
