@@ -34,34 +34,40 @@ Run pip install -r requirements.txt (Python 2), or pip3 install -r requirements.
 HMS set up
 ----------
 Configure the system
-    1. Open the config.py in instance folder
-    2. set all the details asked in config.py
-Go in the Hospital_Management_System directory
-    Initialize the tables of postgres’s ‘hospital_db’ database using these commands :
-    $flask db init
-    $flask db migrate
-    $flask db upgrade
-    //First, add the admin to the system
-    -> open the flask shell using this command
-        $flask shell
-    -> Add the admin 
-        u = User(username='admin',email='admin@gmail.com',role='admin')
-        u.set_password('admin')
-        db.session.add(u)
-        db.session.commit()
--> open the postgres shell and insert the following:
+1. Open the config.py in instance folder
+2. set all the details asked in config.py
+3. Go in the Hospital_Management_System directory
+4. Initialize the tables of postgres’s ‘hospital_db’ database using these commands :
+>flask db init
+>flask db migrate
+>flask db upgrade
+//First, add the admin to the system
+5. open the flask shell using this command
+>flask shell
 
-INSERT INTO medicine
+//Add the admin
+
+>u = User(username='admin',email='admin@gmail.com',role='admin')
+
+>u.set_password('admin')
+
+>db.session.add(u)
+
+>db.session.commit()
+
+6. Open the postgres shell and insert the following:
+
+>INSERT INTO medicine
 (name)
 VALUES
 ('Combiflame'), ('Paracetamol'), ('Crocin'), ('Volini'), ('Move'),('Liver-52');
 
-INSERT INTO symptom 
+>INSERT INTO symptom 
 (name)
 VALUES
 ('Cold'), ('Fever'), ('Rashes'), ('Vomiting'), ('Sweating'),('Nose-Bleeding'),('Nausia');
 
-INSERT INTO disease
+>INSERT INTO disease
 (name)
 VALUES
 ('Diabetes'), ('Viral-Fever'), ('Bacterial-Fever'),('Asthenia'), ('Asthma'), ('Astigmatism'),('Astrocytoma');
@@ -72,12 +78,10 @@ How to run the system
 -> Activate the virtual environment which you have created above.
 -> Go in the Hospital_Management_System directory.
 -> run the command 
-$flask run
-It runs the localhost server. Open the link in any browser and it will display the login page of the HMS.
 
+>flask run
 
-
-
+//It runs the localhost server. Open the link in any browser and it will display the login page of the HMS.
 
 
 
