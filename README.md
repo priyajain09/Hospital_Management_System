@@ -19,29 +19,29 @@ MongoDB Database set up
 Postgres Database set up
 ------------------------
 Open the psql shell and type following queries:
-#DROP DATABASE hospital_db;
-#CREATE DATABASE hospital_db;
+>DROP DATABASE hospital_db;
+>CREATE DATABASE hospital_db;
 
 Installation 
 ------------
--> Install python3 in the system
--> Create virtual environment
--> Install all the dependencies from the given requirements.txt file
+1. Install python3 in the system
+2. Create virtual environment
+3. Install all the dependencies from the given requirements.txt file
 If you are using Linux OS:
 Run pip install -r requirements.txt (Python 2), or pip3 install -r requirements.txt (Python 3)
 
 
 HMS set up
 ----------
--> Configure the system
+Configure the system
     1. Open the config.py in instance folder
     2. set all the details asked in config.py
--> Go in the Hospital_Management_System directory
+Go in the Hospital_Management_System directory
     Initialize the tables of postgres’s ‘hospital_db’ database using these commands :
     $flask db init
     $flask db migrate
     $flask db upgrade
-//First, add the admin to the system
+    //First, add the admin to the system
     -> open the flask shell using this command
         $flask shell
     -> Add the admin 
